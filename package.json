@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "devDependencies": {
-    "typescript": "^4.0.2"
+    "typescript": "4.0.2"
   }
 }
