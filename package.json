@@ -1,0 +1,18 @@
+{
+  "name": "@checkdigit/typescript-config",
+  "version": "1.0.0",
+  "description": "typescript configuration",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/checkdigit/typescript-config.git"
+  },
+  "author": "Check Digit, LLC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/checkdigit/typescript-config/issues"
+  },
+  "homepage": "https://github.com/checkdigit/typescript-config#readme"
+}
