@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "typescript configuration",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc --version && tsc"
   },
   "peerDependencies": {
     "typescript": ">= 4"
@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/checkdigit/typescript-config/issues"
   },
-  "homepage": "https://github.com/checkdigit/typescript-config#readme"
+  "homepage": "https://github.com/checkdigit/typescript-config#readme",
+  "devDependencies": {
+    "typescript": "^4.0.2"
+  }
 }
