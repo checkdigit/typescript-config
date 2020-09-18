@@ -5,6 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "peerDependencies": {
+    "typescript": ">= 3 < 5"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/checkdigit/typescript-config.git"
