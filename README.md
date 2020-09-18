@@ -3,7 +3,7 @@
 ### Installation
 
 ```
-npm add -D @checkdigit/typescript
+npm add -D typescript
 npm add -D @checkdigit/typescript-config
 ```
 
