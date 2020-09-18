@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "typescript configuration",
   "scripts": {
+    "prepublish": "npm run test",
     "test": "tsc --version && tsc"
   },
   "peerDependencies": {
