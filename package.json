@@ -1,0 +1,25 @@
+{
+  "name": "@checkdigit/typescript-config",
+  "version": "1.0.0",
+  "description": "typescript configuration",
+  "scripts": {
+    "prepublish": "npm run test",
+    "test": "tsc --version && tsc"
+  },
+  "peerDependencies": {
+    "typescript": ">= 4.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/checkdigit/typescript-config.git"
+  },
+  "author": "Check Digit, LLC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/checkdigit/typescript-config/issues"
+  },
+  "homepage": "https://github.com/checkdigit/typescript-config#readme",
+  "devDependencies": {
+    "typescript": "4.0.2"
+  }
+}
