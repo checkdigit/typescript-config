@@ -4,6 +4,7 @@
   "description": "typescript configuration",
   "scripts": {
     "prepublish": "npm run test",
+    "postversion": "git push && git push --tags",
     "test": "tsc --version && tsc"
   },
   "peerDependencies": {
