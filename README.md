@@ -1,4 +1,4 @@
-# typescript-config
+# typescript-config 
 
 ### Installation
 
