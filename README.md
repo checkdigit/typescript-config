@@ -12,6 +12,18 @@ This module contains the standard Check Digit Typescript configuration.
 - emits ES2020
 - all compiler options set for maximum strictness
 
+#### A note about versioning
+
+Strict semver is a little complicated, as Typescript itself does not adhere to semver.  So our "best effort" policy is:
+
+- Each new target (e.g. `ES2019` to `ES2020`) will result in a new major version of this module.  We coordinate this
+  with whatever the latest LTS version of Node is currently supported by Amazon Lambda, Google Cloud Functions
+  and Azure Functions.
+- Each new major version of Typescript (e.g. `4.2.x` to `4.3.x`) will result in a new minor version of this module.
+- Each new minor update of Typescript (e.g. `4.3.1` to `4.3.2`) will result in a new patch version of this module.
+
+Bear in mind, any update of Typescript can potentially break your build.  But hopefully in a way that's useful.
+
 ### Installation
 
 ```
