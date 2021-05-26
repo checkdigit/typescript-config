@@ -27,6 +27,7 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowUnusedLabels": false,
+    "noImplicitOverride": true
   },
   "exclude": [
     "node_modules",
