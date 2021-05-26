@@ -1,6 +1,7 @@
 # checkdigit/typescript-config 
 
 [![MIT License](https://img.shields.io/github/license/checkdigit/typescript-config)](https://github.com/checkdigit/typescript-config/blob/master/LICENSE.txt)
+[![David](https://status.david-dm.org/gh/checkdigit/typescript-config.svg)](https://status.david-dm.org/gh/checkdigit/typescript-config.svg)
 
 Copyright (c) 2021 [Check Digit, LLC](https://checkdigit.com)
 
