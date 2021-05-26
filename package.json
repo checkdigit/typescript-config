@@ -1,15 +1,19 @@
 {
   "name": "@checkdigit/typescript-config",
   "version": "1.0.4",
-  "description": "typescript configuration",
+  "description": "Check Digit standard Typescript configuration",
   "scripts": {
     "prepublishOnly": "publish",
+    "postpublish": "rimraf dist .npmignore",
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "test": "tsc --version && tsc"
+    "test": "rimraf build && tsc && test -f build/index.js && test -f build/index.d.ts && test -f build/index.js.map"
+  },
+  "engines": {
+    "node": ">=14"
   },
   "peerDependencies": {
-    "typescript": ">= 4.1.2"
+    "typescript": ">=4.2.4"
   },
   "repository": {
     "type": "git",
@@ -22,7 +26,8 @@
   },
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "devDependencies": {
-    "@checkdigit/publish": "^1.0.18",
-    "typescript": "4.1.3"
+    "@checkdigit/publish": "^1.0.19",
+    "rimraf": "^3.0.2",
+    "typescript": "4.2.4"
   }
 }

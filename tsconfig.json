@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2019",
-    "lib": ["esnext", "dom"],
+    "target": "es2020",
+    "lib": ["esnext", "dom", "webworker"],
     "sourceMap": true,
     "outDir": "build",
     "declaration": true,
@@ -24,7 +24,9 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowUnusedLabels": false,
   },
   "exclude": [
     "node_modules",
