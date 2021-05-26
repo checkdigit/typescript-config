@@ -5,6 +5,13 @@
 
 Copyright (c) 2021 [Check Digit, LLC](https://checkdigit.com)
 
+### Introduction
+
+This module contains the standard Check Digit Typescript configuration.
+- requires Node 14 or above
+- emits ES2020
+- all compiler options set for maximum strictness
+
 ### Installation
 
 ```
