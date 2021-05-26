@@ -1,4 +1,8 @@
-# typescript-config 
+# checkdigit/typescript-config 
+
+[![MIT License](https://img.shields.io/github/license/checkdigit/typescript-config)](https://github.com/checkdigit/typescript-config/blob/master/LICENSE.txt)
+
+Copyright (c) 2021 [Check Digit, LLC](https://checkdigit.com)
 
 ### Installation
 
@@ -21,8 +25,11 @@ Make sure your project's `tsconfig.json` extends `@checkdigit/typescript-config`
   "exclude": [
     "node_modules",
     "build",
-    "dist",
-    "serve"
+    "dist"
   ]
 }
 ```
+
+## License
+
+MIT
