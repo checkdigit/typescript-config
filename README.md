@@ -3,13 +3,13 @@
 [![MIT License](https://img.shields.io/github/license/checkdigit/typescript-config)](https://github.com/checkdigit/typescript-config/blob/master/LICENSE.txt)
 [![David](https://status.david-dm.org/gh/checkdigit/typescript-config.svg)](https://status.david-dm.org/gh/checkdigit/typescript-config.svg)
 
-Copyright (c) 2021 [Check Digit, LLC](https://checkdigit.com)
+Copyright (c) 2022 [Check Digit, LLC](https://checkdigit.com)
 
 ### Introduction
 
 This module contains the standard Check Digit Typescript configuration.
-- requires Node 14 or above
-- emits ES2020
+- requires Node 16 or above
+- emits ES2022
 - all compiler options set for maximum strictness
 
 #### A note about versioning
@@ -27,9 +27,10 @@ Bear in mind, any update of Typescript can potentially break your build.  But ho
 ### Installation
 
 ```
-npm add -D typescript
 npm add -D @checkdigit/typescript-config
 ```
+
+Note: you do not need to explicitly install Typescript itself, as it comes in as a peer dependency of `@checkdigit/typescript-config`.
 
 Make sure your project's `tsconfig.json` extends `@checkdigit/typescript-config`.
 
