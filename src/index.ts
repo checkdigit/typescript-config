@@ -91,3 +91,5 @@ const obj = {
 if (typeof obj[key] === 'string') {
   assert.ok(obj[key].toUpperCase()); // 4.7 knows that obj[key] is a string
 }
+
+console.log('complete');
