@@ -24,7 +24,7 @@
     "postversion": "git push && git push --tags",
     "prettier": "prettier --list-different 'src/**/*.ts'",
     "prettier:fix": "prettier --write 'src/**/*.ts'",
-    "test": "tsc && node build/index.js | grep -q 'completfe' && npm run prettier"
+    "test": "tsc && node build/index.js | grep -q 'complete' && npm run prettier"
   },
   "devDependencies": {
     "@checkdigit/prettier-config": "1.0.2",
