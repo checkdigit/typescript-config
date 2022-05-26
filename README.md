@@ -10,6 +10,9 @@ Copyright (c) 2022 [Check Digit, LLC](https://checkdigit.com)
 This module contains the standard Check Digit Typescript configuration.
 - requires Node 16 or above
 - emits ES2022
+- uses the new tsconfig `module` type of `node16`.  This specifies that whether commonjs or ESM is emitted is dependent
+  on the value of the `type` field in `package.json`.  If not supplied, the default value is `commonjs`.
+  Set `"type": "module"` to emit ESM.
 - all compiler options set for maximum strictness
 
 #### A note about versioning
