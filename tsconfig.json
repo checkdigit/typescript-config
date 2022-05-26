@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2020",
+    "module": "node16",
+    "target": "es2022",
     "lib": ["esnext", "dom", "webworker"],
     "sourceMap": true,
     "outDir": "build",
