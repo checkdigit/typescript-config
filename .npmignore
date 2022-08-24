@@ -6,3 +6,4 @@ build
 .sonarcloud.properties
 coverage
 .idea
+.github

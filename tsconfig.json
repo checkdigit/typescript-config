@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "node16",
+    "module": "commonjs",
     "target": "es2022",
     "lib": ["esnext", "dom", "webworker"],
     "sourceMap": true,
@@ -31,9 +31,5 @@
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true
   },
-  "exclude": [
-    "node_modules",
-    "build",
-    "dist"
-  ]
+  "exclude": ["node_modules", "build"]
 }
