@@ -33,5 +33,9 @@
   "devDependencies": {
     "@checkdigit/prettier-config": "^3.0.0",
     "rimraf": "^3.0.2"
-  }
+  },
+  "files": [
+    "tsconfig.json",
+    "SECURITY.md"
+  ]
 }

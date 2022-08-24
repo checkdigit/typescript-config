@@ -1,9 +1,0 @@
-src
-.rpt2_cache
-build
-**/*.spec.d.ts
-.prettierignore
-.sonarcloud.properties
-coverage
-.idea
-.github
