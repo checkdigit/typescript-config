@@ -6,12 +6,12 @@
   },
   "jsc": {
     "parser": {
-      "syntax": "ecmascript",
+      "syntax": "typescript"
     },
     "target": "esnext"
   },
   "module": {
     "type": "es6"
   },
-  "sourceMaps": true,
+  "sourceMaps": true
 }

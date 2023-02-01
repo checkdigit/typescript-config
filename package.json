@@ -24,17 +24,21 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "prettier": "prettier --list-different .",
-    "prettier:fix": "prettier --write .",
+    "prettier": "prettier --ignore-path .gitignore --list-different .",
+    "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:style",
+    "build": "tsc && node --es-module-specifier-resolution=node ./build/index.js 2>&1 | grep -q 'complete'",
+    "es-build": "rm -rf build-es && esbuild ./src/* --platform=node --format=esm --outdir=build-es && node --es-module-specifier-resolution=node ./build-es/index.js 2>&1 | grep -q 'complete'",
+    "swc-build": "rm -rf build-swc && swc ./src -d ./build-swc && node --es-module-specifier-resolution=node ./build-swc/index.js 2>&1 | grep -q 'complete'",
     "ci:compile": "tsc --noEmit",
-    "ci:test": "tsc && swc build -d swc-build && node swc-build/index.js 2>&1 | grep -q 'complete' && rimraf build",
+    "ci:test": "npm run build && npm run es-build && npm run swc-build",
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
     "@checkdigit/prettier-config": "^3.2.0",
     "@swc/cli": "^0.1.60",
     "@swc/core": "^1.3.32",
+    "esbuild": "^0.17.5",
     "rimraf": "^4.1.2"
   },
   "files": [

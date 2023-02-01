@@ -23,6 +23,8 @@ coverage
 
 # Build directory
 build
+build-es
+build-swc
 
 # Dependency directory
 node_modules
