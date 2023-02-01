@@ -1,0 +1,17 @@
+{
+  "env": {
+    "targets": {
+      "node": 18
+    }
+  },
+  "jsc": {
+    "parser": {
+      "syntax": "ecmascript",
+    },
+    "target": "esnext"
+  },
+  "module": {
+    "type": "es6"
+  },
+  "sourceMaps": true,
+}

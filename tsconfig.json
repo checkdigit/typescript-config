@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2022",
+    "target": "esnext",
+    "moduleResolution": "nodenext",
     "lib": ["esnext", "dom", "webworker"],
     "sourceMap": true,
+    "inlineSources": true,
     "outDir": "build",
     "declaration": true,
     "removeComments": false,
@@ -17,7 +18,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "alwaysStrict": true,
-    "importsNotUsedAsValues": "error",
+    "verbatimModuleSyntax": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true,
