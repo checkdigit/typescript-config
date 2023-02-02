@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "lib": ["esnext", "dom", "webworker"],
     "sourceMap": true,
     "inlineSources": true,

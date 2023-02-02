@@ -120,5 +120,14 @@ function throwIfNullable48<T>(value: T): NonNullable<T> {
 assert.equal(throwIfNullable48(42), 42);
 
 import './typescript-4.9';
+import './typescript-5.0';
 
 console.log('complete');
+
+export function test() {
+  return 'export function test';
+}
+
+export default function () {
+  return 'export default function';
+}

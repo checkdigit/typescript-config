@@ -27,19 +27,30 @@
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:style",
-    "build": "tsc && node --es-module-specifier-resolution=node ./build/index.js 2>&1 | grep -q 'complete'",
-    "es-build": "rm -rf build-es && esbuild ./src/* --platform=node --format=esm --outdir=build-es && node --es-module-specifier-resolution=node ./build-es/index.js 2>&1 | grep -q 'complete'",
-    "swc-build": "rm -rf build-swc && swc ./src -d ./build-swc && node --es-module-specifier-resolution=node ./build-swc/index.js 2>&1 | grep -q 'complete'",
-    "ci:compile": "tsc --noEmit",
-    "ci:test": "npm run build && npm run es-build && npm run swc-build",
+    "build": "rimraf build && tsc && node --es-module-specifier-resolution=node ./build/index.js 2>&1 | grep -q 'complete'",
+    "build-es": "rimraf build-es && esbuild ./src/* --platform=node --bundle --format=esm --sourcemap=inline --outdir=build-es && node ./build-es/index.js 2>&1 | grep -q 'complete'",
+    "build-swc": "rimraf build-swc && swc ./src -d ./build-swc && node --es-module-specifier-resolution=node ./build-swc/index.js 2>&1 | grep -q 'complete'",
+    "ci:test": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --coverage=false",
+    "ci:compile": "npm run build && npm run build-es && npm run build-swc",
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
     "@checkdigit/prettier-config": "^3.2.0",
     "@swc/cli": "^0.1.60",
     "@swc/core": "^1.3.32",
+    "@types/jest": "^29.4.0",
     "esbuild": "^0.17.5",
-    "rimraf": "^4.1.2"
+    "esbuild-jest": "^0.5.0",
+    "get-port": "^6.1.2",
+    "got": "^12.5.3",
+    "jest": "^29.4.1",
+    "rimraf": "^4.1.2",
+    "ts-jest": "^29.0.5"
+  },
+  "overrides": {
+    "ts-jest": {
+      "typescript": "^5.0.0-beta"
+    }
   },
   "files": [
     "tsconfig.json",
