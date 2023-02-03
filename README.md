@@ -2,15 +2,16 @@
 
 [![MIT License](https://img.shields.io/github/license/checkdigit/typescript-config)](https://github.com/checkdigit/typescript-config/blob/master/LICENSE.txt)
 
-Copyright (c) 2022 [Check Digit, LLC](https://checkdigit.com)
+Copyright (c) 2023 [Check Digit, LLC](https://checkdigit.com)
 
 ### Introduction
 
 This module contains the standard Check Digit Typescript configuration.
 
-- requires Node 16 or above
+- requires Node 18 or above
 - emits ES2022
-- uses the `module` type of `commonjs`.
+- uses `esnext` for `target` and `module`
+- uses the `moduleResoltion` of `bundler`
 - all compiler options set for maximum strictness
 
 #### A note about versioning

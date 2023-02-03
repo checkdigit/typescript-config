@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "lib": ["esnext", "dom", "webworker"],
     "sourceMap": true,
