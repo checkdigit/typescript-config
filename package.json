@@ -27,11 +27,11 @@
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:style",
-    "build": "rimraf build && tsc && node --es-module-specifier-resolution=node ./build/index.js 2>&1 | grep -q 'complete'",
+    "build-tsc": "rimraf build && tsc && node --es-module-specifier-resolution=node ./build/index.js 2>&1 | grep -q 'complete'",
     "build-es": "rimraf build-es && esbuild ./src/* --platform=node --bundle --format=esm --sourcemap=inline --outdir=build-es && node ./build-es/index.js 2>&1 | grep -q 'complete'",
     "build-swc": "rimraf build-swc && swc ./src -d ./build-swc && node --es-module-specifier-resolution=node ./build-swc/index.js 2>&1 | grep -q 'complete'",
-    "ci:test": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --coverage=false",
-    "ci:compile": "npm run build && npm run build-es && npm run build-swc",
+    "ci:test": "rimraf build build-es build-swc && NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --coverage=false",
+    "ci:compile": "npm run build-tsc && npm run build-es && npm run build-swc",
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
