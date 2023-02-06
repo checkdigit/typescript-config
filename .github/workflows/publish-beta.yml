@@ -5,6 +5,10 @@ on:
     branches:
       - 'main'
 
+env:
+  CI: true
+  NODE_OPTIONS: --experimental-vm-modules
+
 jobs:
   comment:
     runs-on: ubuntu-latest
