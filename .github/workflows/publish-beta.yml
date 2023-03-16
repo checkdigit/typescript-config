@@ -7,7 +7,6 @@ on:
 
 env:
   CI: true
-  NODE_OPTIONS: --experimental-vm-modules
 
 jobs:
   comment:
@@ -29,7 +28,7 @@ jobs:
       - name: Run Test
         run: npm test
       - name: perform beta publish
-        uses: checkdigit/github-actions/publish-beta
+        uses: checkdigit/github-actions/publish-beta@main
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN_PUBLISH }}
