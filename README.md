@@ -2,7 +2,7 @@
 
 [![MIT License](https://img.shields.io/github/license/checkdigit/typescript-config)](https://github.com/checkdigit/typescript-config/blob/master/LICENSE.txt)
 
-Copyright (c) 2023 [Check Digit, LLC](https://checkdigit.com)
+Copyright (c) 2022-2023 [Check Digit, LLC](https://checkdigit.com)
 
 ### Introduction
 
