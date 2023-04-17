@@ -28,6 +28,8 @@ jobs:
         run: npm run ci:compile
       - name: Check Code Style
         run: npm run ci:style
+      - name: Perform Linting
+        run: npm run ci:lint
       - name: Run Tests
         run: npm run ci:test
 
@@ -52,5 +54,7 @@ jobs:
         run: npm run ci:compile
       - name: Check Code Style
         run: npm run ci:style
+      - name: Perform Linting
+        run: npm run ci:lint
       - name: Run Tests
         run: npm run ci:test

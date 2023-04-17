@@ -27,6 +27,7 @@ describe('typescript-4.4', () => {
       // do nothing
     } catch (error) {
       // @ts-expect-error
+      // eslint-disable-next-line no-console
       console.error(err.message); // errors with useUnknownInCatchVariables = true
     }
   });

@@ -21,13 +21,14 @@ This module includes a number of integration-style tests, to ensure that a speci
 with various bundlers, libraries and frameworks used by Check Digit:
 
 - Jest and `ts-jest`
-- `node:test`
+- ESLint and `@typescript-eslint/eslint-plugin`
+- Built-in `node:test` runner
 - prettier
 - tsc
 - swc
 - esbuild
 
-We do this to ensure that Typescript upgrades do not break things. New major versions of Typescript are not immediately
+We do this to ensure that Typescript upgrades do not break these dependencies. New major versions of Typescript are not immediately
 supported by projects such as ts-jest, eslint, prettier, etc. Our policy is to wait until these projects fully support
 the new version of Typescript, and/or without emitting warnings during these tests, before publishing.
 

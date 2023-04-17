@@ -23,6 +23,7 @@ describe('typescript-5.0', () => {
     assert.equal(moduleDirectory(), 'module-directory-index');
   });
 
+  // eslint-disable-next-line multiline-comment-style
   // it('should work with ESM modules', async () => {
   //   assert.equal(typeof (await getPort()), 'number');
   // });
