@@ -27,9 +27,9 @@
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:style",
     "build-tsc": "rimraf build && tsc",
-    "build-es": "rimraf build-es && esbuild ./src/*.ts ./src/*/*.ts --platform=node --bundle --format=esm --sourcemap=inline --outdir=build-es",
+    "build-es": "rimraf build-es && esbuild ./src/*.ts ./src/*/*.ts --platform=node --bundle --format=cjs --sourcemap=inline --outdir=build-es",
     "build-swc": "rimraf build-swc && swc ./src -d ./build-swc",
-    "ci:test": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --coverage=false",
+    "ci:test": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --coverage=false && node --test build/*.spec.js build/*/*.spec.js && node --test build-es/*.spec.js build-es/*/*.spec.js",
     "ci:compile": "npm run build-tsc && npm run build-es",
     "ci:style": "npm run prettier"
   },

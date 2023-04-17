@@ -2,6 +2,8 @@
 
 import { strict as assert } from 'node:assert';
 
+import { describe, it } from './describe-it';
+
 describe('typescript-4.4', () => {
   it('has typescript 4.4 features', () => {
     interface SymbolIndexSignature44 {

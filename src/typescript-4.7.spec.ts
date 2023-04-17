@@ -2,6 +2,8 @@
 
 import { strict as assert } from 'node:assert';
 
+import { describe, it } from './describe-it';
+
 describe('typescript-4.7', () => {
   it('has typescript 4.7 features', () => {
     // control-flow analysis for bracketed element access

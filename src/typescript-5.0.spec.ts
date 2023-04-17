@@ -8,6 +8,8 @@ import got from 'got'; // CJS version of got
 import moduleDefault, { test } from './module';
 import moduleDirectory from './module-directory';
 
+import { describe, it } from './describe-it';
+
 describe('typescript-5.0', () => {
   it('should export default correctly', () => {
     assert.equal(moduleDefault(), 'export default function');
