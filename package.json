@@ -34,7 +34,7 @@
     "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild src/index.test.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/index.test.cjs",
     "build-esbuild-esm": "rimraf build-esbuild-esm && node builder.mjs --outDir=build-esbuild-esm",
     "build-esbuild-esm-bundle": "rimraf build-esbuild-esm-bundle && esbuild src/index.test.ts --bundle --platform=node --format=esm --sourcemap=inline --sources-content=false --outfile=build-esbuild-esm-bundle/index.test.mjs",
-    "test-jest": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --no-cache --coverage=false",
+    "test-jest": "NODE_OPTIONS=\"--experimental-vm-modules --enable-source-maps\" jest --coverage=false",
     "test-tsc-cjs": "node --test build-tsc-cjs/index.test.js",
     "test-esbuild-cjs": "node --test build-esbuild-cjs/index.test.js",
     "test-esbuild-cjs-bundle": "node --test build-esbuild-cjs-bundle/index.test.cjs",
