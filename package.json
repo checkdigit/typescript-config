@@ -23,23 +23,23 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
-    "lint:fix": "eslint -f unix --ext .ts src --fix",
-    "lint": "eslint -f unix --ext .ts src",
+    "lint:fix": "eslint -f unix --ext .ts,.mts src --fix",
+    "lint": "eslint -f unix --ext .ts,.mts src",
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
     "build-builder": "tsc --module nodenext --outDir build-builder ./src/builder.mts",
     "build-tsc-cjs": "rimraf build-tsc-cjs && tsc --outDir build-tsc-cjs",
     "build-esbuild-cjs": "rimraf build-esbuild-cjs && esbuild ./src/*.ts ./src/*/*.ts --platform=node --bundle --format=cjs --sourcemap=inline --sources-content=false --outdir=build-esbuild-cjs",
-    "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild ./src/index.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/index.cjs",
+    "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild src/index.test.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/index.test.cjs",
     "build-esbuild-esm": "rimraf build-esbuild-esm && node builder.mjs --outDir=build-esbuild-esm",
-    "build-esbuild-esm-bundle": "rimraf build-esbuild-esm-bundle && esbuild ./src/index.ts --bundle --platform=node --format=esm --sourcemap=inline --sources-content=false --outfile=build-esbuild-esm-bundle/index.mjs",
+    "build-esbuild-esm-bundle": "rimraf build-esbuild-esm-bundle && esbuild src/index.test.ts --bundle --platform=node --format=esm --sourcemap=inline --sources-content=false --outfile=build-esbuild-esm-bundle/index.test.mjs",
     "test-jest": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --no-cache --coverage=false",
-    "test-tsc-cjs": "node --test build-tsc-cjs/index.js",
-    "test-esbuild-cjs": "node --test build-esbuild-cjs/index.js",
-    "test-esbuild-cjs-bundle": "node --test build-esbuild-cjs-bundle/index.cjs",
-    "test-esbuild-esm": "node --test build-esbuild-esm/index.mjs",
-    "test-esbuild-esm-bundle": "echo 'node -test build-esbuild-esm-bundle/index.mjs'",
+    "test-tsc-cjs": "node --test build-tsc-cjs/index.test.js",
+    "test-esbuild-cjs": "node --test build-esbuild-cjs/index.test.js",
+    "test-esbuild-cjs-bundle": "node --test build-esbuild-cjs-bundle/index.test.cjs",
+    "test-esbuild-esm": "node --test build-esbuild-esm/index.test.mjs",
+    "test-esbuild-esm-bundle": "echo 'node -test build-esbuild-esm-bundle/index.test.mjs'",
     "ci:test": "npm run test-jest && npm run test-tsc-cjs && npm run test-esbuild-cjs && npm run test-esbuild-cjs-bundle && npm run test-esbuild-esm && npm run test-esbuild-esm-bundle",
     "ci:compile": "npm run build-tsc-cjs && npm run build-esbuild-cjs && npm run build-esbuild-cjs-bundle && npm run build-esbuild-esm && npm run build-esbuild-esm-bundle",
     "ci:lint": "npm run lint",
@@ -75,30 +75,58 @@
       "prettier"
     ],
     "rules": {
-      "@typescript-eslint/ban-types": "off",
-      "@typescript-eslint/require-await": "off",
-      "@typescript-eslint/consistent-type-definitions": "off",
-      "@typescript-eslint/ban-ts-comment": "off",
-      "@typescript-eslint/no-unnecessary-condition": "off",
-      "@typescript-eslint/consistent-indexed-object-style": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "sort-imports": "off",
+      "@typescript-eslint/non-nullable-type-assertion-style": "error",
       "capitalized-comments": "off",
-      "line-comment-position": "off",
-      "no-inline-comments": "off",
-      "no-param-reassign": "off",
-      "id-length": "off",
-      "no-magic-numbers": "off",
-      "sort-keys": "off",
-      "func-style": "off",
-      "func-names": "off",
-      "no-undefined": "off",
       "one-var": "off",
-      "no-ternary": "off",
-      "no-duplicate-imports": "off",
-      "symbol-description": "off"
-    }
+      "sort-keys": "off",
+      "func-style": [
+        "error",
+        "declaration",
+        {
+          "allowArrowFunctions": true
+        }
+      ],
+      "no-magic-numbers": [
+        "error",
+        {
+          "ignore": [
+            1
+          ]
+        }
+      ],
+      "no-undefined": "off",
+      "no-ternary": "off"
+    },
+    "overrides": [
+      {
+        "files": [
+          "*.spec.mts",
+          "*.test.mts",
+          "*.spec.ts",
+          "*.test.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/non-nullable-type-assertion-style": "off",
+          "@typescript-eslint/ban-types": "off",
+          "@typescript-eslint/require-await": "off",
+          "@typescript-eslint/consistent-type-definitions": "off",
+          "@typescript-eslint/ban-ts-comment": "off",
+          "@typescript-eslint/no-unnecessary-condition": "off",
+          "@typescript-eslint/consistent-indexed-object-style": "off",
+          "@typescript-eslint/no-unused-vars": "off",
+          "@typescript-eslint/no-unsafe-member-access": "off",
+          "sort-imports": "off",
+          "line-comment-position": "off",
+          "no-inline-comments": "off",
+          "no-param-reassign": "off",
+          "id-length": "off",
+          "no-magic-numbers": "off",
+          "func-names": "off",
+          "no-duplicate-imports": "off",
+          "symbol-description": "off"
+        }
+      }
+    ]
   },
   "jest": {
     "moduleFileExtensions": [

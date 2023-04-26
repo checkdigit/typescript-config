@@ -1,15 +1,16 @@
 // builder.mts
 
+import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import typescript from 'typescript';
 import url from 'node:url';
 // import { parseArgs } from 'node:util';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-// import { PluginBuild } from 'esbuild';
-// import { build, PluginBuild } from 'esbuild';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import typescript from 'typescript';
+/*
+ * import { PluginBuild } from 'esbuild';
+ * import { build, PluginBuild } from 'esbuild';
+ */
 
 /**
  * Recursively obtains all files in a directory
@@ -45,17 +46,19 @@ async function getFiles(directory: string): Promise<string[]> {
 //   });
 // }
 
-const inDir = 'lib';
-const outDir = 'hello';
+const inDir = 'lib',
+  outDir = 'hello';
 
-// const {
-//   values: { inDir, outDir },
-// } = parseArgs({
-//   options: {
-//     inDir: { type: 'string', short: 'i', default: 'src' },
-//     outDir: { type: 'string', short: 'o', default: 'build' },
-//   },
-// });
+/*
+ * const {
+ *   values: { inDir, outDir },
+ * } = parseArgs({
+ *   options: {
+ *     inDir: { type: 'string', short: 'i', default: 'src' },
+ *     outDir: { type: 'string', short: 'o', default: 'build' },
+ *   },
+ * });
+ */
 
 /**
  * Emit declarations using typescript compiler
@@ -63,9 +66,11 @@ const outDir = 'hello';
 const sourceDirectory = path.join(path.dirname(url.fileURLToPath(import.meta.url)), inDir as string);
 const allSourceFiles = await getFiles(sourceDirectory);
 const productionSourceFiles = allSourceFiles.filter(
-  (file) => file.endsWith('.ts') //  && !file.endsWith('.test.ts') && !file.endsWith('.spec.ts')
+  //  && !file.endsWith('.test.ts') && !file.endsWith('.spec.ts')
+  (file) => file.endsWith('.ts')
 );
 
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const configFile = typescript.readConfigFile('./tsconfig.json', typescript.sys.readFile);
 const compilerOptions = typescript.parseJsonConfigFileContent(configFile.config, typescript.sys, './');
 
@@ -80,7 +85,8 @@ const emitResult = program.emit();
 const allDiagnostics = [...typescript.getPreEmitDiagnostics(program), ...emitResult.diagnostics];
 for (const diagnostic of allDiagnostics) {
   if (diagnostic.file) {
-    const { line, character } = typescript.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start as number);
+    assert.ok(diagnostic.start !== undefined);
+    const { line, character } = typescript.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
     const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
     // eslint-disable-next-line no-console
     console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);

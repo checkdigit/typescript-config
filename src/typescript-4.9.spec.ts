@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from './describe-it';
+import { describe, it } from './describe-it.test';
 
 describe('typescript-4.9', () => {
   it('has typescript 4.9 features', () => {

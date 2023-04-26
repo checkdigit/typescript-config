@@ -4,10 +4,10 @@ import { strict as assert } from 'node:assert';
 
 import got from 'got'; // CJS version of got
 
-import moduleDefault, { test } from './module';
-import moduleDirectory from './module-directory';
+import moduleDefault, { test } from './module.test';
+import moduleDirectory from './test/module-directory';
 
-import { describe, it } from './describe-it';
+import { describe, it } from './describe-it.test';
 
 describe('typescript-5.0', () => {
   it('should export default correctly', () => {
