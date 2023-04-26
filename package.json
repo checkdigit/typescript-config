@@ -28,6 +28,7 @@
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
+    "build-builder": "tsc --module nodenext --outDir build-builder ./src/builder.mts",
     "build-tsc-cjs": "rimraf build-tsc-cjs && tsc --outDir build-tsc-cjs",
     "build-esbuild-cjs": "rimraf build-esbuild-cjs && esbuild ./src/*.ts ./src/*/*.ts --platform=node --bundle --format=cjs --sourcemap=inline --sources-content=false --outdir=build-esbuild-cjs",
     "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild ./src/index.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/index.cjs",
@@ -47,11 +48,11 @@
   },
   "devDependencies": {
     "@checkdigit/prettier-config": "^3.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.0",
-    "@typescript-eslint/parser": "^5.59.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.1",
+    "@typescript-eslint/parser": "^5.59.1",
     "@types/jest": "^29.5.1",
     "esbuild": "^0.17.18",
-    "eslint": "^8.38.0",
+    "eslint": "^8.39.0",
     "eslint-config-prettier": "^8.8.0",
     "get-port": "^6.1.2",
     "got": "11.8.6",
@@ -101,10 +102,26 @@
     }
   },
   "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "mjs",
+      "cjs",
+      "ts",
+      "mts",
+      "json"
+    ],
     "extensionsToTreatAsEsm": [
       ".mts"
     ],
     "transform": {
+      "^.+\\.mts$": [
+        "ts-jest",
+        {
+          "isolatedModules": true,
+          "diagnostics": false,
+          "useESM": true
+        }
+      ],
       "^.+\\.ts$": [
         "ts-jest",
         {
@@ -116,11 +133,13 @@
     },
     "collectCoverageFrom": [
       "<rootDir>/src/**",
+      "!<rootDir>/src/**/*.spec.mts",
       "!<rootDir>/src/**/*.spec.ts",
       "!<rootDir>/src/**/*.test.ts"
     ],
     "testMatch": [
-      "<rootDir>/src/**/*.spec.ts"
+      "<rootDir>/src/**/*.spec.ts",
+      "<rootDir>/src/**/*.spec.mts"
     ]
   },
   "files": [
