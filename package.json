@@ -34,7 +34,7 @@
     "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild ./src/index.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/index.cjs",
     "build-esbuild-esm": "rimraf build-esbuild-esm && node builder.mjs --outDir=build-esbuild-esm",
     "build-esbuild-esm-bundle": "rimraf build-esbuild-esm-bundle && esbuild ./src/index.ts --bundle --platform=node --format=esm --sourcemap=inline --sources-content=false --outfile=build-esbuild-esm-bundle/index.mjs",
-    "test-jest": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --coverage=false",
+    "test-jest": "NODE_OPTIONS=\"--no-warnings --experimental-vm-modules\" jest --no-cache --coverage=false",
     "test-tsc-cjs": "node --test build-tsc-cjs/index.js",
     "test-esbuild-cjs": "node --test build-esbuild-cjs/index.js",
     "test-esbuild-cjs-bundle": "node --test build-esbuild-cjs-bundle/index.cjs",
@@ -107,7 +107,8 @@
       "cjs",
       "ts",
       "mts",
-      "json"
+      "json",
+      "node"
     ],
     "extensionsToTreatAsEsm": [
       ".mts"
@@ -133,6 +134,7 @@
     "collectCoverageFrom": [
       "<rootDir>/src/**",
       "!<rootDir>/src/**/*.spec.mts",
+      "!<rootDir>/src/**/*.test.mts",
       "!<rootDir>/src/**/*.spec.ts",
       "!<rootDir>/src/**/*.test.ts"
     ],
