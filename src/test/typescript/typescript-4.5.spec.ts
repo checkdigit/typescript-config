@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from './describe-it.test';
+import { describe, it } from '../../describe-it.test';
 
 // 4.5 introduces type modifiers on import names
 import { ok, type AssertPredicate } from 'node:assert';

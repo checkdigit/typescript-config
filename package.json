@@ -31,16 +31,16 @@
     "build-builder": "tsc --module nodenext --outDir build-builder ./src/builder.mts",
     "build-tsc-cjs": "rimraf build-tsc-cjs && tsc --outDir build-tsc-cjs",
     "build-esbuild-cjs": "rimraf build-esbuild-cjs && esbuild ./src/*.ts ./src/*/*.ts --platform=node --bundle --format=cjs --sourcemap=inline --sources-content=false --outdir=build-esbuild-cjs",
-    "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild src/index.test.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/index.test.cjs",
+    "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild src/test/index.test.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/test/index.test.cjs",
     "build-esbuild-esm": "rimraf build-esbuild-esm && node builder.mjs --outDir=build-esbuild-esm",
-    "build-esbuild-esm-bundle": "rimraf build-esbuild-esm-bundle && esbuild src/index.test.ts --bundle --platform=node --format=esm --sourcemap=inline --sources-content=false --outfile=build-esbuild-esm-bundle/index.test.mjs",
-    "test-jest-esm": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage=false src/*.mts src/*/*.mts",
-    "test-jest-cjs": "jest --coverage=false src/*.ts src/*/*.ts",
-    "test-tsc-cjs": "node --test build-tsc-cjs/index.test.js",
-    "test-esbuild-cjs": "node --test build-esbuild-cjs/index.test.js",
-    "test-esbuild-cjs-bundle": "node --test build-esbuild-cjs-bundle/index.test.cjs",
-    "test-esbuild-esm": "node --test build-esbuild-esm/index.test.mjs",
-    "test-esbuild-esm-bundle": "echo 'node -test build-esbuild-esm-bundle/index.test.mjs'",
+    "build-esbuild-esm-bundle": "rimraf build-esbuild-esm-bundle && esbuild src/test/index.test.ts --bundle --platform=node --format=esm --sourcemap=inline --sources-content=false --outfile=build-esbuild-esm-bundle/test/index.test.mjs",
+    "test-jest-esm": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage=false src/*.mts src/*/*.mts src/*/*/*.mts",
+    "test-jest-cjs": "jest --coverage=false src/*.ts src/*/*.ts src/*/*/*.ts",
+    "test-tsc-cjs": "node --test build-tsc-cjs/test/index.test.js",
+    "test-esbuild-cjs": "node --test build-esbuild-cjs/test/index.test.js",
+    "test-esbuild-cjs-bundle": "node --test build-esbuild-cjs-bundle/test/index.test.cjs",
+    "test-esbuild-esm": "node --test build-esbuild-esm/test/index.test.mjs",
+    "test-esbuild-esm-bundle": "echo 'node -test build-esbuild-esm-bundle/test/index.test.mjs'",
     "ci:test": "npm run test-jest-cjs && npm run test-jest-esm &&npm run test-tsc-cjs && npm run test-esbuild-cjs && npm run test-esbuild-cjs-bundle && npm run test-esbuild-esm && npm run test-esbuild-esm-bundle",
     "ci:compile": "npm run build-tsc-cjs && npm run build-esbuild-cjs && npm run build-esbuild-cjs-bundle && npm run build-esbuild-esm && npm run build-esbuild-esm-bundle",
     "ci:lint": "npm run lint",
@@ -126,7 +126,8 @@
           "no-magic-numbers": "off",
           "func-names": "off",
           "no-duplicate-imports": "off",
-          "symbol-description": "off"
+          "symbol-description": "off",
+          "no-invalid-this": "off"
         }
       }
     ]

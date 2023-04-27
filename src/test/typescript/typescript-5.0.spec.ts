@@ -5,11 +5,15 @@ import { strict as assert } from 'node:assert';
 import got from 'got'; // CJS version of got
 
 import moduleDefault, { test } from './module.test';
-import moduleDirectory from './test/module-directory';
+import moduleDirectory from './module-directory';
 
-import { describe, it } from './describe-it.test';
+import { describe, it } from '../../describe-it.test';
 
 describe('typescript-5.0', () => {
+  it('"this" is an object', () => {
+    assert.ok(typeof this === 'object');
+  });
+
   it('should export default correctly', () => {
     assert.equal(moduleDefault(), 'export default function');
   });

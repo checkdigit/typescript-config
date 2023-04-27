@@ -46,7 +46,7 @@ async function getFiles(directory: string): Promise<string[]> {
 //   });
 // }
 
-const inDir = 'lib',
+const inDir = 'test/lib',
   outDir = 'hello';
 
 /*
