@@ -28,7 +28,7 @@
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
-    "build-builder": "tsc --module nodenext --outDir build-builder ./src/builder.mts",
+    "build-builder": "tsc --module nodenext --outDir build-builder src/builder/builder.mts",
     "build-tsc-cjs": "rimraf build-tsc-cjs && tsc --outDir build-tsc-cjs",
     "build-esbuild-cjs": "rimraf build-esbuild-cjs && esbuild ./src/*.ts ./src/*/*.ts --platform=node --bundle --format=cjs --sourcemap=inline --sources-content=false --outdir=build-esbuild-cjs",
     "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild src/test/index.test.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/test/index.test.cjs",
