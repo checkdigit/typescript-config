@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
+    "module": "NodeNext",
     "target": "esnext",
     "sourceMap": true,
     "inlineSources": true,
@@ -27,6 +27,7 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true
