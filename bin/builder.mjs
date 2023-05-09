@@ -1,4 +1,4 @@
-// compile-esbuild-esm.mjs
+#!/usr/bin/env node
 
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -59,7 +59,7 @@ const {
 /**
  * Emit declarations using typescript compiler
  */
-const sourceDirectory = path.join(path.dirname(url.fileURLToPath(import.meta.url)), inDir);
+const sourceDirectory = path.join(process.cwd(), inDir);
 const allSourceFiles = await getFiles(sourceDirectory);
 const productionSourceFiles = allSourceFiles.filter(
   (file) => file.endsWith('.ts') //  && !file.endsWith('.test.ts') && !file.endsWith('.spec.ts')
