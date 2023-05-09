@@ -11,7 +11,8 @@
   },
   "peerDependencies": {
     "@types/node": ">=16",
-    "typescript": ">=5.0.4 <5.1"
+    "typescript": ">=5.0.4 <5.1",
+    "esbuild": "0.17.18"
   },
   "repository": {
     "type": "git",
@@ -26,12 +27,13 @@
   "scripts": {
     "preversion": "npm test",
     "postversion": "git push && git push --tags",
+    "prepare": "npm run build-builder",
     "lint:fix": "eslint -f unix --ext .ts,.mts src --fix",
     "lint": "eslint -f unix --ext .ts,.mts src",
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
-    "build-builder": "tsc --module nodenext --outDir build-builder src/builder/builder.mts",
+    "build-builder": "esbuild src/builder/index.mts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=bin/builder.mjs",
     "build-tsc-cjs": "rimraf build-tsc-cjs && tsc --outDir build-tsc-cjs",
     "build-esbuild-cjs": "rimraf build-esbuild-cjs && esbuild ./src/*.ts ./src/*/*.ts --platform=node --bundle --format=cjs --sourcemap=inline --sources-content=false --outdir=build-esbuild-cjs",
     "build-esbuild-cjs-bundle": "rimraf build-esbuild-cjs-bundle && esbuild src/test/index.test.ts --bundle --platform=node --format=cjs --sourcemap=inline --sources-content=false --outfile=build-esbuild-cjs-bundle/test/index.test.cjs",
@@ -56,7 +58,6 @@
     "@typescript-eslint/eslint-plugin": "^5.59.5",
     "@typescript-eslint/parser": "^5.59.5",
     "debug": "^4.3.4",
-    "esbuild": "^0.17.18",
     "eslint": "^8.40.0",
     "eslint-config-prettier": "^8.8.0",
     "get-port": "^6.1.2",
@@ -85,6 +86,7 @@
       "capitalized-comments": "off",
       "one-var": "off",
       "sort-keys": "off",
+      "sort-imports": "off",
       "func-style": [
         "error",
         "declaration",
@@ -121,7 +123,6 @@
           "@typescript-eslint/consistent-indexed-object-style": "off",
           "@typescript-eslint/no-unused-vars": "off",
           "@typescript-eslint/no-unsafe-member-access": "off",
-          "sort-imports": "off",
           "line-comment-position": "off",
           "no-inline-comments": "off",
           "no-param-reassign": "off",

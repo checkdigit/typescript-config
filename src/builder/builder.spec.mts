@@ -1,12 +1,12 @@
 // builder/builder.spec.mts
 
+import { strict as assert } from 'node:assert';
+
 // @ts-expect-error
-import builder from './builder';
+import builder from './builder.mts';
 
 describe('test builder', () => {
   it('should build', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    await builder('../test/lib', 'hello');
-    expect(true).toBe(true);
+    await assert.rejects(builder('../test/lib', 'hello'));
   });
 });

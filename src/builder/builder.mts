@@ -4,13 +4,8 @@ import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import typescript from 'typescript';
-import url from 'node:url';
-// import { parseArgs } from 'node:util';
 
-/*
- * import { PluginBuild } from 'esbuild';
- * import { build, PluginBuild } from 'esbuild';
- */
+import { PluginBuild, build } from 'esbuild';
 
 /**
  * Recursively obtains all files in a directory
@@ -28,30 +23,30 @@ async function getFiles(directory: string): Promise<string[]> {
   return files.flat();
 }
 
-// function setup(pluginBuild: PluginBuild) {
-//   pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
-//     if (resolved.kind === 'entry-point' || !resolved.path.startsWith('.') || resolved.path.endsWith('.js')) {
-//       return { external: resolved.kind !== 'entry-point' };
-//     }
-//     let isDirectory = false;
-//     try {
-//       const stats = await fs.lstat(path.join(resolved.resolveDir, resolved.path));
-//       isDirectory = stats.isDirectory();
-//     } catch {
-//       // do nothing
-//     }
-//     let newPath = resolved.path;
-//     newPath += isDirectory ? `/index.mjs` : `.mjs`;
-//     return { path: newPath, external: true };
-//   });
-// }
+function setup(pluginBuild: PluginBuild) {
+  pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
+    if (resolved.kind === 'entry-point' || !resolved.path.startsWith('.') || resolved.path.endsWith('.js')) {
+      return { external: resolved.kind !== 'entry-point' };
+    }
+    let isDirectory = false;
+    try {
+      const stats = await fs.lstat(path.join(resolved.resolveDir, resolved.path));
+      isDirectory = stats.isDirectory();
+    } catch {
+      // do nothing
+    }
+    let newPath = resolved.path;
+    newPath += isDirectory ? `/index.mjs` : `.mjs`;
+    return { path: newPath, external: true };
+  });
+}
 
 // eslint-disable-next-line func-names,max-lines-per-function,max-statements
 export default async function (inDir: string, outDir: string): Promise<void> {
   /**
    * Emit declarations using typescript compiler
    */
-  const sourceDirectory = path.join(path.dirname(url.fileURLToPath(import.meta.url)), inDir);
+  const sourceDirectory = path.join(process.cwd(), inDir);
   const allSourceFiles = await getFiles(sourceDirectory);
   const productionSourceFiles = allSourceFiles.filter(
     //  && !file.endsWith('.test.ts') && !file.endsWith('.spec.ts')
@@ -83,27 +78,27 @@ export default async function (inDir: string, outDir: string): Promise<void> {
       console.log(typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
     }
   }
-  // if (emitResult.emitSkipped) {
-  //   throw new Error('TypeScript compilation failed');
-  // }
-  //
-  // /**
-  //  * Emit ESM javascript using esbuild
-  //  */
-  // await build({
-  //   entryPoints: productionSourceFiles,
-  //   bundle: true,
-  //   platform: 'node',
-  //   format: 'esm',
-  //   outdir: outDir as string,
-  //   sourcemap: 'inline',
-  //   sourcesContent: false,
-  //   outExtension: { '.js': '.mjs' },
-  //   plugins: [
-  //     {
-  //       name: 'resolve-ts',
-  //       setup,
-  //     },
-  //   ],
-  // });
+  if (emitResult.emitSkipped) {
+    throw new Error('TypeScript compilation failed');
+  }
+
+  /**
+   * Emit ESM javascript using esbuild
+   */
+  await build({
+    entryPoints: productionSourceFiles,
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    outdir: outDir,
+    sourcemap: 'inline',
+    sourcesContent: false,
+    outExtension: { '.js': '.mjs' },
+    plugins: [
+      {
+        name: 'resolve-ts',
+        setup,
+      },
+    ],
+  });
 }

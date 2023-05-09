@@ -1,11 +1,11 @@
 // builder/index.mts
 
+import { strict as assert } from 'node:assert';
 import { parseArgs } from 'node:util';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-// eslint-disable-next-line sort-imports
-import builder from './builder';
+import builder from './builder.mts';
 
 const {
   values: { inDir, outDir },
@@ -16,5 +16,7 @@ const {
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/non-nullable-type-assertion-style
-await builder(inDir as string, outDir as string);
+assert.ok(inDir !== undefined, 'inDir is required');
+assert.ok(outDir !== undefined, 'outDir is required');
+
+await builder(inDir, outDir);
