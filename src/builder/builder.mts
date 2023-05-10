@@ -7,6 +7,11 @@ import typescript from 'typescript';
 
 import { PluginBuild, build } from 'esbuild';
 
+export interface BuilderOptions {
+  inDir: string;
+  outDir: string;
+}
+
 /**
  * Recursively obtains all files in a directory
  * @param {string} directory
@@ -42,7 +47,7 @@ function setup(pluginBuild: PluginBuild) {
 }
 
 // eslint-disable-next-line func-names,max-lines-per-function,max-statements
-export default async function (inDir: string, outDir: string): Promise<void> {
+export default async function ({ inDir, outDir }: BuilderOptions): Promise<void> {
   /**
    * Emit declarations using typescript compiler
    */
@@ -53,8 +58,7 @@ export default async function (inDir: string, outDir: string): Promise<void> {
     (file) => file.endsWith('.ts')
   );
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const configFile = typescript.readConfigFile('./tsconfig.json', typescript.sys.readFile);
+  const configFile = typescript.readConfigFile('./tsconfig.json', (name) => typescript.sys.readFile(name));
   const compilerOptions = typescript.parseJsonConfigFileContent(configFile.config, typescript.sys, './');
 
   const program = typescript.createProgram(productionSourceFiles, {

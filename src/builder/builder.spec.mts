@@ -7,6 +7,6 @@ import builder from './builder.mts';
 
 describe('test builder', () => {
   it('should build', async () => {
-    await assert.rejects(builder('../test/lib', 'hello'));
+    await assert.rejects(builder({ inDir: '../test/lib', outDir: 'hello' }));
   });
 });

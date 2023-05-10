@@ -47,7 +47,7 @@
     "test-esbuild-esm": "node --test build-esbuild-esm/test/index.test.mjs",
     "test-esbuild-esm-bundle": "echo 'node -test build-esbuild-esm-bundle/test/index.test.mjs'",
     "ci:test": "npm run test-jest-cjs && npm run test-jest-esm &&npm run test-tsc-cjs && npm run test-esbuild-cjs && npm run test-esbuild-cjs-bundle && npm run test-esbuild-esm && npm run test-esbuild-esm-bundle",
-    "ci:compile": "npm run build-tsc-cjs && npm run build-esbuild-cjs && npm run build-esbuild-cjs-bundle && npm run build-esbuild-esm && npm run build-esbuild-esm-bundle",
+    "ci:compile": "npm run build-builder && npm run build-tsc-cjs && npm run build-esbuild-cjs && npm run build-esbuild-cjs-bundle && npm run build-esbuild-esm && npm run build-esbuild-esm-bundle",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier"
   },

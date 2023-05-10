@@ -19,4 +19,4 @@ const {
 assert.ok(inDir !== undefined, 'inDir is required');
 assert.ok(outDir !== undefined, 'outDir is required');
 
-await builder(inDir, outDir);
+await builder({ inDir, outDir });
