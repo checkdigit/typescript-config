@@ -29,22 +29,25 @@ async function getFiles(directory: string): Promise<string[]> {
   return files.flat();
 }
 
-function setup(pluginBuild: PluginBuild) {
-  pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
-    if (resolved.kind === 'entry-point' || !resolved.path.startsWith('.') || resolved.path.endsWith('.js')) {
-      return { external: resolved.kind !== 'entry-point' };
-    }
-    let isDirectory = false;
-    try {
-      const stats = await fs.lstat(path.join(resolved.resolveDir, resolved.path));
-      isDirectory = stats.isDirectory();
-    } catch {
-      // do nothing
-    }
-    let newPath = resolved.path;
-    newPath += isDirectory ? `/index.mjs` : `.mjs`;
-    return { path: newPath, external: true };
-  });
+function setup(type: 'module' | 'commonjs') {
+  const extension = type === 'module' ? 'mjs' : 'cjs';
+  return (pluginBuild: PluginBuild) => {
+    pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
+      if (resolved.kind === 'entry-point' || !resolved.path.startsWith('.') || resolved.path.endsWith('.js')) {
+        return { external: resolved.kind !== 'entry-point' };
+      }
+      let isDirectory = false;
+      try {
+        const stats = await fs.lstat(path.join(resolved.resolveDir, resolved.path));
+        isDirectory = stats.isDirectory();
+      } catch {
+        // do nothing
+      }
+      let newPath = resolved.path;
+      newPath += isDirectory ? `/index.${extension}` : `.${extension}`;
+      return { path: newPath, external: true };
+    });
+  };
 }
 
 // eslint-disable-next-line func-names,max-lines-per-function,max-statements
@@ -105,7 +108,7 @@ export default async function ({ type, inDir, outDir }: BuilderOptions): Promise
     plugins: [
       {
         name: 'resolve-ts',
-        setup,
+        setup: setup(type),
       },
     ],
   });
