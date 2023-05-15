@@ -51,7 +51,7 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<void>
   /**
    * Emit declarations using typescript compiler
    */
-  const sourceDirectory = path.join(process.cwd(), inDir);
+  const sourceDirectory = inDir;
   const allSourceFiles = await getFiles(sourceDirectory);
   const productionSourceFiles = allSourceFiles.filter(
     //  && !file.endsWith('.test.ts') && !file.endsWith('.spec.ts')

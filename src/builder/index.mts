@@ -1,6 +1,7 @@
 // builder/index.mts
 
 import { strict as assert } from 'node:assert';
+import path from 'node:path';
 import { parseArgs } from 'node:util';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -19,4 +20,4 @@ const {
 assert.ok(inDir !== undefined, 'inDir is required');
 assert.ok(outDir !== undefined, 'outDir is required');
 
-await builder({ inDir, outDir });
+await builder({ inDir: path.join(process.cwd(), inDir), outDir: path.join(process.cwd(), outDir) });
