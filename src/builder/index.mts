@@ -20,4 +20,9 @@ const {
 assert.ok(inDir !== undefined, 'inDir is required');
 assert.ok(outDir !== undefined, 'outDir is required');
 
-await builder({ inDir: path.join(process.cwd(), inDir), outDir: path.join(process.cwd(), outDir) });
+const messages = await builder({ inDir: path.join(process.cwd(), inDir), outDir: path.join(process.cwd(), outDir) });
+if (messages.length > 0) {
+  // eslint-disable-next-line no-console
+  console.warn(JSON.stringify(messages, undefined, 2));
+  process.exit(1);
+}

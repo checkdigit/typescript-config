@@ -47,7 +47,9 @@ function setup(pluginBuild: PluginBuild) {
 }
 
 // eslint-disable-next-line func-names,max-lines-per-function,max-statements
-export default async function ({ inDir, outDir }: BuilderOptions): Promise<void> {
+export default async function ({ inDir, outDir }: BuilderOptions): Promise<string[]> {
+  const messages: string[] = [];
+
   /**
    * Emit declarations using typescript compiler
    */
@@ -75,11 +77,10 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<void>
       assert.ok(diagnostic.start !== undefined);
       const { line, character } = typescript.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
       const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-      // eslint-disable-next-line no-console
-      console.log(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+      messages.push(`tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
     } else {
       // eslint-disable-next-line no-console
-      console.log(typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n'));
+      messages.push(`tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`);
     }
   }
   if (emitResult.emitSkipped) {
@@ -89,7 +90,7 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<void>
   /**
    * Emit ESM javascript using esbuild
    */
-  await build({
+  const buildResult = await build({
     entryPoints: productionSourceFiles,
     bundle: true,
     platform: 'node',
@@ -105,4 +106,8 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<void>
       },
     ],
   });
+
+  messages.push(...buildResult.errors.map((error) => `esbuild error: ${error.text}`));
+  messages.push(...buildResult.warnings.map((warning) => `esbuild warning: ${warning.text}`));
+  return messages;
 }
