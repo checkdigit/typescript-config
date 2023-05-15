@@ -8,6 +8,7 @@ import typescript from 'typescript';
 import { PluginBuild, build } from 'esbuild';
 
 export interface BuilderOptions {
+  type: 'module' | 'commonjs';
   inDir: string;
   outDir: string;
 }
@@ -47,14 +48,13 @@ function setup(pluginBuild: PluginBuild) {
 }
 
 // eslint-disable-next-line func-names,max-lines-per-function,max-statements
-export default async function ({ inDir, outDir }: BuilderOptions): Promise<string[]> {
+export default async function ({ type, inDir, outDir }: BuilderOptions): Promise<string[]> {
   const messages: string[] = [];
 
   /**
    * Emit declarations using typescript compiler
    */
-  const sourceDirectory = inDir;
-  const allSourceFiles = await getFiles(sourceDirectory);
+  const allSourceFiles = await getFiles(inDir);
   const productionSourceFiles = allSourceFiles.filter(
     //  && !file.endsWith('.test.ts') && !file.endsWith('.spec.ts')
     (file) => file.endsWith('.ts')
@@ -71,7 +71,10 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<strin
     outDir,
   });
   const emitResult = program.emit();
-  const allDiagnostics = [...typescript.getPreEmitDiagnostics(program), ...emitResult.diagnostics];
+  const allDiagnostics = typescript.sortAndDeduplicateDiagnostics([
+    ...typescript.getPreEmitDiagnostics(program),
+    ...emitResult.diagnostics,
+  ]);
   for (const diagnostic of allDiagnostics) {
     if (diagnostic.file) {
       assert.ok(diagnostic.start !== undefined);
@@ -84,7 +87,7 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<strin
     }
   }
   if (emitResult.emitSkipped) {
-    throw new Error('TypeScript compilation failed');
+    throw new Error(`TypeScript compilation failed ${JSON.stringify(messages)}`);
   }
 
   /**
@@ -94,11 +97,11 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<strin
     entryPoints: productionSourceFiles,
     bundle: true,
     platform: 'node',
-    format: 'esm',
+    format: type === 'module' ? 'esm' : 'cjs',
     outdir: outDir,
     sourcemap: 'inline',
     sourcesContent: false,
-    outExtension: { '.js': '.mjs' },
+    outExtension: { '.js': type === 'module' ? '.mjs' : '.cjs' },
     plugins: [
       {
         name: 'resolve-ts',
@@ -109,5 +112,8 @@ export default async function ({ inDir, outDir }: BuilderOptions): Promise<strin
 
   messages.push(...buildResult.errors.map((error) => `esbuild error: ${error.text}`));
   messages.push(...buildResult.warnings.map((warning) => `esbuild warning: ${warning.text}`));
+  if (messages.length > 0) {
+    throw new Error(`esbuild failed ${JSON.stringify(messages)}`);
+  }
   return messages;
 }

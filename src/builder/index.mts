@@ -9,18 +9,24 @@ import { parseArgs } from 'node:util';
 import builder from './builder.mts';
 
 const {
-  values: { inDir, outDir },
+  values: { type, inDir, outDir },
 } = parseArgs({
   options: {
+    type: { type: 'string', short: 't', default: 'module' },
     inDir: { type: 'string', short: 'i', default: 'src' },
     outDir: { type: 'string', short: 'o', default: 'build' },
   },
 });
 
+assert.ok(type === 'module' || type === 'commonjs', 'type must be module or commonjs');
 assert.ok(inDir !== undefined, 'inDir is required');
 assert.ok(outDir !== undefined, 'outDir is required');
 
-const messages = await builder({ inDir: path.join(process.cwd(), inDir), outDir: path.join(process.cwd(), outDir) });
+const messages = await builder({
+  type,
+  inDir: path.join(process.cwd(), inDir),
+  outDir: path.join(process.cwd(), outDir),
+});
 if (messages.length > 0) {
   // eslint-disable-next-line no-console
   console.warn(JSON.stringify(messages, undefined, 2));
