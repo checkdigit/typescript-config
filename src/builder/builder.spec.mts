@@ -305,4 +305,29 @@ describe('test builder', () => {
     const output2 = await import(path.join(outDir, 'index.cjs'));
     assert.equal(output2.default.default, 'worldworld');
   });
+
+  it('should bundle an ESM module that imports a second ESM module', async () => {
+    const id = uuid();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, twoModules);
+    assert.deepEqual(
+      await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }),
+      []
+    );
+    assert.deepEqual(await read(outDir), {
+      'index.d.ts': 'declare const _default: string;\nexport default _default;\n',
+      'index.mjs':
+        'var hello = "world";\n' +
+        '\n' +
+        'var src_default = hello + "world";\n' +
+        'export {\n' +
+        '  src_default as default\n' +
+        '};\n',
+      'thing.d.ts': 'export declare const hello = "world";\n',
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const output = await import(path.join(outDir, 'index.mjs'));
+    assert.equal(output.default, 'worldworld');
+  });
 });

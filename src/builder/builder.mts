@@ -8,9 +8,31 @@ import typescript from 'typescript';
 import { PluginBuild, build } from 'esbuild';
 
 export interface BuilderOptions {
+  /**
+   * whether to produce ESM or CommonJS code
+   */
   type: 'module' | 'commonjs';
+
+  /**
+   * the entry point for the bundle, relative to the inDir.  if not provided, the files in the inDir will be processed
+   * as individual unbundled files
+   */
+  entryPoint?: string;
+
+  /**
+   * source code
+   */
   inDir: string;
+
+  /**
+   * build directory
+   */
   outDir: string;
+
+  /**
+   * build file, relative to the outDir
+   */
+  outFile?: string;
 }
 
 /**
@@ -51,17 +73,20 @@ function setup(type: 'module' | 'commonjs') {
 }
 
 // eslint-disable-next-line func-names,max-lines-per-function,max-statements
-export default async function ({ type, inDir, outDir }: BuilderOptions): Promise<string[]> {
+export default async function ({ type, entryPoint, inDir, outDir, outFile }: BuilderOptions): Promise<string[]> {
   const messages: string[] = [];
+
+  assert.ok(
+    (entryPoint === undefined && outFile === undefined) || (entryPoint !== undefined && outFile !== undefined),
+    'entryPoint and outFile must both be provided'
+  );
 
   /**
    * Emit declarations using typescript compiler
    */
   const allSourceFiles = await getFiles(inDir);
-  const productionSourceFiles = allSourceFiles.filter(
-    //  && !file.endsWith('.test.ts') && !file.endsWith('.spec.ts')
-    (file) => file.endsWith('.ts')
-  );
+  const productionSourceFiles =
+    entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
 
   const configFile = typescript.readConfigFile('./tsconfig.json', (name) => typescript.sys.readFile(name));
   const compilerOptions = typescript.parseJsonConfigFileContent(configFile.config, typescript.sys, './');
@@ -101,16 +126,20 @@ export default async function ({ type, inDir, outDir }: BuilderOptions): Promise
     bundle: true,
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
-    outdir: outDir,
     sourcemap: 'inline',
     sourcesContent: false,
-    outExtension: { '.js': type === 'module' ? '.mjs' : '.cjs' },
-    plugins: [
-      {
-        name: 'resolve-ts',
-        setup: setup(type),
-      },
-    ],
+    ...(outFile === undefined
+      ? {
+          outdir: outDir,
+          outExtension: { '.js': type === 'module' ? '.mjs' : '.cjs' },
+          plugins: [
+            {
+              name: 'resolve-ts',
+              setup: setup(type),
+            },
+          ],
+        }
+      : { outfile: path.join(outDir, outFile) }),
   });
 
   messages.push(...buildResult.errors.map((error) => `esbuild error: ${error.text}`));
