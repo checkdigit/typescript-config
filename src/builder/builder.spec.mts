@@ -22,6 +22,10 @@ const twoModules = {
   [`thing.ts`]: `export const hello = 'world';`,
 };
 
+const exportDefaultFunctionModule = {
+  [`index.ts`]: `export default function () { return 'hello world' }\n`,
+};
+
 async function write(dir: string, files: Record<string, string>): Promise<void> {
   await fs.mkdir(dir, { recursive: true });
   await Promise.all(Object.entries(files).map(([name, content]) => fs.writeFile(path.join(dir, name), content)));
@@ -99,6 +103,72 @@ describe('test builder', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.hello, 'world');
+  });
+
+  it('should build a single ESM module that exports function as default', async () => {
+    const id = uuid();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, exportDefaultFunctionModule);
+    assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
+    assert.deepEqual(await read(outDir), {
+      'index.d.ts': 'export default function (): string;\n',
+      'index.mjs':
+        'function src_default() {\n' +
+        '  return "hello world";\n' +
+        '}\n' +
+        'export {\n' +
+        '  src_default as default\n' +
+        '};\n',
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const output = await import(path.join(outDir, 'index.mjs'));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    assert.equal(output.default(), 'hello world');
+  });
+
+  it('should build a single CJS module that exports function as default', async () => {
+    const id = uuid();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, exportDefaultFunctionModule);
+    assert.deepEqual(await builder({ type: 'commonjs', inDir, outDir }), []);
+    assert.deepEqual(await read(outDir), {
+      'index.cjs':
+        'var __defProp = Object.defineProperty;\n' +
+        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
+        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
+        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
+        'var __export = (target, all) => {\n' +
+        '  for (var name in all)\n' +
+        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
+        '};\n' +
+        'var __copyProps = (to, from, except, desc) => {\n' +
+        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
+        '    for (let key of __getOwnPropNames(from))\n' +
+        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
+        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
+        '  }\n' +
+        '  return to;\n' +
+        '};\n' +
+        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
+        '\n' +
+        'var src_exports = {};\n' +
+        '__export(src_exports, {\n' +
+        '  default: () => src_default\n' +
+        '});\n' +
+        'module.exports = __toCommonJS(src_exports);\n' +
+        'function src_default() {\n' +
+        '  return "hello world";\n' +
+        '}\n',
+      'index.d.ts': 'export default function (): string;\n',
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const output = require(path.join(outDir, 'index.cjs'));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    assert.equal(output.default(), 'hello world');
   });
 
   it('should build an ESM module that imports a second ESM module', async () => {
