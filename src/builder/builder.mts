@@ -33,6 +33,11 @@ export interface BuilderOptions {
    * build file, relative to the outDir
    */
   outFile?: string;
+
+  /**
+   * external modules to exclude from the bundle
+   */
+  external?: string[];
 }
 
 /**
@@ -73,7 +78,14 @@ function setup(type: 'module' | 'commonjs') {
 }
 
 // eslint-disable-next-line func-names,max-lines-per-function,max-statements
-export default async function ({ type, entryPoint, inDir, outDir, outFile }: BuilderOptions): Promise<string[]> {
+export default async function ({
+  type,
+  entryPoint,
+  inDir,
+  outDir,
+  outFile,
+  external = [],
+}: BuilderOptions): Promise<string[]> {
   const messages: string[] = [];
 
   assert.ok(
@@ -161,7 +173,7 @@ export default async function ({ type, entryPoint, inDir, outDir, outFile }: Bui
             },
           ],
         }
-      : { outfile: path.join(outDir, outFile) }),
+      : { outfile: path.join(outDir, outFile), external }),
   });
 
   messages.push(...buildResult.errors.map((error) => `esbuild error: ${error.text}`));

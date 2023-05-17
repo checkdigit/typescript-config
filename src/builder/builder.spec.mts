@@ -410,4 +410,59 @@ describe('test builder', () => {
       test: 'world',
     });
   });
+
+  it('should bundle an ESM module that imports external modules, but excludes them', async () => {
+    const id = uuid();
+    const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const inDir = path.join(moduleDir, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, importExternalModule);
+    await writeNodeModules(moduleDir, testNodeModules);
+    assert.deepEqual(
+      await builder({
+        type: 'module',
+        entryPoint: 'index.ts',
+        outFile: 'index.mjs',
+        inDir,
+        outDir,
+        external: ['*'],
+      }),
+      []
+    );
+    assert.deepEqual(await read(outDir), {
+      'index.d.ts': 'export declare const hello: {\n    test: string;\n    message: string;\n};\n',
+      'index.mjs':
+        'import { hello as test } from "test-esm-module";\n' +
+        'import util from "node:util";\n' +
+        'var hello = { test, message: util.format("hello %s", "world") };\n' +
+        'export {\n' +
+        '  hello\n' +
+        '};\n',
+    });
+  });
+
+  it('should bundle a commonjs module that imports external ESM modules', async () => {
+    const id = uuid();
+    const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const inDir = path.join(moduleDir, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, importExternalModule);
+    await writeNodeModules(moduleDir, testNodeModules);
+    assert.deepEqual(
+      await builder({
+        type: 'commonjs',
+        entryPoint: 'index.ts',
+        outFile: 'index.cjs',
+        inDir,
+        outDir,
+      }),
+      []
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const output = require(path.join(outDir, 'index.cjs'));
+    assert.deepEqual(output.hello, {
+      message: 'hello world',
+      test: 'world',
+    });
+  });
 });
