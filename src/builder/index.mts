@@ -9,12 +9,15 @@ import { parseArgs } from 'node:util';
 import builder from './builder.mts';
 
 const {
-  values: { type, inDir, outDir },
+  values: { type, inDir, outDir, entryPoint, outFile, external },
 } = parseArgs({
   options: {
     type: { type: 'string', short: 't', default: 'module' },
     inDir: { type: 'string', short: 'i', default: 'src' },
     outDir: { type: 'string', short: 'o', default: 'build' },
+    entryPoint: { type: 'string', short: 'e', default: undefined },
+    outFile: { type: 'string', short: 'f', default: undefined },
+    external: { type: 'string', short: 'x', multiple: true, default: [] },
   },
 });
 
@@ -26,6 +29,9 @@ const messages = await builder({
   type,
   inDir: path.join(process.cwd(), inDir),
   outDir: path.join(process.cwd(), outDir),
+  entryPoint,
+  outFile,
+  external,
 });
 if (messages.length > 0) {
   // eslint-disable-next-line no-console

@@ -17,7 +17,7 @@ export interface BuilderOptions {
    * the entry point for the bundle, relative to the inDir.  if not provided, the files in the inDir will be processed
    * as individual unbundled files
    */
-  entryPoint?: string;
+  entryPoint?: string | undefined;
 
   /**
    * source code
@@ -32,12 +32,12 @@ export interface BuilderOptions {
   /**
    * build file, relative to the outDir
    */
-  outFile?: string;
+  outFile?: string | undefined;
 
   /**
    * external modules to exclude from the bundle
    */
-  external?: string[];
+  external?: string[] | undefined;
 }
 
 /**
