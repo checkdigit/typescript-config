@@ -26,9 +26,59 @@ const exportDefaultFunctionModule = {
   [`index.ts`]: `export default function () { return 'hello world' }\n`,
 };
 
-async function write(dir: string, files: Record<string, string>): Promise<void> {
-  await fs.mkdir(dir, { recursive: true });
-  await Promise.all(Object.entries(files).map(([name, content]) => fs.writeFile(path.join(dir, name), content)));
+const importExternalModule = {
+  [`index.ts`]: `
+import { hello as test } from 'test-esm-module';
+import util from 'node:util';
+export const hello = { test, message: util.format('hello %s', 'world') };
+`,
+};
+
+const testNodeModules = {
+  [`test-cjs-module`]: {
+    source: {
+      [`index.js`]: `module.exports.goodbye = 'world';`,
+      [`index.d.ts`]: `export declare const goodbye = "world";\n`,
+    },
+  },
+  [`test-esm-module`]: {
+    type: 'module',
+    source: {
+      [`index.js`]: `export const hello = 'world';`,
+      [`index.d.ts`]: `export declare const hello = "world";\n`,
+    },
+  },
+} as const;
+
+interface NodeModule {
+  [name: string]: {
+    type?: 'module' | 'commonjs';
+    source: {
+      [file: string]: string;
+    };
+  };
+}
+
+async function writeNodeModules(directory: string, nodeModules: NodeModule) {
+  const nodeModulesDirectory = path.join(directory, 'node_modules');
+  for (const [name, nodeModule] of Object.entries(nodeModules)) {
+    const nodeModuleDirectory = path.join(nodeModulesDirectory, name);
+    await fs.mkdir(nodeModuleDirectory, { recursive: true });
+    await fs.writeFile(
+      path.join(nodeModuleDirectory, 'package.json'),
+      JSON.stringify({
+        type: nodeModule.type ?? 'commonjs',
+      })
+    );
+    for (const [file, content] of Object.entries(nodeModule.source)) {
+      await fs.writeFile(path.join(nodeModuleDirectory, file), content);
+    }
+  }
+}
+
+async function write(directory: string, files: Record<string, string>): Promise<void> {
+  await fs.mkdir(directory, { recursive: true });
+  await Promise.all(Object.entries(files).map(([name, content]) => fs.writeFile(path.join(directory, name), content)));
 }
 
 async function read(dir: string): Promise<Record<string, string>> {
@@ -329,5 +379,35 @@ describe('test builder', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.default, 'worldworld');
+  });
+
+  it('should bundle an ESM module that imports external modules', async () => {
+    const id = uuid();
+    const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const inDir = path.join(moduleDir, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, importExternalModule);
+    await writeNodeModules(moduleDir, testNodeModules);
+    assert.deepEqual(
+      await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }),
+      []
+    );
+    assert.deepEqual(await read(outDir), {
+      'index.d.ts': 'export declare const hello: {\n    test: string;\n    message: string;\n};\n',
+      'index.mjs':
+        'var hello = "world";\n' +
+        '\n' +
+        'import util from "node:util";\n' +
+        'var hello2 = { test: hello, message: util.format("hello %s", "world") };\n' +
+        'export {\n' +
+        '  hello2 as hello\n' +
+        '};\n',
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const output = await import(path.join(outDir, 'index.mjs'));
+    assert.deepEqual(output.hello, {
+      message: 'hello world',
+      test: 'world',
+    });
   });
 });

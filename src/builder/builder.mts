@@ -88,15 +88,37 @@ export default async function ({ type, entryPoint, inDir, outDir, outFile }: Bui
   const productionSourceFiles =
     entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
 
-  const configFile = typescript.readConfigFile('./tsconfig.json', (name) => typescript.sys.readFile(name));
-  const compilerOptions = typescript.parseJsonConfigFileContent(configFile.config, typescript.sys, './');
-
   const program = typescript.createProgram(productionSourceFiles, {
-    ...compilerOptions.options,
+    module: typescript.ModuleKind.ESNext,
+    moduleResolution: typescript.ModuleResolutionKind.Bundler,
+    target: typescript.ScriptTarget.ESNext,
+    declaration: true,
     noEmitOnError: true,
     emitDeclarationOnly: true,
     rootDir: inDir,
     outDir,
+    noLib: false,
+    skipLibCheck: true,
+    strict: true,
+    preserveConstEnums: true,
+    noImplicitReturns: true,
+    noUnusedLocals: true,
+    noUnusedParameters: true,
+    alwaysStrict: true,
+    verbatimModuleSyntax: false,
+    noFallthroughCasesInSwitch: true,
+    forceConsistentCasingInFileNames: true,
+    emitDecoratorMetadata: true,
+    experimentalDecorators: true,
+    resolveJsonModule: true,
+    esModuleInterop: true,
+    noUncheckedIndexedAccess: true,
+    noPropertyAccessFromIndexSignature: true,
+    allowUnusedLabels: false,
+    allowUnreachableCode: false,
+    noImplicitOverride: true,
+    useUnknownInCatchVariables: true,
+    exactOptionalPropertyTypes: true,
   });
   const emitResult = program.emit();
   const allDiagnostics = typescript.sortAndDeduplicateDiagnostics([

@@ -137,7 +137,9 @@
           "symbol-description": "off",
           "no-invalid-this": "off",
           "max-lines-per-function": "off",
-          "max-lines": "off"
+          "max-lines": "off",
+          "max-statements": "off",
+          "no-await-in-loop": "off"
         }
       }
     ]
