@@ -155,6 +155,22 @@ describe('test builder', () => {
     assert.equal(output.hello, 'world');
   });
 
+  it('should minify a single ESM module', async () => {
+    const id = uuid();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, singleModule);
+    assert.deepEqual(await builder({ type: 'module', inDir, outDir, minify: true }), []);
+    assert.deepEqual(await read(outDir), {
+      'index.d.ts': 'export declare const hello = "world";\n',
+      'index.mjs': 'var o="world";export{o as hello};\n',
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const output = await import(path.join(outDir, 'index.mjs'));
+    assert.equal(output.hello, 'world');
+  });
+
   it('should build a single ESM module that exports function as default', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');

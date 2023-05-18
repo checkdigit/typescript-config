@@ -38,6 +38,11 @@ export interface BuilderOptions {
    * external modules to exclude from the bundle
    */
   external?: string[] | undefined;
+
+  /**
+   * whether to minify output
+   */
+  minify?: boolean | undefined;
 }
 
 /**
@@ -85,6 +90,7 @@ export default async function ({
   outDir,
   outFile,
   external = [],
+  minify = false,
 }: BuilderOptions): Promise<string[]> {
   const messages: string[] = [];
 
@@ -158,6 +164,7 @@ export default async function ({
   const buildResult = await build({
     entryPoints: productionSourceFiles,
     bundle: true,
+    minify,
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
     sourcemap: 'inline',

@@ -39,7 +39,7 @@
     "build-cjs-bundle-no-external": "rimraf build-cjs-bundle-no-external && npx builder --type=commonjs --external=./node_modules/* --entryPoint=test/index.test.ts --outDir=build-cjs-bundle-no-external --outFile=test/index.test.cjs",
     "build-esm": "rimraf build-esm && npx builder --type=module --outDir=build-esm",
     "build-esm-bundle": "rimraf build-esm-bundle && npx builder --type=module --outDir=build-esm-bundle --entryPoint=test/index.test.ts --outFile=test/index.test.mjs",
-    "build-esm-bundle-no-external": "rimraf build-esm-bundle-no-external && npx builder --type=module --external=./node_modules/* --outDir=build-esm-bundle-no-external --entryPoint=test/index.test.ts --outFile=test/index.test.mjs",
+    "build-esm-bundle-no-external": "rimraf build-esm-bundle-no-external && npx builder --type=module --external=./node_modules/* --outDir=build-esm-bundle-no-external --entryPoint=test/index.test.ts --outFile=test/index.test.mjs --minify",
     "test-jest-esm": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage=false src/*.mts src/*/*.mts src/*/*/*.mts",
     "test-jest-cjs": "jest --coverage=false src/*.ts src/*/*.ts src/*/*/*.ts",
     "test-cjs": "node --test build-cjs/test/index.test.cjs",
