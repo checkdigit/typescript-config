@@ -63,14 +63,19 @@ async function getFiles(directory: string): Promise<string[]> {
 
 function excludeSourceMaps(filter: RegExp) {
   return (pluginBuild: PluginBuild) => {
-    // ignore source maps for anything that matches filter
-    pluginBuild.onLoad({ filter }, async (args) => ({
-      contents: `${await fs.readFile(
-        args.path,
-        'utf8'
-      )}\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==`,
-      loader: 'default',
-    }));
+    // ignore source maps for any Javascript file that matches filter
+    pluginBuild.onLoad({ filter }, async (args) => {
+      if (args.path.endsWith('.js') || args.path.endsWith('.mjs') || args.path.endsWith('.cjs')) {
+        return {
+          contents: `${await fs.readFile(
+            args.path,
+            'utf8'
+          )}\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==`,
+          loader: 'default',
+        };
+      }
+      return undefined;
+    });
   };
 }
 

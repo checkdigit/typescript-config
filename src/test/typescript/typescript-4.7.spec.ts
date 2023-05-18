@@ -1,4 +1,4 @@
-// typescript-4.8.ts
+// typescript-4.7.ts
 
 import { strict as assert } from 'node:assert';
 
