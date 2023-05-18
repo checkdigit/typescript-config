@@ -43,6 +43,11 @@ export interface BuilderOptions {
    * whether to minify output
    */
   minify?: boolean | undefined;
+
+  /**
+   * whether to include sourcemap
+   */
+  sourceMap?: boolean | undefined;
 }
 
 /**
@@ -110,6 +115,7 @@ export default async function ({
   outFile,
   external = [],
   minify = false,
+  sourceMap,
 }: BuilderOptions): Promise<string[]> {
   const messages: string[] = [];
 
@@ -186,10 +192,11 @@ export default async function ({
     minify,
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
-    sourcemap: 'inline',
     sourcesContent: false,
+    sourcemap: sourceMap ? 'inline' : false,
     ...(outFile === undefined
       ? {
+          // individual files
           outdir: outDir,
           outExtension: { '.js': type === 'module' ? '.mjs' : '.cjs' },
           plugins: [
@@ -200,7 +207,9 @@ export default async function ({
           ],
         }
       : {
+          // bundling
           outfile: path.join(outDir, outFile),
+          legalComments: 'none',
           external,
           plugins: [
             {

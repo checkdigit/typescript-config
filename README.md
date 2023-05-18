@@ -34,6 +34,7 @@ types, and `esbuild` for generating code.
 - `--external` external modules to exclude from the bundle. Built-in `node` modules are automatically excluded.
   A wildcard `*` can be used to exclude multiple external modules.
 - `--minify` whether to minify the output.
+- `--sourceMap` whether to include inline sourcemap.
 
 #### Examples
 

@@ -35,7 +35,7 @@
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
     "build-builder": "esbuild src/builder/index.mts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
     "build-cjs": "rimraf build-cjs && npx builder --type=commonjs --outDir=build-cjs",
-    "build-cjs-bundle": "rimraf build-cjs-bundle && npx builder --type=commonjs --entryPoint=test/index.test.ts --outDir=build-cjs-bundle --outFile=test/index.test.cjs --minify",
+    "build-cjs-bundle": "rimraf build-cjs-bundle && npx builder --type=commonjs --entryPoint=test/index.test.ts --outDir=build-cjs-bundle --outFile=test/index.test.cjs --minify --sourceMap",
     "build-cjs-bundle-no-external": "rimraf build-cjs-bundle-no-external && npx builder --type=commonjs --external=./node_modules/* --entryPoint=test/index.test.ts --outDir=build-cjs-bundle-no-external --outFile=test/index.test.cjs",
     "build-esm": "rimraf build-esm && npx builder --type=module --outDir=build-esm",
     "build-esm-bundle": "rimraf build-esm-bundle && npx builder --type=module --outDir=build-esm-bundle --entryPoint=test/index.test.ts --outFile=test/index.test.mjs",
