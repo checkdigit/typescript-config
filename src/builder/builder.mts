@@ -61,9 +61,23 @@ async function getFiles(directory: string): Promise<string[]> {
   return files.flat();
 }
 
-function setup(type: 'module' | 'commonjs') {
+function excludeSourceMaps(filter: RegExp) {
+  return (pluginBuild: PluginBuild) => {
+    // ignore source maps for anything that matches filter
+    pluginBuild.onLoad({ filter }, async (args) => ({
+      contents: `${await fs.readFile(
+        args.path,
+        'utf8'
+      )}\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==`,
+      loader: 'default',
+    }));
+  };
+}
+
+function resolveTypescriptPaths(type: 'module' | 'commonjs') {
   const extension = type === 'module' ? 'mjs' : 'cjs';
   return (pluginBuild: PluginBuild) => {
+    // rewrite paths based on standard node resolution
     pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
       if (resolved.kind === 'entry-point' || !resolved.path.startsWith('.') || resolved.path.endsWith('.js')) {
         return { external: resolved.kind !== 'entry-point' };
@@ -175,12 +189,21 @@ export default async function ({
           outExtension: { '.js': type === 'module' ? '.mjs' : '.cjs' },
           plugins: [
             {
-              name: 'resolve-ts',
-              setup: setup(type),
+              name: 'resolve-typescript-paths',
+              setup: resolveTypescriptPaths(type),
             },
           ],
         }
-      : { outfile: path.join(outDir, outFile), external }),
+      : {
+          outfile: path.join(outDir, outFile),
+          external,
+          plugins: [
+            {
+              name: 'exclude-source-maps',
+              setup: excludeSourceMaps(/node_modules/u),
+            },
+          ],
+        }),
   });
 
   messages.push(...buildResult.errors.map((error) => `esbuild error: ${error.text}`));
