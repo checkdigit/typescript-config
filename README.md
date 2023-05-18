@@ -6,7 +6,9 @@ Copyright (c) 2022-2023 [Check Digit, LLC](https://checkdigit.com)
 
 ### Introduction
 
-This module contains the standard Check Digit Typescript configuration.
+This module contains the standard Check Digit Typescript configuration, along with our standard build tool `builder`.
+
+### Typescript Configuration
 
 - currently requires Node 16 or above.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
@@ -15,17 +17,49 @@ This module contains the standard Check Digit Typescript configuration.
 - uses the `module` type of `commonjs`.
 - all compiler options set for maximum strictness.
 
+### Builder
+
+`builder` is a command line tool that generates either commonjs or esm modules, from Typescript source. It is intended
+to be used when publishing a package to NPM, or to bundle a package for deployment. It uses `tsc` for generating
+types, and `esbuild` for generating code.
+
+#### Options
+
+- `--type` the type of module to generate. Defaults to `module` (ESM). Valid values are `commonjs` and `module`.
+- `--entryPoint` the entry point for the bundle, relative to the inDir. if not provided, the files in the inDir will
+  be processed as individual unbundled files.
+- `--inDir` the input source code directory.
+- `--outDir` the output directory.
+- `--outFile` the output file, relative to `--outDir`. This is provided for single-file bundles, along with `--entryPoint`.
+- `--external` external modules to exclude from the bundle. Built-in `node` modules are automatically excluded.
+  A wildcard `*` can be used to exclude multiple external modules.
+
+#### Examples
+
+```
+# build commonjs .cjs files from Typescript source
+npx builder --type=commonjs --outDir=build-cjs
+
+# build single-file commonjs .cjs bundle from Typescript source
+npx builder --type=commonjs --entryPoint=index.ts --outDir=build-cjs-bundle --outFile=index.cjs
+
+# build ESM .mjs files from Typescript source
+npx builder --type=module --outDir=build-esm
+
+# build single-file ESM .mjs bundle from Typescript source
+npx builder --type=module --outDir=build-esm-bundle --entryPoint=index.ts --outFile=index.mjs
+```
+
 ### Tests
 
 This module includes a number of integration-style tests, to ensure that a specific version of Typescript will interoperate
-with various bundlers, libraries and frameworks used by Check Digit:
+with `builder`, in addition to libraries and frameworks used by Check Digit:
 
 - Jest and `ts-jest`
 - ESLint and `@typescript-eslint/eslint-plugin`
 - Built-in `node:test` runner
 - prettier
 - tsc
-- swc
 - esbuild
 
 We do this to ensure that Typescript upgrades do not break these dependencies. New major versions of Typescript are not immediately
