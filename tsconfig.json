@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2022",
-    "lib": ["esnext", "dom", "webworker"],
+    "module": "NodeNext",
+    "target": "esnext",
     "sourceMap": true,
     "inlineSources": true,
     "outDir": "build",
@@ -28,6 +27,7 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true

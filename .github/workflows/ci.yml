@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -28,6 +28,8 @@ jobs:
         run: npm run ci:compile
       - name: Check Code Style
         run: npm run ci:style
+      - name: Perform Linting
+        run: npm run ci:lint
       - name: Run Tests
         run: npm run ci:test
 
@@ -36,7 +38,7 @@ jobs:
     name: Branch Build
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -52,5 +54,7 @@ jobs:
         run: npm run ci:compile
       - name: Check Code Style
         run: npm run ci:style
+      - name: Perform Linting
+        run: npm run ci:lint
       - name: Run Tests
         run: npm run ci:test
