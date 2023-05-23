@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
