@@ -9,9 +9,9 @@ import { PluginBuild, build } from 'esbuild';
 
 export interface BuilderOptions {
   /**
-   * whether to produce ESM or CommonJS code
+   * whether to produce Typescript types, ESM or CommonJS code
    */
-  type: 'module' | 'commonjs';
+  type: 'module' | 'commonjs' | 'types';
 
   /**
    * the entry point for the bundle, relative to the inDir.  if not provided, the files in the inDir will be processed
@@ -124,20 +124,21 @@ export default async function ({
     'entryPoint and outFile must both be provided'
   );
 
-  /**
-   * Emit declarations using typescript compiler
-   */
   const allSourceFiles = await getFiles(inDir);
   const productionSourceFiles =
     entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
 
+  /**
+   * Emit declarations using typescript compiler, if type is 'types'.  Otherwise, just compile to ensure the build is good.
+   */
   const program = typescript.createProgram(productionSourceFiles, {
     module: typescript.ModuleKind.ESNext,
     moduleResolution: typescript.ModuleResolutionKind.Bundler,
     target: typescript.ScriptTarget.ESNext,
     declaration: true,
+    noEmit: type !== 'types',
     noEmitOnError: true,
-    emitDeclarationOnly: true,
+    emitDeclarationOnly: type === 'types',
     rootDir: inDir,
     outDir,
     noLib: false,
@@ -179,8 +180,13 @@ export default async function ({
       messages.push(`tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`);
     }
   }
-  if (emitResult.emitSkipped) {
-    throw new Error(`TypeScript compilation failed ${JSON.stringify(messages)}`);
+
+  if (messages.length > 0) {
+    throw new Error(`tsc failed ${JSON.stringify(messages)}`);
+  }
+
+  if (type === 'types') {
+    return [];
   }
 
   /**
@@ -225,5 +231,6 @@ export default async function ({
   if (messages.length > 0) {
     throw new Error(`esbuild failed ${JSON.stringify(messages)}`);
   }
+
   return messages;
 }

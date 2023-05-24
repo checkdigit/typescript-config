@@ -25,7 +25,7 @@ types, and `esbuild` for generating code.
 
 #### Options
 
-- `--type` the type of module to generate. Defaults to `module` (ESM). Valid values are `commonjs` and `module`.
+- `--type` the type of output to generate. Defaults to `module` (ESM). Valid values are `commonjs`, `module` or `types`.
 - `--entryPoint` the entry point for the bundle, relative to the inDir. if not provided, the files in the inDir will
   be processed as individual unbundled files.
 - `--inDir` the input source code directory.
