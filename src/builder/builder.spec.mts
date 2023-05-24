@@ -105,7 +105,7 @@ describe('test builder', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await write(inDir, { 'index.ts': 'bad code' });
     await assert.rejects(builder({ type: 'module', inDir, outDir }), {
-      message: `TypeScript compilation failed ${JSON.stringify([
+      message: `tsc failed ${JSON.stringify([
         `tsc: ${inDir}/index.ts (1,1): Unexpected keyword or identifier.`,
         `tsc: ${inDir}/index.ts (1,1): Cannot find name 'bad'.`,
         `tsc: ${inDir}/index.ts (1,5): Cannot find name 'code'.`,
@@ -139,6 +139,17 @@ describe('test builder', () => {
     });
   });
 
+  it('should build types', async () => {
+    const id = uuid();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await write(inDir, singleModule);
+    assert.deepEqual(await builder({ type: 'types', inDir, outDir }), []);
+    assert.deepEqual(await read(outDir), {
+      'index.d.ts': 'export declare const hello = "world";\n',
+    });
+  });
+
   it('should build a single ESM module', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
@@ -146,7 +157,6 @@ describe('test builder', () => {
     await write(inDir, singleModule);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'export declare const hello = "world";\n',
       'index.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
 
@@ -162,7 +172,6 @@ describe('test builder', () => {
     await write(inDir, singleModule);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir, minify: true }), []);
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'export declare const hello = "world";\n',
       'index.mjs': 'var o="world";export{o as hello};\n',
     });
 
@@ -178,7 +187,6 @@ describe('test builder', () => {
     await write(inDir, exportDefaultFunctionModule);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'export default function (): string;\n',
       'index.mjs':
         'function src_default() {\n' +
         '  return "hello world";\n' +
@@ -228,7 +236,6 @@ describe('test builder', () => {
         'function src_default() {\n' +
         '  return "hello world";\n' +
         '}\n',
-      'index.d.ts': 'export default function (): string;\n',
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -244,14 +251,12 @@ describe('test builder', () => {
     await write(inDir, twoModules);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'declare const _default: string;\nexport default _default;\n',
       'index.mjs':
         'import { hello } from "./thing.mjs";\n' +
         'var src_default = hello + "world";\n' +
         'export {\n' +
         '  src_default as default\n' +
         '};\n',
-      'thing.d.ts': 'export declare const hello = "world";\n',
       'thing.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -266,7 +271,6 @@ describe('test builder', () => {
     await write(inDir, singleModule);
     assert.deepEqual(await builder({ type: 'commonjs', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'export declare const hello = "world";\n',
       'index.cjs':
         'var __defProp = Object.defineProperty;\n' +
         'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
@@ -331,7 +335,6 @@ describe('test builder', () => {
         'module.exports = __toCommonJS(src_exports);\n' +
         'var import_thing = require("./thing.cjs");\n' +
         'var src_default = import_thing.hello + "world";\n',
-      'index.d.ts': 'declare const _default: string;\nexport default _default;\n',
       'thing.cjs':
         'var __defProp = Object.defineProperty;\n' +
         'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
@@ -360,7 +363,6 @@ describe('test builder', () => {
         '0 && (module.exports = {\n' +
         '  hello\n' +
         '});\n',
-      'thing.d.ts': 'export declare const hello = "world";\n',
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -382,7 +384,6 @@ describe('test builder', () => {
       []
     );
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'declare const _default: string;\nexport default _default;\n',
       'index.mjs':
         'var hello = "world";\n' +
         '\n' +
@@ -390,7 +391,6 @@ describe('test builder', () => {
         'export {\n' +
         '  src_default as default\n' +
         '};\n',
-      'thing.d.ts': 'export declare const hello = "world";\n',
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
@@ -409,7 +409,6 @@ describe('test builder', () => {
       []
     );
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'export declare const hello: {\n    test: string;\n    message: string;\n};\n',
       'index.mjs':
         'var hello = "world";\n' +
         '\n' +
@@ -446,7 +445,6 @@ describe('test builder', () => {
       []
     );
     assert.deepEqual(await read(outDir), {
-      'index.d.ts': 'export declare const hello: {\n    test: string;\n    message: string;\n};\n',
       'index.mjs':
         'import { hello as test } from "test-esm-module";\n' +
         'import util from "node:util";\n' +
