@@ -9,7 +9,7 @@ import { PluginBuild, build } from 'esbuild';
 
 export interface BuilderOptions {
   /**
-   * whether to produce ESM or CommonJS code
+   * whether to produce Typescript types, ESM or CommonJS code
    */
   type: 'module' | 'commonjs' | 'types';
 
