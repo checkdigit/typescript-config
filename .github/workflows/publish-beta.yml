@@ -26,7 +26,7 @@ jobs:
       - name: Audit Signatures
         run: npm audit signatures
       - name: Run Test
-        run: npm run ci:test
+        run: npm run test
       - name: Prepare Beta
         uses: checkdigit/github-actions/prepare-beta@main
       - name: Publish Beta
