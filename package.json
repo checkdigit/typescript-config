@@ -25,9 +25,7 @@
   },
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "scripts": {
-    "preversion": "npm test",
-    "postversion": "git push && git push --tags",
-    "prepare": "npm run build-builder",
+    "prepublishOnly": "npm run build-builder",
     "lint:fix": "eslint -f unix --ext .ts,.mts src --fix",
     "lint": "eslint -f unix --ext .ts,.mts src",
     "prettier": "prettier --ignore-path .gitignore --list-different .",
@@ -191,6 +189,7 @@
     ]
   },
   "files": [
+    "bin",
     "tsconfig.json",
     "SECURITY.md"
   ]
