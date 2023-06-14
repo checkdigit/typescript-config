@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "3.7.0",
+  "version": "4.0.0",
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
@@ -53,7 +53,7 @@
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
-    "@checkdigit/prettier-config": "^3.4.0",
+    "@checkdigit/prettier-config": "4.0.0-PR.23-11e4",
     "@types/debug": "^4.1.8",
     "@types/jest": "^29.5.2",
     "@types/uuid": "^9.0.2",
