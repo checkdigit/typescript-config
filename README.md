@@ -19,7 +19,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 
 ### Builder
 
-`builder` is a command line tool that generates either commonjs or esm modules, from Typescript source. It is intended
+`builder` is a command line tool that generates either CommonJS or ESM modules, from Typescript source. It is intended
 to be used when publishing a package to NPM, or to bundle a package for deployment. It uses `tsc` for generating
 types, and `esbuild` for generating code.
 
