@@ -53,7 +53,7 @@
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
-    "@checkdigit/prettier-config": "4.0.0",
+    "@checkdigit/prettier-config": "^4.0.0",
     "@types/debug": "^4.1.8",
     "@types/jest": "^29.5.2",
     "@types/uuid": "^9.0.2",
