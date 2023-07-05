@@ -10,7 +10,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 
 ### Typescript Configuration
 
-- currently requires Node 16 or above.
+- currently requires Node 18 or above.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
   up any issues with using newer features unavailable in a particular environment. Browsers and NodeJS are fast moving
   targets, and can add language features at any time.
@@ -19,7 +19,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 
 ### Builder
 
-`builder` is a command line tool that generates either commonjs or esm modules, from Typescript source. It is intended
+`builder` is a command line tool that generates either CommonJS or ESM modules, from Typescript source. It is intended
 to be used when publishing a package to NPM, or to bundle a package for deployment. It uses `tsc` for generating
 types, and `esbuild` for generating code.
 
