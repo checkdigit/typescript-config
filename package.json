@@ -11,8 +11,8 @@
   },
   "peerDependencies": {
     "@types/node": ">=18",
-    "esbuild": "0.18.10",
-    "typescript": ">=5.1.5 <5.2"
+    "esbuild": "0.18.11",
+    "typescript": ">=5.1.6 <5.2"
   },
   "repository": {
     "type": "git",
@@ -53,20 +53,20 @@
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
-    "@checkdigit/prettier-config": "4.0.0-PR.23-11e4",
+    "@checkdigit/prettier-config": "4.0.0",
     "@types/debug": "^4.1.8",
     "@types/jest": "^29.5.2",
     "@types/uuid": "^9.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@typescript-eslint/parser": "^5.61.0",
     "debug": "^4.3.4",
-    "eslint": "^8.43.0",
+    "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "get-port": "^7.0.0",
     "got": "^11.8.6",
-    "jest": "^29.5.0",
+    "jest": "^29.6.0",
     "rimraf": "^5.0.1",
-    "ts-jest": "^29.1.0",
+    "ts-jest": "^29.1.1",
     "uuid": "^9.0.0"
   },
   "eslintConfig": {
@@ -192,5 +192,8 @@
     "bin",
     "tsconfig.json",
     "SECURITY.md"
-  ]
+  ],
+  "dependencies": {
+    "semver": "^7.5.3"
+  }
 }
