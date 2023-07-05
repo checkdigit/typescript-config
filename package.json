@@ -192,8 +192,5 @@
     "bin",
     "tsconfig.json",
     "SECURITY.md"
-  ],
-  "dependencies": {
-    "semver": "^7.5.3"
-  }
+  ]
 }
