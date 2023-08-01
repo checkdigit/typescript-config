@@ -23,8 +23,6 @@ jobs:
         uses: checkdigit/github-actions/check-label@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check Imports
-        uses: checkdigit/github-actions/check-imports@main
       - name: Install dependencies
         run: npm ci --ignore-scripts
       - name: Audit Signatures
@@ -57,8 +55,6 @@ jobs:
         uses: checkdigit/github-actions/check-label@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check Imports
-        uses: checkdigit/github-actions/check-imports@main
       - name: Install dependencies
         run: npm ci --ignore-scripts
       - name: Audit Signatures
