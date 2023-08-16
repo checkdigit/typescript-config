@@ -5,7 +5,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import typescript from 'typescript';
 
-import { PluginBuild, build } from 'esbuild';
+import { type PluginBuild, build } from 'esbuild';
 
 export interface BuilderOptions {
   /**

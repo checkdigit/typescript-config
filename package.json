@@ -11,7 +11,7 @@
   },
   "peerDependencies": {
     "@types/node": ">=18",
-    "esbuild": "0.19",
+    "esbuild": "0.19.2",
     "typescript": "5.2.1-rc"
   },
   "repository": {
@@ -48,19 +48,19 @@
     "test-esm-bundle": "echo \"node --test build-esm-bundle/test/index.test.mjs\"",
     "test-esm-bundle-no-external": "node --test build-esm-bundle-no-external/test/index.test.mjs",
     "ci:test": "npm run test-jest-cjs && npm run test-jest-esm && npm run test-cjs && npm run test-cjs-bundle && npm run test-cjs-bundle-no-external && npm run test-esm && npm run test-esm-bundle && npm run test-esm-bundle-no-external",
-    "ci:compile": "npm run build-builder && npm run build-types && npm run build-cjs && npm run build-cjs-bundle && npm run build-cjs-bundle-no-external && npm run build-esm && npm run build-esm-bundle && npm run build-esm-bundle-no-external",
+    "ci:compile": "tsc --noEmit && npm run build-builder && npm run build-types && npm run build-cjs && npm run build-cjs-bundle && npm run build-cjs-bundle-no-external && npm run build-esm && npm run build-esm-bundle && npm run build-esm-bundle-no-external",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
-    "@checkdigit/prettier-config": "^4.0.0",
+    "@checkdigit/prettier-config": "^4.0.1",
     "@types/debug": "^4.1.8",
     "@types/jest": "^29.5.3",
     "@types/uuid": "^9.0.2",
-    "@typescript-eslint/eslint-plugin": "^6.3.0",
-    "@typescript-eslint/parser": "^6.3.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
     "debug": "^4.3.4",
-    "eslint": "^8.46.0",
+    "eslint": "^8.47.0",
     "eslint-config-prettier": "^9.0.0",
     "get-port": "^7.0.0",
     "got": "^11.8.6",
