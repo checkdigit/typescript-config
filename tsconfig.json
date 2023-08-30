@@ -8,7 +8,6 @@
     "outDir": "build",
     "declaration": true,
     "removeComments": false,
-    "rootDir": "./src",
     "noLib": false,
     "noEmitOnError": false,
     "skipLibCheck": true,
