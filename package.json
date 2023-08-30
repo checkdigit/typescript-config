@@ -12,7 +12,7 @@
   "peerDependencies": {
     "@types/node": ">=18",
     "esbuild": "0.19.2",
-    "typescript": "5.2.2"
+    "typescript": ">=5.2.2 <5.3"
   },
   "repository": {
     "type": "git",
