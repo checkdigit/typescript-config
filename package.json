@@ -26,8 +26,8 @@
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "scripts": {
     "prepublishOnly": "npm run build-builder",
-    "lint:fix": "eslint -f unix --ext .ts,.mts src --fix",
-    "lint": "eslint --max-warnings 0 -f unix --ext .ts,.mts src",
+    "lint:fix": "eslint --ignore-path .gitignore . --fix",
+    "lint": "eslint  --max-warnings 0 --ignore-path .gitignore .",
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
