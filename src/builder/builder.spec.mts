@@ -155,8 +155,7 @@ describe('test builder', () => {
     await write(inDir, singleModule);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
-        'import { createRequire } from \'module\';const require = createRequire(import.meta.url);\n\nvar hello = "world";\nexport {\n  hello\n};\n',
+      'index.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -164,16 +163,14 @@ describe('test builder', () => {
     assert.equal(output.hello, 'world');
   });
 
-  it.only('should minify a single ESM module', async () => {
+  it('should minify a single ESM module', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await write(inDir, singleModule);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir, minify: true }), []);
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
-        "import { createRequire } from 'module';const require = createRequire(import.meta.url);\n" +
-        'var o="world";export{o as hello};\n',
+      'index.mjs': 'var o="world";export{o as hello};\n',
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -189,8 +186,6 @@ describe('test builder', () => {
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
       'index.mjs':
-        "import { createRequire } from 'module';const require = createRequire(import.meta.url);\n" +
-        '\n' +
         'function src_default() {\n' +
         '  return "hello world";\n' +
         '}\n' +
@@ -388,6 +383,8 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        "import { createRequire } from 'module';const require = createRequire(import.meta.url);\n" +
+        '\n' +
         'var hello = "world";\n' +
         '\n' +
         'var src_default = hello + "world";\n' +
@@ -413,6 +410,8 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        "import { createRequire } from 'module';const require = createRequire(import.meta.url);\n" +
+        '\n' +
         'var hello = "world";\n' +
         '\n' +
         'import util from "node:util";\n' +
@@ -449,6 +448,8 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        "import { createRequire } from 'module';const require = createRequire(import.meta.url);\n" +
+        '\n' +
         'import { hello as test } from "test-esm-module";\n' +
         'import util from "node:util";\n' +
         'var hello = { test, message: util.format("hello %s", "world") };\n' +
