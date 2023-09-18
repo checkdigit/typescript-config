@@ -199,6 +199,9 @@ export default async function ({
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
     sourcesContent: false,
+    banner: (type === 'module') ? {
+      js: "import { createRequire } from 'module';const require = createRequire(import.meta.url);"
+    }: {},
     sourcemap: sourceMap ? 'inline' : false,
     ...(outFile === undefined
       ? {
