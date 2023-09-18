@@ -68,7 +68,7 @@ async function writeNodeModules(directory: string, nodeModules: NodeModule) {
       path.join(nodeModuleDirectory, 'package.json'),
       JSON.stringify({
         type: nodeModule.type ?? 'commonjs',
-      })
+      }),
     );
     for (const [file, content] of Object.entries(nodeModule.source)) {
       await fs.writeFile(path.join(nodeModuleDirectory, file), content);
@@ -87,14 +87,12 @@ async function read(dir: string): Promise<Record<string, string>> {
     await Promise.all(
       files.map(async (name) => [
         name,
-        (
-          await fs.readFile(path.join(dir, name), 'utf-8')
-        )
+        (await fs.readFile(path.join(dir, name), 'utf-8'))
           .split('\n')
           .filter((line) => !line.startsWith('//'))
           .join('\n'),
-      ])
-    )
+      ]),
+    ),
   ) as Record<string, string>;
 }
 
@@ -386,7 +384,7 @@ describe('test builder', () => {
     await write(inDir, twoModules);
     assert.deepEqual(
       await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }),
-      []
+      [],
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
@@ -411,7 +409,7 @@ describe('test builder', () => {
     await writeNodeModules(moduleDir, testNodeModules);
     assert.deepEqual(
       await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }),
-      []
+      [],
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
@@ -447,7 +445,7 @@ describe('test builder', () => {
         outDir,
         external: ['*'],
       }),
-      []
+      [],
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
@@ -475,7 +473,7 @@ describe('test builder', () => {
         inDir,
         outDir,
       }),
-      []
+      [],
     );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = require(path.join(outDir, 'index.cjs'));

@@ -61,7 +61,7 @@ async function getFiles(directory: string): Promise<string[]> {
     entries.map((entry) => {
       const result = path.resolve(directory, entry.name);
       return entry.isDirectory() ? getFiles(result) : result;
-    })
+    }),
   );
   return files.flat();
 }
@@ -74,7 +74,7 @@ function excludeSourceMaps(filter: RegExp) {
         return {
           contents: `${await fs.readFile(
             args.path,
-            'utf8'
+            'utf8',
           )}\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==`,
           loader: 'default',
         };
@@ -121,7 +121,7 @@ export default async function ({
 
   assert.ok(
     (entryPoint === undefined && outFile === undefined) || (entryPoint !== undefined && outFile !== undefined),
-    'entryPoint and outFile must both be provided'
+    'entryPoint and outFile must both be provided',
   );
 
   const allSourceFiles = await getFiles(inDir);
