@@ -372,6 +372,7 @@ describe('test builder', () => {
     assert.equal(output2.default.default, 'worldworld');
   });
 
+  // file.only
   it('should bundle an ESM module that imports a second ESM module', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
@@ -383,6 +384,9 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        '\n' +
         'var hello = "world";\n' +
         '\n' +
         'var src_default = hello + "world";\n' +
@@ -408,6 +412,9 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        '\n' +
         'var hello = "world";\n' +
         '\n' +
         'import util from "node:util";\n' +
@@ -444,6 +451,9 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        '\n' +
         'import { hello as test } from "test-esm-module";\n' +
         'import util from "node:util";\n' +
         'var hello = { test, message: util.format("hello %s", "world") };\n' +

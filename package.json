@@ -55,10 +55,10 @@
   "devDependencies": {
     "@checkdigit/prettier-config": "^4.1.0",
     "@types/debug": "^4.1.8",
-    "@types/jest": "^29.5.4",
+    "@types/jest": "^29.5.5",
     "@types/uuid": "^9.0.4",
-    "@typescript-eslint/eslint-plugin": "^6.7.0",
-    "@typescript-eslint/parser": "^6.7.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "debug": "^4.3.4",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.0.0",

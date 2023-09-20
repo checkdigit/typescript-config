@@ -23,6 +23,9 @@ This module contains the standard Check Digit Typescript configuration, along wi
 to be used when publishing a package to NPM, or to bundle a package for deployment. It uses `tsc` for generating
 types, and `esbuild` for generating code.
 
+__Note:__ if building an ESM bundle, the `require` function will be defined as a global variable, to allow
+dynamic `require`s by CommonJS submodules. This is not a problem for NodeJS, but will cause issues in a browser environment.
+
 #### Options
 
 - `--type` the type of output to generate. Defaults to `module` (ESM). Valid values are `commonjs`, `module` or `types`.
@@ -72,7 +75,7 @@ the new version of Typescript, and/or without emitting warnings during these tes
 
 Strict semver is a little complicated, as Typescript itself does not adhere to semver. So our "best effort" policy is:
 
-- Each update to the minimum Node target (e.g. Node 16 to Node 18) will result in a new major version of this module.
+- Each update to the minimu[README.md](README.md)m Node target (e.g. Node 16 to Node 18) will result in a new major version of this module.
   We coordinate this with whatever the latest LTS version of Node is currently supported by Amazon Lambda, Google Cloud Functions
   and Azure Functions.
 - Each new "major" version of Typescript (e.g. `4.2.x` to `4.3.x`) will result in a new minor version of this module.
