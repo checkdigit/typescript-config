@@ -75,7 +75,8 @@ the new version of Typescript, and/or without emitting warnings during these tes
 
 Strict semver is a little complicated, as Typescript itself does not adhere to semver. So our "best effort" policy is:
 
-- Each update to the minimu[README.md](README.md)m Node target (e.g. Node 16 to Node 18) will result in a new major version of this module.
+- Each update to the minimum Node target (e.g. Node 18 to Node 20), or a change to a major compiler output option
+  (e.g. `module`, `target` or `moduleResolution`) will result in a new major version of this module.
   We coordinate this with whatever the latest LTS version of Node is currently supported by Amazon Lambda, Google Cloud Functions
   and Azure Functions.
 - Each new "major" version of Typescript (e.g. `4.2.x` to `4.3.x`) will result in a new minor version of this module.
@@ -99,17 +100,13 @@ Make sure your project's `tsconfig.json` extends `@checkdigit/typescript-config`
 
 ```
 {
-  "extends": "@checkdigit/typescript-config",
-  "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "build"
-  },
-  "exclude": [
-    "node_modules",
-    "build"
-  ]
+  "extends": "@checkdigit/typescript-config"
 }
 ```
+
+Note this configuration has `moduleResolution` set to `bundler`. This requires that you use the `builder` command
+to produce working code for deployment. However, for simply running Jest tests, this is not necessary if
+used in conjunction with [`@checkdigit/jest-config`](https://github.com/checkdigit/jest-config).
 
 ## License
 
