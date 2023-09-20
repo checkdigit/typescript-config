@@ -149,7 +149,7 @@ export default async function ({
     noUnusedLocals: true,
     noUnusedParameters: true,
     alwaysStrict: true,
-    verbatimModuleSyntax: false,
+    verbatimModuleSyntax: true,
     noFallthroughCasesInSwitch: true,
     forceConsistentCasingInFileNames: true,
     emitDecoratorMetadata: true,
