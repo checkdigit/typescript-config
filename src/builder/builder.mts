@@ -5,7 +5,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import typescript from 'typescript';
 
-import { PluginBuild, build } from 'esbuild';
+import { type PluginBuild, build } from 'esbuild';
 
 export interface BuilderOptions {
   /**
@@ -149,7 +149,7 @@ export default async function ({
     noUnusedLocals: true,
     noUnusedParameters: true,
     alwaysStrict: true,
-    verbatimModuleSyntax: false,
+    verbatimModuleSyntax: true,
     noFallthroughCasesInSwitch: true,
     forceConsistentCasingInFileNames: true,
     emitDecoratorMetadata: true,
@@ -199,6 +199,12 @@ export default async function ({
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
     sourcesContent: false,
+    banner:
+      type === 'module' && outFile !== undefined
+        ? {
+            js: 'import { createRequire as __createRequire } from "node:module";\nconst require = __createRequire(import.meta.url);',
+          }
+        : {},
     sourcemap: sourceMap ? 'inline' : false,
     ...(outFile === undefined
       ? {

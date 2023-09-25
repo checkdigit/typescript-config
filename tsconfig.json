@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
+    "module": "esnext",
     "target": "esnext",
+    "moduleResolution": "bundler",
     "sourceMap": true,
     "inlineSources": true,
-    "outDir": "build",
     "declaration": true,
     "removeComments": false,
-    "rootDir": "./src",
     "noLib": false,
     "noEmitOnError": false,
     "skipLibCheck": true,
@@ -17,7 +16,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "alwaysStrict": true,
-    "verbatimModuleSyntax": false,
+    "verbatimModuleSyntax": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true,
@@ -31,6 +30,5 @@
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true
-  },
-  "exclude": ["node_modules", "build"]
+  }
 }
