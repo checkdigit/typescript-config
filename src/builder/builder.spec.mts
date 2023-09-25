@@ -372,7 +372,6 @@ describe('test builder', () => {
     assert.equal(output2.default.default, 'worldworld');
   });
 
-  // file.only
   it('should bundle an ESM module that imports a second ESM module', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
