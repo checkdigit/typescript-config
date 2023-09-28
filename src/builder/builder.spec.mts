@@ -155,7 +155,14 @@ describe('test builder', () => {
     await write(inDir, singleModule);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
-      'index.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
+      'index.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        '\n' +
+        'var hello = "world";\n' +
+        'export {\n' +
+        '  hello\n' +
+        '};\n',
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -170,7 +177,10 @@ describe('test builder', () => {
     await write(inDir, singleModule);
     assert.deepEqual(await builder({ type: 'module', inDir, outDir, minify: true }), []);
     assert.deepEqual(await read(outDir), {
-      'index.mjs': 'var o="world";export{o as hello};\n',
+      'index.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        'var o="world";export{o as hello};\n',
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -186,6 +196,9 @@ describe('test builder', () => {
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        '\n' +
         'function src_default() {\n' +
         '  return "hello world";\n' +
         '}\n' +
@@ -250,12 +263,22 @@ describe('test builder', () => {
     assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
     assert.deepEqual(await read(outDir), {
       'index.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        '\n' +
         'import { hello } from "./thing.mjs";\n' +
         'var src_default = hello + "world";\n' +
         'export {\n' +
         '  src_default as default\n' +
         '};\n',
-      'thing.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
+      'thing.mjs':
+        'import { createRequire as __createRequire } from "node:module";\n' +
+        'const require = __createRequire(import.meta.url);\n' +
+        '\n' +
+        'var hello = "world";\n' +
+        'export {\n' +
+        '  hello\n' +
+        '};\n',
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));

@@ -200,7 +200,7 @@ export default async function ({
     format: type === 'module' ? 'esm' : 'cjs',
     sourcesContent: false,
     banner:
-      type === 'module' && outFile !== undefined
+      type === 'module'
         ? {
             js: 'import { createRequire as __createRequire } from "node:module";\nconst require = __createRequire(import.meta.url);',
           }
