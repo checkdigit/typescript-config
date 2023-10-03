@@ -13,6 +13,13 @@ import builder from './builder.mts';
 
 const require = createRequire(import.meta.url);
 
+const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
+import { fileURLToPath as __fileURLToPath } from "node:url";
+import { default as __path } from "node:path";
+const __filename = __fileURLToPath(import.meta.url);
+const __dirname = __path.dirname(__filename);
+const require = __createRequire(import.meta.url);`;
+
 const singleModule = {
   [`index.ts`]: `export const hello = 'world';`,
 };
@@ -383,15 +390,13 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
-        'import { createRequire as __createRequire } from "node:module";\n' +
-        'const require = __createRequire(import.meta.url);\n' +
-        '\n' +
-        'var hello = "world";\n' +
-        '\n' +
-        'var src_default = hello + "world";\n' +
-        'export {\n' +
-        '  src_default as default\n' +
-        '};\n',
+        `${commonJsCompatabilityBanner}\n\n` +
+        `var hello = "world";\n` +
+        `\n` +
+        `var src_default = hello + "world";\n` +
+        `export {\n` +
+        `  src_default as default\n` +
+        `};\n`,
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
@@ -411,16 +416,14 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
-        'import { createRequire as __createRequire } from "node:module";\n' +
-        'const require = __createRequire(import.meta.url);\n' +
-        '\n' +
-        'var hello = "world";\n' +
-        '\n' +
-        'import util from "node:util";\n' +
-        'var hello2 = { test: hello, message: util.format("hello %s", "world") };\n' +
-        'export {\n' +
-        '  hello2 as hello\n' +
-        '};\n',
+        `${commonJsCompatabilityBanner}\n\n` +
+        `var hello = "world";\n` +
+        `\n` +
+        `import util from "node:util";\n` +
+        `var hello2 = { test: hello, message: util.format("hello %s", "world") };\n` +
+        `export {\n` +
+        `  hello2 as hello\n` +
+        `};\n`,
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
@@ -450,15 +453,13 @@ describe('test builder', () => {
     );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
-        'import { createRequire as __createRequire } from "node:module";\n' +
-        'const require = __createRequire(import.meta.url);\n' +
-        '\n' +
-        'import { hello as test } from "test-esm-module";\n' +
-        'import util from "node:util";\n' +
-        'var hello = { test, message: util.format("hello %s", "world") };\n' +
-        'export {\n' +
-        '  hello\n' +
-        '};\n',
+        `${commonJsCompatabilityBanner}\n\n` +
+        `import { hello as test } from "test-esm-module";\n` +
+        `import util from "node:util";\n` +
+        `var hello = { test, message: util.format("hello %s", "world") };\n` +
+        `export {\n` +
+        `  hello\n` +
+        `};\n`,
     });
   });
 

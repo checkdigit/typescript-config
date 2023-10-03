@@ -7,6 +7,13 @@ import typescript from 'typescript';
 
 import { type PluginBuild, build } from 'esbuild';
 
+const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
+import { fileURLToPath as __fileURLToPath } from "node:url";
+import { default as __path } from "node:path";
+const __filename = __fileURLToPath(import.meta.url);
+const __dirname = __path.dirname(__filename);
+const require = __createRequire(import.meta.url);`;
+
 export interface BuilderOptions {
   /**
    * whether to produce Typescript types, ESM or CommonJS code
@@ -202,7 +209,7 @@ export default async function ({
     banner:
       type === 'module' && outFile !== undefined
         ? {
-            js: 'import { createRequire as __createRequire } from "node:module";\nconst require = __createRequire(import.meta.url);',
+            js: commonJsCompatabilityBanner,
           }
         : {},
     sourcemap: sourceMap ? 'inline' : false,
