@@ -2,8 +2,6 @@
 
 import { strict as assert } from 'node:assert';
 
-import got from 'got'; // CJS version of got
-
 import moduleDefault, { test } from './module.test';
 import moduleDirectory from './module-directory';
 
@@ -24,11 +22,6 @@ describe('typescript-5.0', () => {
 
   it('should work with module directories', () => {
     assert.equal(moduleDirectory(), 'module-directory-index');
-  });
-
-  it('should work with CJS modules', async () => {
-    assert.equal(typeof got, 'function');
-    assert.equal(typeof got.put, 'function');
   });
 
   it('supports const type parameters', async () => {

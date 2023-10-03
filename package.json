@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
@@ -11,7 +11,7 @@
   },
   "peerDependencies": {
     "@types/node": ">=18",
-    "esbuild": "0.19.3",
+    "esbuild": "0.19.4",
     "typescript": ">=5.2.2 <5.3"
   },
   "repository": {
@@ -57,19 +57,21 @@
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
+    "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "@checkdigit/prettier-config": "^4.1.0",
     "@types/debug": "^4.1.9",
     "@types/jest": "^29.5.5",
     "@types/uuid": "^9.0.4",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
+    "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "@typescript-eslint/parser": "^6.7.4",
     "debug": "^4.3.4",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
     "get-port": "^7.0.0",
     "got": "^11.8.6",
     "jest": "^29.7.0",
-    "rimraf": "^5.0.2",
+    "node-fetch": "^3.3.2",
+    "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",
     "uuid": "^9.0.1"
   },
