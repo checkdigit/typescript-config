@@ -12,7 +12,7 @@
   "peerDependencies": {
     "@types/node": ">=18",
     "esbuild": "0.19.4",
-    "typescript": ">=5.2.2 <5.3"
+    "typescript": "5.3.0-beta"
   },
   "repository": {
     "type": "git",
@@ -198,5 +198,8 @@
     "bin",
     "tsconfig.json",
     "SECURITY.md"
-  ]
+  ],
+  "overrides": {
+    "typescript": "5.3.0-beta"
+  }
 }
