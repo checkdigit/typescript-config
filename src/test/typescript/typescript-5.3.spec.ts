@@ -2,7 +2,11 @@
 
 import { strict as assert } from 'node:assert';
 
-// import packageJson from '../../../package.json' with { type: 'json' };
+/*
+ * Note: prettier currently does not support import attributes
+ * import packageJson from '../../../package.json' with { type: 'json' };
+ */
+
 import { describe, it } from '../../describe-it.test';
 
 describe('typescript-5.3', () => {
@@ -32,5 +36,30 @@ describe('typescript-5.3', () => {
         // 'x' is unknown
       }
     }
+  });
+
+  it('supports narrowing on comparisons to booleans', () => {
+    interface A {
+      a: string;
+    }
+
+    interface B {
+      b: string;
+    }
+
+    type MyType = A | B;
+
+    function isA(x: MyType): x is A {
+      return 'a' in x;
+    }
+
+    function test(x: MyType) {
+      if (isA(x) === true) {
+        // pre 5.3: error TS2339: Property 'a' does not exist on type 'MyType'
+        assert.equal(x.a, 'hello');
+      }
+    }
+
+    test({ a: 'hello' });
   });
 });
