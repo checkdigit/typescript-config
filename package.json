@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
@@ -96,6 +96,14 @@
       "one-var": "off",
       "sort-keys": "off",
       "sort-imports": "off",
+      "max-lines": [
+        "error",
+        {
+          "max": 500,
+          "skipBlankLines": true,
+          "skipComments": true
+        }
+      ],
       "func-style": [
         "error",
         "declaration",
