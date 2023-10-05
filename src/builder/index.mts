@@ -43,6 +43,15 @@ const buildResult = await builder({
   sourceMap,
 });
 
+// write output files
+await Promise.all(
+  buildResult.outputFiles.map(async (file) => {
+    await fs.mkdir(path.join(path.dirname(file.path)), { recursive: true });
+    await fs.writeFile(file.path, file.text);
+  }),
+);
+
+// write metafile.json
 if (buildResult.metafile !== undefined) {
   analyze(buildResult.metafile);
   await fs.writeFile(path.join(outDir, 'metafile.json'), JSON.stringify(buildResult.metafile, undefined, 2));

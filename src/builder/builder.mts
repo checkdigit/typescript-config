@@ -57,8 +57,14 @@ export interface Metafile {
   };
 }
 
+export interface OutputFile {
+  path: string;
+  text: string;
+}
+
 export interface BuildResult {
   metafile?: Metafile | undefined;
+  outputFiles: OutputFile[];
 }
 
 export interface BuilderOptions {
@@ -240,7 +246,9 @@ export default async function ({
   }
 
   if (type === 'types') {
-    return {};
+    return {
+      outputFiles: [],
+    };
   }
 
   /**
@@ -253,6 +261,7 @@ export default async function ({
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
     treeShaking: type === 'module',
+    write: false,
     metafile: outFile !== undefined,
     sourcesContent: false,
     banner:

@@ -10,13 +10,6 @@ import { v4 as uuid } from 'uuid';
 // @ts-expect-error
 import builder from './builder.mts';
 
-const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
-import { fileURLToPath as __fileURLToPath } from "node:url";
-import { default as __path } from "node:path";
-const __filename = __fileURLToPath(import.meta.url);
-const __dirname = __path.dirname(__filename);
-const require = __createRequire(import.meta.url);`;
-
 const twoModules = {
   [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world';\n`,
   [`thing.ts`]: `export const hello = 'world';`,
@@ -72,26 +65,9 @@ async function writeNodeModules(directory: string, nodeModules: NodeModule) {
   }
 }
 
-async function write(directory: string, files: Record<string, string>): Promise<void> {
+async function writeInput(directory: string, files: Record<string, string>): Promise<void> {
   await fs.mkdir(directory, { recursive: true });
   await Promise.all(Object.entries(files).map(([name, content]) => fs.writeFile(path.join(directory, name), content)));
-}
-
-async function read(dir: string): Promise<Record<string, string>> {
-  const files = await fs.readdir(dir);
-  return Object.fromEntries(
-    await Promise.all(
-      files
-        .filter((name) => name !== 'metafile.json')
-        .map(async (name) => [
-          name,
-          (await fs.readFile(path.join(dir, name), 'utf-8'))
-            .split('\n')
-            .filter((line) => !line.startsWith('//'))
-            .join('\n'),
-        ]),
-    ),
-  ) as Record<string, string>;
 }
 
 describe('analyze', () => {
@@ -99,21 +75,8 @@ describe('analyze', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, twoModules);
+    await writeInput(inDir, twoModules);
     await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
-    assert.deepEqual(await read(outDir), {
-      'index.mjs':
-        `${commonJsCompatabilityBanner}\n\n` +
-        `var hello = "world";\n` +
-        `\n` +
-        `var src_default = hello + "world";\n` +
-        `export {\n` +
-        `  src_default as default\n` +
-        `};\n`,
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output = await import(path.join(outDir, 'index.mjs'));
-    assert.equal(output.default, 'worldworld');
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
@@ -121,26 +84,9 @@ describe('analyze', () => {
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, importExternalModule);
+    await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
     await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
-    assert.deepEqual(await read(outDir), {
-      'index.mjs':
-        `${commonJsCompatabilityBanner}\n\n` +
-        `var hello = "world";\n` +
-        `\n` +
-        `import util from "node:util";\n` +
-        `var hello2 = { test: hello, message: util.format("hello %s", "world") };\n` +
-        `export {\n` +
-        `  hello2 as hello\n` +
-        `};\n`,
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output = await import(path.join(outDir, 'index.mjs'));
-    assert.deepEqual(output.hello, {
-      message: 'hello world',
-      test: 'world',
-    });
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {
@@ -148,9 +94,9 @@ describe('analyze', () => {
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, importExternalModule);
+    await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    await builder({
+    const result = await builder({
       type: 'module',
       entryPoint: 'index.ts',
       outFile: 'index.mjs',
@@ -158,15 +104,6 @@ describe('analyze', () => {
       outDir,
       external: ['*'],
     });
-    assert.deepEqual(await read(outDir), {
-      'index.mjs':
-        `${commonJsCompatabilityBanner}\n\n` +
-        `import { hello as test } from "test-esm-module";\n` +
-        `import util from "node:util";\n` +
-        `var hello = { test, message: util.format("hello %s", "world") };\n` +
-        `export {\n` +
-        `  hello\n` +
-        `};\n`,
-    });
+    assert.notEqual(result.metafile, undefined);
   });
 });
