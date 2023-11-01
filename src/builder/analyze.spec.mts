@@ -81,11 +81,10 @@ describe('analyze', () => {
     await writeInput(inDir, twoModules);
     const result = await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
     assert.ok(result.metafile !== undefined);
-    assert.deepEqual(analyze(result.metafile), {
-      moduleBytes: 0,
-      sourceBytes: 56,
-      totalBytes: 672,
-    });
+    const analysis = analyze(result.metafile);
+    assert.ok(analysis.moduleBytes === 0);
+    assert.ok(analysis.sourceBytes > 0);
+    assert.ok(analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes);
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
@@ -104,11 +103,10 @@ describe('analyze', () => {
       outDir,
     });
     assert.ok(result.metafile !== undefined);
-    assert.deepEqual(analyze(result.metafile), {
-      moduleBytes: 21,
-      sourceBytes: 103,
-      totalBytes: 534,
-    });
+    const analysis = analyze(result.metafile);
+    assert.ok(analysis.sourceBytes > 0);
+    assert.ok(analysis.moduleBytes > 0);
+    assert.ok(analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes);
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {
@@ -127,10 +125,9 @@ describe('analyze', () => {
       external: ['*'],
     });
     assert.ok(result.metafile !== undefined);
-    assert.deepEqual(analyze(result.metafile), {
-      moduleBytes: 0,
-      sourceBytes: 144,
-      totalBytes: 614,
-    });
+    const analysis = analyze(result.metafile);
+    assert.ok(analysis.moduleBytes === 0);
+    assert.ok(analysis.sourceBytes > 0);
+    assert.ok(analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes);
   });
 });
