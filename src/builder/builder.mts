@@ -224,7 +224,10 @@ export default async function ({
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
   });
-  const emitResult = program.emit();
+  const declarationFiles: OutputFile[] = [];
+  const emitResult = program.emit(undefined, (fileName, data) => {
+    declarationFiles.push({ path: fileName, text: data });
+  });
   const allDiagnostics = typescript.sortAndDeduplicateDiagnostics([
     ...typescript.getPreEmitDiagnostics(program),
     ...emitResult.diagnostics,
@@ -247,7 +250,7 @@ export default async function ({
 
   if (type === 'types') {
     return {
-      outputFiles: [],
+      outputFiles: declarationFiles,
     };
   }
 

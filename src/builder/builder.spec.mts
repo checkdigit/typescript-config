@@ -114,6 +114,18 @@ async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string;
   );
 }
 
+function convert(outputFiles: Array<{ path: string; text: string }>) {
+  return Object.fromEntries(
+    outputFiles.map((file) => [
+      path.basename(file.path),
+      file.text
+        .split('\n')
+        .filter((line) => !line.startsWith('//'))
+        .join('\n'),
+    ]),
+  );
+}
+
 describe('test builder', () => {
   it('should not build bad code', async () => {
     const id = uuid();
@@ -149,7 +161,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, {});
-    await builder({ type: 'module', inDir, outDir });
+    await writeOutput(await builder({ type: 'module', inDir, outDir }));
     await assert.rejects(read(outDir), {
       message: `ENOENT: no such file or directory, scandir '${outDir}'`,
     });
@@ -160,8 +172,8 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    await builder({ type: 'types', inDir, outDir });
-    assert.deepEqual(await read(outDir), {
+    const result = await builder({ type: 'types', inDir, outDir });
+    assert.deepEqual(convert(result.outputFiles), {
       'index.d.ts': 'export declare const hello = "world";\n',
     });
   });
@@ -285,8 +297,8 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    await writeOutput(await builder({ type: 'commonjs', inDir, outDir }));
-    assert.deepEqual(await read(outDir), {
+    const result = await builder({ type: 'commonjs', inDir, outDir });
+    assert.deepEqual(convert(result.outputFiles), {
       'index.cjs':
         'var __defProp = Object.defineProperty;\n' +
         'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
@@ -445,17 +457,15 @@ describe('test builder', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    await writeOutput(
-      await builder({
-        type: 'module',
-        entryPoint: 'index.ts',
-        outFile: 'index.mjs',
-        inDir,
-        outDir,
-        external: ['*'],
-      }),
-    );
-    assert.deepEqual(await read(outDir), {
+    const result = await builder({
+      type: 'module',
+      entryPoint: 'index.ts',
+      outFile: 'index.mjs',
+      inDir,
+      outDir,
+      external: ['*'],
+    });
+    assert.deepEqual(convert(result.outputFiles), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
         `import { hello as test } from "test-esm-module";\n` +
