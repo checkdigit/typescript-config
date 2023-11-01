@@ -53,6 +53,11 @@ await Promise.all(
 
 // write metafile.json
 if (buildResult.metafile !== undefined) {
-  analyze(buildResult.metafile);
+  const analysis = analyze(buildResult.metafile);
   await fs.writeFile(path.join(outDir, 'metafile.json'), JSON.stringify(buildResult.metafile, undefined, 2));
+
+  // eslint-disable-next-line no-console
+  console.log(
+    `${outFile}: src ${analysis.sourceBytes}, node_modules ${analysis.moduleBytes}, total ${analysis.totalBytes}`,
+  );
 }

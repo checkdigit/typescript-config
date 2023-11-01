@@ -108,6 +108,11 @@ export interface BuilderOptions {
    * whether to include sourcemap
    */
   sourceMap?: boolean | undefined;
+
+  /**
+   * working directory
+   */
+  workingDirectory?: string | undefined;
 }
 
 /**
@@ -176,6 +181,7 @@ export default async function ({
   external = [],
   minify = false,
   sourceMap,
+  workingDirectory = process.cwd(),
 }: BuilderOptions): Promise<BuildResult> {
   const messages: string[] = [];
 
@@ -261,6 +267,7 @@ export default async function ({
     entryPoints: productionSourceFiles,
     bundle: true,
     minify,
+    absWorkingDir: workingDirectory,
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
     treeShaking: type === 'module',

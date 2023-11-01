@@ -10,6 +10,9 @@ import { v4 as uuid } from 'uuid';
 // @ts-expect-error
 import builder from './builder.mts';
 
+// @ts-expect-error
+import analyze from './analyze.mts';
+
 const twoModules = {
   [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world';\n`,
   [`thing.ts`]: `export const hello = 'world';`,
@@ -76,7 +79,13 @@ describe('analyze', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
+    const result = await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
+    assert.ok(result.metafile !== undefined);
+    assert.deepEqual(analyze(result.metafile), {
+      moduleBytes: 0,
+      sourceBytes: 56,
+      totalBytes: 672,
+    });
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
@@ -86,7 +95,20 @@ describe('analyze', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
+    const result = await builder({
+      type: 'module',
+      entryPoint: 'index.ts',
+      outFile: 'index.mjs',
+      workingDirectory: moduleDir,
+      inDir,
+      outDir,
+    });
+    assert.ok(result.metafile !== undefined);
+    assert.deepEqual(analyze(result.metafile), {
+      moduleBytes: 21,
+      sourceBytes: 103,
+      totalBytes: 534,
+    });
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {
@@ -104,6 +126,11 @@ describe('analyze', () => {
       outDir,
       external: ['*'],
     });
-    assert.notEqual(result.metafile, undefined);
+    assert.ok(result.metafile !== undefined);
+    assert.deepEqual(analyze(result.metafile), {
+      moduleBytes: 0,
+      sourceBytes: 144,
+      totalBytes: 614,
+    });
   });
 });
