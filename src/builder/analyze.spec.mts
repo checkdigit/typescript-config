@@ -7,6 +7,13 @@ import path from 'node:path';
 
 import { v4 as uuid } from 'uuid';
 
+/*
+ * The below imports work, but tsc complains:
+ * TS5097: An import path can only end with a .mts extension when allowImportingTsExtensions is enabled
+ *
+ * This will be fixed once this library can be 100% ESM and all the .mts files are converted to .ts.
+ */
+
 // @ts-expect-error
 import builder from './builder.mts';
 

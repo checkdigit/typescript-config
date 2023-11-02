@@ -1,6 +1,5 @@
 // builder/analyze.mts
 
-// import path from 'node:path';
 import { strict as assert } from 'node:assert';
 
 import type { Metafile } from 'esbuild';
