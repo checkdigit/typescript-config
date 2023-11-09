@@ -83,7 +83,7 @@ async function writeNodeModules(directory: string, nodeModules: NodeModule) {
   }
 }
 
-async function write(directory: string, files: Record<string, string>): Promise<void> {
+async function writeInput(directory: string, files: Record<string, string>): Promise<void> {
   await fs.mkdir(directory, { recursive: true });
   await Promise.all(Object.entries(files).map(([name, content]) => fs.writeFile(path.join(directory, name), content)));
 }
@@ -92,15 +92,38 @@ async function read(dir: string): Promise<Record<string, string>> {
   const files = await fs.readdir(dir);
   return Object.fromEntries(
     await Promise.all(
-      files.map(async (name) => [
-        name,
-        (await fs.readFile(path.join(dir, name), 'utf-8'))
-          .split('\n')
-          .filter((line) => !line.startsWith('//'))
-          .join('\n'),
-      ]),
+      files
+        .filter((name) => name !== 'metafile.json')
+        .map(async (name) => [
+          name,
+          (await fs.readFile(path.join(dir, name), 'utf-8'))
+            .split('\n')
+            .filter((line) => !line.startsWith('//'))
+            .join('\n'),
+        ]),
     ),
   ) as Record<string, string>;
+}
+
+async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string; text: string }> }) {
+  return Promise.all(
+    outputFiles.map(async (file) => {
+      await fs.mkdir(path.join(path.dirname(file.path)), { recursive: true });
+      await fs.writeFile(file.path, file.text);
+    }),
+  );
+}
+
+function convert(outputFiles: Array<{ path: string; text: string }>) {
+  return Object.fromEntries(
+    outputFiles.map((file) => [
+      path.basename(file.path),
+      file.text
+        .split('\n')
+        .filter((line) => !line.startsWith('//'))
+        .join('\n'),
+    ]),
+  );
 }
 
 describe('test builder', () => {
@@ -108,7 +131,7 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
-    await write(inDir, { 'index.ts': 'bad code' });
+    await writeInput(inDir, { 'index.ts': 'bad code' });
     await assert.rejects(builder({ type: 'module', inDir, outDir }), {
       message: `tsc failed ${JSON.stringify([
         `tsc: ${inDir}/index.ts (1,1): Unexpected keyword or identifier.`,
@@ -137,8 +160,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
-    await write(inDir, {});
-    assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
+    await writeInput(inDir, {});
+    await writeOutput(await builder({ type: 'module', inDir, outDir }));
     await assert.rejects(read(outDir), {
       message: `ENOENT: no such file or directory, scandir '${outDir}'`,
     });
@@ -148,9 +171,9 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, singleModule);
-    assert.deepEqual(await builder({ type: 'types', inDir, outDir }), []);
-    assert.deepEqual(await read(outDir), {
+    await writeInput(inDir, singleModule);
+    const result = await builder({ type: 'types', inDir, outDir });
+    assert.deepEqual(convert(result.outputFiles), {
       'index.d.ts': 'export declare const hello = "world";\n',
     });
   });
@@ -159,8 +182,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, singleModule);
-    assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
+    await writeInput(inDir, singleModule);
+    await writeOutput(await builder({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
@@ -174,8 +197,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, singleModule);
-    assert.deepEqual(await builder({ type: 'module', inDir, outDir, minify: true }), []);
+    await writeInput(inDir, singleModule);
+    await writeOutput(await builder({ type: 'module', inDir, outDir, minify: true }));
     assert.deepEqual(await read(outDir), {
       'index.mjs': 'var o="world";export{o as hello};\n',
     });
@@ -189,8 +212,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, exportDefaultFunctionModule);
-    assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
+    await writeInput(inDir, exportDefaultFunctionModule);
+    await writeOutput(await builder({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         'function src_default() {\n' +
@@ -211,8 +234,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, exportDefaultFunctionModule);
-    assert.deepEqual(await builder({ type: 'commonjs', inDir, outDir }), []);
+    await writeInput(inDir, exportDefaultFunctionModule);
+    await writeOutput(await builder({ type: 'commonjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.cjs':
         'var __defProp = Object.defineProperty;\n' +
@@ -253,8 +276,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, twoModules);
-    assert.deepEqual(await builder({ type: 'module', inDir, outDir }), []);
+    await writeInput(inDir, twoModules);
+    await writeOutput(await builder({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         'import { hello } from "./thing.mjs";\n' +
@@ -273,9 +296,9 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, singleModule);
-    assert.deepEqual(await builder({ type: 'commonjs', inDir, outDir }), []);
-    assert.deepEqual(await read(outDir), {
+    await writeInput(inDir, singleModule);
+    const result = await builder({ type: 'commonjs', inDir, outDir });
+    assert.deepEqual(convert(result.outputFiles), {
       'index.cjs':
         'var __defProp = Object.defineProperty;\n' +
         'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
@@ -311,8 +334,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, twoModules);
-    assert.deepEqual(await builder({ type: 'commonjs', inDir, outDir }), []);
+    await writeInput(inDir, twoModules);
+    await writeOutput(await builder({ type: 'commonjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.cjs':
         'var __defProp = Object.defineProperty;\n' +
@@ -383,11 +406,8 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, twoModules);
-    assert.deepEqual(
-      await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }),
-      [],
-    );
+    await writeInput(inDir, twoModules);
+    await writeOutput(await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
@@ -408,12 +428,9 @@ describe('test builder', () => {
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, importExternalModule);
+    await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    assert.deepEqual(
-      await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }),
-      [],
-    );
+    await writeOutput(await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
@@ -438,20 +455,17 @@ describe('test builder', () => {
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, importExternalModule);
+    await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    assert.deepEqual(
-      await builder({
-        type: 'module',
-        entryPoint: 'index.ts',
-        outFile: 'index.mjs',
-        inDir,
-        outDir,
-        external: ['*'],
-      }),
-      [],
-    );
-    assert.deepEqual(await read(outDir), {
+    const result = await builder({
+      type: 'module',
+      entryPoint: 'index.ts',
+      outFile: 'index.mjs',
+      inDir,
+      outDir,
+      external: ['*'],
+    });
+    assert.deepEqual(convert(result.outputFiles), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
         `import { hello as test } from "test-esm-module";\n` +
@@ -468,9 +482,9 @@ describe('test builder', () => {
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await write(inDir, importExternalModule);
+    await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    assert.deepEqual(
+    await writeOutput(
       await builder({
         type: 'commonjs',
         entryPoint: 'index.ts',
@@ -478,7 +492,6 @@ describe('test builder', () => {
         inDir,
         outDir,
       }),
-      [],
     );
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = require(path.join(outDir, 'index.cjs'));

@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
@@ -11,7 +11,7 @@
   },
   "peerDependencies": {
     "@types/node": ">=18",
-    "esbuild": "0.19.4",
+    "esbuild": "0.19.5",
     "typescript": ">=5.2.2 <5.3"
   },
   "repository": {
@@ -59,13 +59,13 @@
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "@checkdigit/prettier-config": "^4.1.0",
-    "@types/debug": "^4.1.9",
-    "@types/jest": "^29.5.5",
-    "@types/uuid": "^9.0.4",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
+    "@types/debug": "^4.1.10",
+    "@types/jest": "^29.5.7",
+    "@types/uuid": "^9.0.6",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
     "debug": "^4.3.4",
-    "eslint": "^8.50.0",
+    "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
     "get-port": "^7.0.0",
     "got": "^11.8.6",
@@ -96,6 +96,14 @@
       "one-var": "off",
       "sort-keys": "off",
       "sort-imports": "off",
+      "max-lines": [
+        "error",
+        {
+          "max": 500,
+          "skipBlankLines": true,
+          "skipComments": true
+        }
+      ],
       "func-style": [
         "error",
         "declaration",
@@ -183,11 +191,7 @@
       ]
     },
     "collectCoverageFrom": [
-      "<rootDir>/src/**",
-      "!<rootDir>/src/**/*.spec.mts",
-      "!<rootDir>/src/**/*.test.mts",
-      "!<rootDir>/src/**/*.spec.ts",
-      "!<rootDir>/src/**/*.test.ts"
+      "<rootDir>/src/**"
     ],
     "testMatch": [
       "<rootDir>/src/**/*.spec.ts",
