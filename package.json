@@ -4,13 +4,13 @@
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.9"
   },
   "bin": {
     "builder": "./bin/builder.mjs"
   },
   "peerDependencies": {
-    "@types/node": ">=20",
+    "@types/node": ">=20.9",
     "esbuild": "0.19.5",
     "typescript": "5.3.1-rc"
   },
@@ -58,12 +58,12 @@
   },
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.1.0",
-    "@checkdigit/prettier-config": "^4.1.0",
-    "@types/debug": "^4.1.11",
+    "@checkdigit/prettier-config": "5.0.0-PR.29-ad02",
+    "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.8",
     "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
     "debug": "^4.3.4",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
@@ -96,6 +96,14 @@
       "one-var": "off",
       "sort-keys": "off",
       "sort-imports": "off",
+      "max-lines": [
+        "error",
+        {
+          "max": 500,
+          "skipBlankLines": true,
+          "skipComments": true
+        }
+      ],
       "func-style": [
         "error",
         "declaration",
