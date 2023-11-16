@@ -4,7 +4,7 @@
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "bin": {
     "builder": "./bin/builder.mjs"
@@ -184,11 +184,7 @@
       ]
     },
     "collectCoverageFrom": [
-      "<rootDir>/src/**",
-      "!<rootDir>/src/**/*.spec.mts",
-      "!<rootDir>/src/**/*.test.mts",
-      "!<rootDir>/src/**/*.spec.ts",
-      "!<rootDir>/src/**/*.test.ts"
+      "<rootDir>/src/**"
     ],
     "testMatch": [
       "<rootDir>/src/**/*.spec.ts",

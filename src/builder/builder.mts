@@ -14,6 +14,59 @@ const __filename = __fileURLToPath(import.meta.url);
 const __dirname = __path.dirname(__filename);
 const require = __createRequire(import.meta.url);`;
 
+export type ImportKind =
+  | 'entry-point'
+  | 'import-statement'
+  | 'require-call'
+  | 'dynamic-import'
+  | 'require-resolve'
+  | 'import-rule'
+  | 'composes-from'
+  | 'url-token';
+
+export interface Metafile {
+  inputs: {
+    [path: string]: {
+      bytes: number;
+      imports: {
+        path: string;
+        kind: ImportKind;
+        external?: boolean;
+        original?: string;
+      }[];
+      format?: 'cjs' | 'esm';
+    };
+  };
+  outputs: {
+    [path: string]: {
+      bytes: number;
+      inputs: {
+        [path: string]: {
+          bytesInOutput: number;
+        };
+      };
+      imports: {
+        path: string;
+        kind: ImportKind | 'file-loader';
+        external?: boolean;
+      }[];
+      exports: string[];
+      entryPoint?: string;
+      cssBundle?: string;
+    };
+  };
+}
+
+export interface OutputFile {
+  path: string;
+  text: string;
+}
+
+export interface BuildResult {
+  metafile?: Metafile | undefined;
+  outputFiles: OutputFile[];
+}
+
 export interface BuilderOptions {
   /**
    * whether to produce Typescript types, ESM or CommonJS code
@@ -55,6 +108,11 @@ export interface BuilderOptions {
    * whether to include sourcemap
    */
   sourceMap?: boolean | undefined;
+
+  /**
+   * working directory
+   */
+  workingDirectory?: string | undefined;
 }
 
 /**
@@ -123,7 +181,8 @@ export default async function ({
   external = [],
   minify = false,
   sourceMap,
-}: BuilderOptions): Promise<string[]> {
+  workingDirectory = process.cwd(),
+}: BuilderOptions): Promise<BuildResult> {
   const messages: string[] = [];
 
   assert.ok(
@@ -170,7 +229,10 @@ export default async function ({
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
   });
-  const emitResult = program.emit();
+  const declarationFiles: OutputFile[] = [];
+  const emitResult = program.emit(undefined, (fileName, data) => {
+    declarationFiles.push({ path: fileName, text: data });
+  });
   const allDiagnostics = typescript.sortAndDeduplicateDiagnostics([
     ...typescript.getPreEmitDiagnostics(program),
     ...emitResult.diagnostics,
@@ -192,7 +254,9 @@ export default async function ({
   }
 
   if (type === 'types') {
-    return [];
+    return {
+      outputFiles: declarationFiles,
+    };
   }
 
   /**
@@ -202,8 +266,12 @@ export default async function ({
     entryPoints: productionSourceFiles,
     bundle: true,
     minify,
+    absWorkingDir: workingDirectory,
     platform: 'node',
     format: type === 'module' ? 'esm' : 'cjs',
+    treeShaking: type === 'module',
+    write: false,
+    metafile: outFile !== undefined,
     sourcesContent: false,
     banner:
       type === 'module' && outFile !== undefined
@@ -244,5 +312,5 @@ export default async function ({
     throw new Error(`esbuild failed ${JSON.stringify(messages)}`);
   }
 
-  return messages;
+  return buildResult;
 }
