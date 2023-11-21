@@ -10,7 +10,10 @@ import { describe, it } from '../../describe-it.test';
 
 describe('typescript-5.3', () => {
   it('supports import attributes', async () => {
-    const dynamicPackageJson = await import('../../../package.json', { with: { type: 'json' } });
+    const dynamicPackageJson =
+      process.version < 'v21'
+        ? await import('../../../package.json', { assert: { type: 'json' } })
+        : await import('../../../package.json', { with: { type: 'json' } });
     // assert.deepEqual(dynamicPackageJson.default, packageJson);
     assert.equal(dynamicPackageJson.default.description, 'Check Digit standard Typescript configuration');
     assert.equal(dynamicPackageJson.default.name, '@checkdigit/typescript-config');
