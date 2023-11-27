@@ -14,3 +14,4 @@ import './typescript/typescript-4.9.spec';
 import './typescript/typescript-5.0.spec';
 import './typescript/typescript-5.1.spec';
 import './typescript/typescript-5.2.spec';
+import './typescript/typescript-5.3.spec';

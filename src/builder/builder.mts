@@ -154,7 +154,12 @@ function resolveTypescriptPaths(type: 'module' | 'commonjs') {
   return (pluginBuild: PluginBuild) => {
     // rewrite paths based on standard node resolution
     pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
-      if (resolved.kind === 'entry-point' || !resolved.path.startsWith('.') || resolved.path.endsWith('.js')) {
+      if (
+        resolved.kind === 'entry-point' ||
+        !resolved.path.startsWith('.') ||
+        resolved.path.endsWith('.js') ||
+        resolved.path.endsWith('.json')
+      ) {
         return { external: resolved.kind !== 'entry-point' };
       }
       let isDirectory = false;
@@ -216,7 +221,6 @@ export default async function ({
     noUnusedParameters: true,
     alwaysStrict: true,
     verbatimModuleSyntax: true,
-    noFallthroughCasesInSwitch: true,
     forceConsistentCasingInFileNames: true,
     emitDecoratorMetadata: true,
     experimentalDecorators: true,
