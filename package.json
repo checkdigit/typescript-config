@@ -11,7 +11,7 @@
   },
   "peerDependencies": {
     "@types/node": ">=20.9",
-    "esbuild": "0.19.6",
+    "esbuild": "0.19.8",
     "typescript": ">=5.3.2 <5.4.0"
   },
   "repository": {
@@ -60,10 +60,10 @@
     "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "@checkdigit/prettier-config": "5.0.0-PR.29-ad02",
     "@types/debug": "^4.1.12",
-    "@types/jest": "^29.5.8",
+    "@types/jest": "^29.5.10",
     "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
     "debug": "^4.3.4",
     "eslint": "^8.54.0",
     "eslint-config-prettier": "^9.0.0",
