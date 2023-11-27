@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.1.0",
-    "@checkdigit/prettier-config": "5.0.0-PR.29-ad02",
+    "@checkdigit/prettier-config": "^5.0.0",
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.10",
     "@types/uuid": "^9.0.7",
