@@ -1,6 +1,7 @@
 // test/index.ts
 
 import './lib/es2023.spec';
+import './lib/es2024.spec';
 import './lib/esnext.full.spec';
 
 import './commonjs.spec';
@@ -16,3 +17,4 @@ import './typescript/typescript-5.0.spec';
 import './typescript/typescript-5.1.spec';
 import './typescript/typescript-5.2.spec';
 import './typescript/typescript-5.3.spec';
+import './typescript/typescript-5.4.spec';
