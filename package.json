@@ -11,7 +11,7 @@
     ".": {
       "types": "./dist-types/index.d.ts",
       "import": "./dist-mjs/index.mjs",
-      "default": "./dist-mjs/index.mjs"
+      "default": "./tsconfig.json"
     }
   },
   "bin": {
