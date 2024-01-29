@@ -1,18 +1,18 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
-    "node": ">=20.9"
+    "node": ">=20.11"
   },
   "bin": {
     "builder": "./bin/builder.mjs"
   },
   "peerDependencies": {
-    "@types/node": ">=20.9",
-    "esbuild": "0.19.8",
-    "typescript": ">=5.3.2 <5.4.0"
+    "@types/node": ">=20.11",
+    "esbuild": "0.20.0",
+    "typescript": "5.4.0-beta"
   },
   "repository": {
     "type": "git",
@@ -41,7 +41,7 @@
     "build-mjs-bundle": "rimraf build-mjs-bundle && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=test/index.test.ts --outFile=test/index.test.mjs",
     "build-mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=test/index.test.ts --outFile=test/index.test.mjs",
     "build-mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=test/index.test.ts --outFile=test/index.test.mjs --minify",
-    "test-jest-mjs": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage=false src/*.mts src/*/*.mts src/*/*/*.mts",
+    "test-jest-mjs": "NODE_OPTIONS=\"--disable-warning ExperimentalWarning --experimental-vm-modules\" jest --coverage=false src/*.mts src/*/*.mts src/*/*/*.mts",
     "test-jest-cjs": "jest --coverage=false src/*.ts src/*/*.ts src/*/*/*.ts",
     "test-cjs": "node --test build-cjs/test/index.test.cjs",
     "test-cjs-bundle": "node --test build-cjs-bundle/test/index.test.cjs",
@@ -203,5 +203,8 @@
     "bin",
     "tsconfig.json",
     "SECURITY.md"
-  ]
+  ],
+  "overrides": {
+    "typescript": "5.4.0-beta"
+  }
 }

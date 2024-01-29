@@ -2,7 +2,7 @@
 
 [![MIT License](https://img.shields.io/github/license/checkdigit/typescript-config)](https://github.com/checkdigit/typescript-config/blob/master/LICENSE.txt)
 
-Copyright (c) 2022-2023 [Check Digit, LLC](https://checkdigit.com)
+Copyright (c) 2022-2024 [Check Digit, LLC](https://checkdigit.com)
 
 ### Introduction
 
@@ -10,7 +10,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 
 ### Typescript Configuration
 
-- currently requires Node 20 or above.
+- currently requires Node 20.11 or above.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
   up any issues with using newer features unavailable in a particular environment. Browsers and NodeJS are fast moving
   targets, and can add language features at any time.

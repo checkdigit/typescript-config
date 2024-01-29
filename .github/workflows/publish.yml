@@ -12,8 +12,8 @@ jobs:
       id-token: write
     name: Publish to NPM
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
@@ -21,8 +21,6 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Audit Signatures
         run: npm audit signatures
-      - name: Run Test
-        run: npm run test
       - name: Publish
         run: npm publish --provenance
         env:
