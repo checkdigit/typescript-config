@@ -69,9 +69,9 @@ export interface BuildResult {
 
 export interface BuilderOptions {
   /**
-   * whether to produce Typescript types, ESM or CommonJS code
+   * whether to produce Typescript types or ESM code
    */
-  type: 'module' | 'commonjs' | 'types';
+  type: 'module' | 'types';
 
   /**
    * the entry point for the bundle, relative to the inDir.  if not provided, the files in the inDir will be processed
@@ -135,7 +135,7 @@ function excludeSourceMaps(filter: RegExp) {
   return (pluginBuild: PluginBuild) => {
     // ignore source maps for any Javascript file that matches filter
     pluginBuild.onLoad({ filter }, async (args) => {
-      if (args.path.endsWith('.js') || args.path.endsWith('.mjs') || args.path.endsWith('.cjs')) {
+      if (args.path.endsWith('.js') || args.path.endsWith('.mjs')) {
         return {
           contents: `${await fs.readFile(
             args.path,
@@ -149,8 +149,7 @@ function excludeSourceMaps(filter: RegExp) {
   };
 }
 
-function resolveTypescriptPaths(type: 'module' | 'commonjs') {
-  const extension = type === 'module' ? 'mjs' : 'cjs';
+function resolveTypescriptPaths() {
   return (pluginBuild: PluginBuild) => {
     // rewrite paths based on standard node resolution
     pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
@@ -170,7 +169,7 @@ function resolveTypescriptPaths(type: 'module' | 'commonjs') {
         // do nothing
       }
       let newPath = resolved.path;
-      newPath += isDirectory ? `/index.${extension}` : `.${extension}`;
+      newPath += isDirectory ? `/index.mjs` : `.mjs`;
       return { path: newPath, external: true };
     });
   };
@@ -273,7 +272,7 @@ export default async function ({
     minify,
     absWorkingDir: workingDirectory,
     platform: 'node',
-    format: type === 'module' ? 'esm' : 'cjs',
+    format: 'esm',
     treeShaking: type === 'module',
     write: false,
     metafile: outFile !== undefined,
@@ -289,11 +288,11 @@ export default async function ({
       ? {
           // individual files
           outdir: outDir,
-          outExtension: { '.js': type === 'module' ? '.mjs' : '.cjs' },
+          outExtension: { '.js': '.mjs' },
           plugins: [
             {
               name: 'resolve-typescript-paths',
-              setup: resolveTypescriptPaths(type),
+              setup: resolveTypescriptPaths(),
             },
           ],
         }

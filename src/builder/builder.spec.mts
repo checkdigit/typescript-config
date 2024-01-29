@@ -2,7 +2,6 @@
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
-import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 
@@ -10,8 +9,6 @@ import { v4 as uuid } from 'uuid';
 
 // @ts-expect-error
 import builder from './builder.mts';
-
-const require = createRequire(import.meta.url);
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
@@ -230,48 +227,6 @@ describe('test builder', () => {
     assert.equal(output.default(), 'hello world');
   });
 
-  it('should build a single CJS module that exports function as default', async () => {
-    const id = uuid();
-    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, exportDefaultFunctionModule);
-    await writeOutput(await builder({ type: 'commonjs', inDir, outDir }));
-    assert.deepEqual(await read(outDir), {
-      'index.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var src_exports = {};\n' +
-        '__export(src_exports, {\n' +
-        '  default: () => src_default\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(src_exports);\n' +
-        'function src_default() {\n' +
-        '  return "hello world";\n' +
-        '}\n',
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output = require(path.join(outDir, 'index.cjs'));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    assert.equal(output.default(), 'hello world');
-  });
-
   it('should build an ESM module that imports a second ESM module', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
@@ -290,116 +245,6 @@ describe('test builder', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.default, 'worldworld');
-  });
-
-  it('should build a single CJS module', async () => {
-    const id = uuid();
-    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, singleModule);
-    const result = await builder({ type: 'commonjs', inDir, outDir });
-    assert.deepEqual(convert(result.outputFiles), {
-      'index.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var src_exports = {};\n' +
-        '__export(src_exports, {\n' +
-        '  hello: () => hello\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(src_exports);\n' +
-        'var hello = "world";\n' +
-        '0 && (module.exports = {\n' +
-        '  hello\n' +
-        '});\n',
-    });
-  });
-
-  it('should build a CJS module that requires a second CJS module', async () => {
-    const id = uuid();
-    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, twoModules);
-    await writeOutput(await builder({ type: 'commonjs', inDir, outDir }));
-    assert.deepEqual(await read(outDir), {
-      'index.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var src_exports = {};\n' +
-        '__export(src_exports, {\n' +
-        '  default: () => src_default\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(src_exports);\n' +
-        'var import_thing = require("./thing.cjs");\n' +
-        'var src_default = import_thing.hello + "world";\n',
-      'thing.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var thing_exports = {};\n' +
-        '__export(thing_exports, {\n' +
-        '  hello: () => hello\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(thing_exports);\n' +
-        'var hello = "world";\n' +
-        '0 && (module.exports = {\n' +
-        '  hello\n' +
-        '});\n',
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output1 = require(path.join(outDir, 'index.cjs'));
-    assert.equal(output1.default, 'worldworld');
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output2 = await import(path.join(outDir, 'index.cjs'));
-    assert.equal(output2.default.default, 'worldworld');
   });
 
   it('should bundle an ESM module that imports a second ESM module', async () => {
@@ -474,30 +319,6 @@ describe('test builder', () => {
         `export {\n` +
         `  hello\n` +
         `};\n`,
-    });
-  });
-
-  it('should bundle a commonjs module that imports external ESM modules', async () => {
-    const id = uuid();
-    const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
-    const inDir = path.join(moduleDir, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, importExternalModule);
-    await writeNodeModules(moduleDir, testNodeModules);
-    await writeOutput(
-      await builder({
-        type: 'commonjs',
-        entryPoint: 'index.ts',
-        outFile: 'index.cjs',
-        inDir,
-        outDir,
-      }),
-    );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output = require(path.join(outDir, 'index.cjs'));
-    assert.deepEqual(output.hello, {
-      message: 'hello world',
-      test: 'world',
     });
   });
 });
