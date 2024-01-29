@@ -7,8 +7,7 @@ import path from 'node:path';
 
 import { v4 as uuid } from 'uuid';
 
-// @ts-expect-error
-import builder from './builder.mts';
+import builder from './builder';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";

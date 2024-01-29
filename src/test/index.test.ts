@@ -4,6 +4,7 @@ import './lib/es2023.spec';
 import './lib/esnext.full.spec';
 
 import './commonjs.spec';
+import './module.spec';
 
 import './typescript/typescript-4.4.spec';
 import './typescript/typescript-4.5.spec';

@@ -1,24 +1,12 @@
-// builder/index.mts
+// builder/index.ts
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-/*
- * The below imports work, but tsc complains:
- * TS5097: An import path can only end with a .mts extension when allowImportingTsExtensions is enabled
- *
- * This will be fixed once this library can be 100% ESM and all the .mts files are converted to .ts.
- */
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import builder from './builder.mts';
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import analyze from './analyze.mts';
+import builder from './builder';
+import analyze from './analyze';
 
 const {
   values: { type, inDir, outDir, entryPoint, outFile, external, minify, sourceMap },

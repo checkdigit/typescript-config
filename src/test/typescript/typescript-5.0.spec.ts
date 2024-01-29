@@ -2,28 +2,9 @@
 
 import { strict as assert } from 'node:assert';
 
-import moduleDefault, { test } from './module.test';
-import moduleDirectory from './module-directory';
-
 import { describe, it } from '../../describe-it.test';
 
 describe('typescript-5.0', () => {
-  it('"this" is an object', () => {
-    assert.ok(typeof this === 'object');
-  });
-
-  it('should export default correctly', () => {
-    assert.equal(moduleDefault(), 'export default function');
-  });
-
-  it('should export test function correctly', () => {
-    assert.equal(test(), 'export function test');
-  });
-
-  it('should work with module directories', () => {
-    assert.equal(moduleDirectory(), 'module-directory-index');
-  });
-
   it('supports const type parameters', async () => {
     type HasNames = { names: readonly string[] };
 
