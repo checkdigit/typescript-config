@@ -7,6 +7,13 @@
     "node": ">=20.11"
   },
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist-types/index.d.ts",
+      "import": "./dist-mjs/index.mjs",
+      "default": "./dist-mjs/index.mjs"
+    }
+  },
   "bin": {
     "builder": "./bin/builder.mjs"
   },
@@ -26,7 +33,9 @@
   },
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "scripts": {
-    "prepublishOnly": "npm run build-builder",
+    "prepublishOnly": "npm run build-builder && npm run build:dist-types && npm run build:dist-mjs",
+    "build:dist-types": "rimraf dist-types && npx builder --type=types --outDir=dist-types",
+    "build:dist-mjs": "rimraf dist-mjs && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
     "lint:fix": "eslint --ignore-path .gitignore . --fix",
     "lint": "eslint  --max-warnings 0 --ignore-path .gitignore .",
     "prettier": "prettier --ignore-path .gitignore --list-different .",
@@ -180,6 +189,15 @@
   "files": [
     "bin",
     "tsconfig.json",
+    "src",
+    "dist-types",
+    "dist-mjs",
+    "!src/**/*.test.ts",
+    "!src/**/*.spec.ts",
+    "!dist-types/**/*.test.d.ts",
+    "!dist-types/**/*.spec.d.ts",
+    "!dist-mjs/**/*.test.mjs",
+    "!dist-mjs/**/*.spec.mjs",
     "SECURITY.md"
   ],
   "overrides": {
