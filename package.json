@@ -32,7 +32,7 @@
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
-    "build-builder": "esbuild src/builder/index.ts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
+    "build-builder": "esbuild src/builder.ts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
     "build-types": "rimraf build-types && bin/builder.mjs --type=types --outDir=build-types",
     "build-mjs": "rimraf build-mjs && bin/builder.mjs --type=module --outDir=build-mjs",
     "build-mjs-bundle": "rimraf build-mjs-bundle && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=test/index.test.ts --outFile=test/index.test.mjs",

@@ -1,10 +1,10 @@
-// builder/builder.mts
+// compile.ts
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import typescript from 'typescript';
 
+import typescript from 'typescript';
 import { type PluginBuild, build } from 'esbuild';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
@@ -62,12 +62,12 @@ export interface OutputFile {
   text: string;
 }
 
-export interface BuildResult {
+export interface CompileResult {
   metafile?: Metafile | undefined;
   outputFiles: OutputFile[];
 }
 
-export interface BuilderOptions {
+export interface CompileOptions {
   /**
    * whether to produce Typescript types or ESM code
    */
@@ -186,7 +186,7 @@ export default async function ({
   minify = false,
   sourceMap,
   workingDirectory = process.cwd(),
-}: BuilderOptions): Promise<BuildResult> {
+}: CompileOptions): Promise<CompileResult> {
   const messages: string[] = [];
 
   assert.ok(

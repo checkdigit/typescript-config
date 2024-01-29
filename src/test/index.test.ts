@@ -1,4 +1,4 @@
-// index.ts
+// test/index.ts
 
 import './lib/es2023.spec';
 import './lib/esnext.full.spec';

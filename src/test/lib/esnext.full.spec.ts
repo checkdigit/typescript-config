@@ -1,4 +1,4 @@
-// lib/esnext.full.spec.ts
+// test/lib/esnext.full.spec.ts
 
 import { strict as assert } from 'node:assert';
 

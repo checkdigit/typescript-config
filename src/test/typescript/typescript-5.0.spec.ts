@@ -1,4 +1,4 @@
-// typescript-5.0.spec.ts
+// test/typescript/typescript-5.0.spec.ts
 
 import { strict as assert } from 'node:assert';
 

@@ -1,4 +1,4 @@
-// lib/es2023.spec.ts
+// test/lib/es2023.spec.ts
 
 import { strict as assert } from 'node:assert';
 

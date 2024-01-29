@@ -1,4 +1,4 @@
-// commonjs.spec.ts
+// test/commonjs.spec.ts
 
 import { strict as assert } from 'node:assert';
 

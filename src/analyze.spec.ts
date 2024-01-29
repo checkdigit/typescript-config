@@ -1,4 +1,4 @@
-// builder/analyze.spec.mts
+// analyze.spec.ts
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
@@ -7,7 +7,7 @@ import path from 'node:path';
 
 import { v4 as uuid } from 'uuid';
 
-import builder from './builder';
+import compile from './compile';
 import analyze from './analyze';
 
 const twoModules = {
@@ -76,7 +76,7 @@ describe('analyze', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    const result = await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
+    const result = await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
     assert.ok(result.metafile !== undefined);
     const analysis = analyze(result.metafile);
     assert.ok(analysis.moduleBytes === 0);
@@ -91,7 +91,7 @@ describe('analyze', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    const result = await builder({
+    const result = await compile({
       type: 'module',
       entryPoint: 'index.ts',
       outFile: 'index.mjs',
@@ -113,7 +113,7 @@ describe('analyze', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    const result = await builder({
+    const result = await compile({
       type: 'module',
       entryPoint: 'index.ts',
       outFile: 'index.mjs',

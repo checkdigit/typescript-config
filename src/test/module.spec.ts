@@ -1,4 +1,4 @@
-// module.spec.ts
+// test/module.spec.ts
 
 import { strict as assert } from 'node:assert';
 

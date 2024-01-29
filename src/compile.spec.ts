@@ -1,4 +1,4 @@
-// builder/builder.spec.mts
+// compile.spec.ts
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
@@ -7,7 +7,7 @@ import path from 'node:path';
 
 import { v4 as uuid } from 'uuid';
 
-import builder from './builder';
+import compile from './compile';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
@@ -122,13 +122,13 @@ function convert(outputFiles: Array<{ path: string; text: string }>) {
   );
 }
 
-describe('test builder', () => {
+describe('compile', () => {
   it('should not build bad code', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, { 'index.ts': 'bad code' });
-    await assert.rejects(builder({ type: 'module', inDir, outDir }), {
+    await assert.rejects(compile({ type: 'module', inDir, outDir }), {
       message: `tsc failed ${JSON.stringify([
         `tsc: ${inDir}/index.ts (1,1): Unexpected keyword or identifier.`,
         `tsc: ${inDir}/index.ts (1,1): Cannot find name 'bad'.`,
@@ -144,7 +144,7 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
-    await assert.rejects(builder({ type: 'module', inDir, outDir }), {
+    await assert.rejects(compile({ type: 'module', inDir, outDir }), {
       message: `ENOENT: no such file or directory, scandir '${inDir}'`,
     });
     await assert.rejects(read(outDir), {
@@ -157,7 +157,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, {});
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     await assert.rejects(read(outDir), {
       message: `ENOENT: no such file or directory, scandir '${outDir}'`,
     });
@@ -168,7 +168,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    const result = await builder({ type: 'types', inDir, outDir });
+    const result = await compile({ type: 'types', inDir, outDir });
     assert.deepEqual(convert(result.outputFiles), {
       'index.d.ts': 'export declare const hello = "world";\n',
     });
@@ -179,7 +179,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
@@ -194,7 +194,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    await writeOutput(await builder({ type: 'module', inDir, outDir, minify: true }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir, minify: true }));
     assert.deepEqual(await read(outDir), {
       'index.mjs': 'var o="world";export{o as hello};\n',
     });
@@ -209,7 +209,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, exportDefaultFunctionModule);
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         'function src_default() {\n' +
@@ -231,7 +231,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         'import { hello } from "./thing.mjs";\n' +
@@ -251,7 +251,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await writeOutput(await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
@@ -274,7 +274,7 @@ describe('test builder', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    await writeOutput(await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
@@ -301,7 +301,7 @@ describe('test builder', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    const result = await builder({
+    const result = await compile({
       type: 'module',
       entryPoint: 'index.ts',
       outFile: 'index.mjs',
