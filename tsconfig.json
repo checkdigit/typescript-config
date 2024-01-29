@@ -9,7 +9,7 @@
     "removeComments": false,
     "noLib": false,
     "noEmitOnError": false,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "strict": true,
     "preserveConstEnums": true,
     "noImplicitReturns": true,
@@ -28,6 +28,6 @@
     "allowUnreachableCode": false,
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
-    "exactOptionalPropertyTypes": true
-  }
+    "exactOptionalPropertyTypes": true,
+  },
 }
