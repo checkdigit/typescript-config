@@ -4,7 +4,7 @@ import { strict as assert } from 'node:assert';
 
 import jsonSchemaRefParser from '@apidevtools/json-schema-ref-parser';
 
-import { describe, it } from '../describe-it.test';
+import { describe, it } from './describe-it';
 
 describe('commonjs', () => {
   it('should work with CJS module that uses __dirname', async () => {

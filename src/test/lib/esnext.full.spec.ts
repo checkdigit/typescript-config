@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../../describe-it.test';
+import { describe, it } from '../describe-it';
 
 describe('supports esnext.full', () => {
   it('should allow Headers to be iterable (from dom.iterable)', async () => {

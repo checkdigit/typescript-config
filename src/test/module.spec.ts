@@ -2,8 +2,8 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it.test';
-import moduleDefault, { test } from './module.test';
+import { describe, it } from './describe-it';
+import moduleDefault, { test } from './module';
 import moduleDirectory from './module-directory';
 
 describe('module', () => {

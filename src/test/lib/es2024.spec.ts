@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../../describe-it.test';
+import { describe, it } from '../describe-it';
 
 (process.version < 'v21' ? describe.skip : describe)('supports es2024', () => {
   it('supports Object.groupBy', async () => {

@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../../describe-it.test';
+import { describe, it } from '../describe-it';
 
 import packageJson from '../../../package.json' with { type: 'json' };
 

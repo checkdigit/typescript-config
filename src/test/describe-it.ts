@@ -1,4 +1,4 @@
-// describe-it.ts
+// test/describe-it.ts
 
 import { describe as nodeDescribe, it as nodeIt } from 'node:test';
 
