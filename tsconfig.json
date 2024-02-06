@@ -28,6 +28,6 @@
     "allowUnreachableCode": false,
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
-    "exactOptionalPropertyTypes": true,
-  },
+    "exactOptionalPropertyTypes": true
+  }
 }
