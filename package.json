@@ -39,6 +39,7 @@
     "prettier": "prettier --ignore-path .gitignore --list-different .",
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
+    "build": "npm run build:builder && npm run build:types && npm run build:mjs && npm run build:mjs-bundle && npm run build:mjs-bundle-minify && npm run build:mjs-bundle-no-external",
     "build:dist-types": "rimraf dist-types && npx builder --type=types --outDir=dist-types",
     "build:dist-mjs": "rimraf dist-mjs && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
     "build:builder": "esbuild src/builder.ts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
@@ -52,8 +53,8 @@
     "test:mjs-bundle": "node --test build-mjs-bundle/test/index.mjs",
     "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/test/index.mjs",
     "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/test/index.mjs",
-    "ci:test": "npm run test:jest-mjs && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
-    "ci:compile": "tsc --noEmit && npm run build:builder && npm run build:types && npm run build:mjs && npm run build:mjs-bundle && npm run build:mjs-bundle-minify && npm run build:mjs-bundle-no-external",
+    "ci:test": "npm run build && npm run test:jest-mjs && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
+    "ci:compile": "tsc --noEmit",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier"
   },
