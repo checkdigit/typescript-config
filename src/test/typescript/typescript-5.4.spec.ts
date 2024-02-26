@@ -28,4 +28,24 @@ describe('typescript-5.4', () => {
     // @ts-expect-error
     assert.equal(createStreetLight(['red', 'yellow', 'green'], 'blue'), -1);
   });
+
+  it('more accurate conditional type constraints', () => {
+    type IsArray<T> = T extends unknown[] ? true : false;
+    function foo<U extends object>(x: IsArray<U>) {
+      // @ts-expect-error
+      const first: true = x; // this has been an error
+      // @ts-expect-error
+      const second: false = x; // this was not an error pre-5.4
+      assert.equal(first, second);
+    }
+    foo(false);
+  });
+
+  it('improved checking against template strings with interpolations', () => {
+    function a<T extends { id: string }>() {
+      const x: `-${keyof T & string}` = '-id'; // this was an error pre-5.4
+      return x;
+    }
+    assert.equal(a(), '-id');
+  });
 });
