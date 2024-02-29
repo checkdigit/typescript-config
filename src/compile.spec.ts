@@ -5,6 +5,7 @@ import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
+import { describe, it } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 
 import compile from './compile';
