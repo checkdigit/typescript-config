@@ -20,7 +20,7 @@
   "peerDependencies": {
     "@types/node": ">=20.11",
     "esbuild": "0.20.1",
-    "typescript": "5.4.1-rc"
+    "typescript": ">=5.4.2 <5.5.0"
   },
   "repository": {
     "type": "git",
@@ -59,7 +59,7 @@
     "ci:style": "npm run prettier"
   },
   "devDependencies": {
-    "@apidevtools/json-schema-ref-parser": "^11.1.0",
+    "@apidevtools/json-schema-ref-parser": "^11.4.1",
     "@checkdigit/prettier-config": "^5.3.0",
     "@jest/globals": "^29.7.0",
     "@types/debug": "^4.1.12",
@@ -203,8 +203,5 @@
     "!dist-mjs/**/*.test.mjs",
     "!dist-mjs/**/*.spec.mjs",
     "SECURITY.md"
-  ],
-  "overrides": {
-    "typescript": "5.4.1-rc"
-  }
+  ]
 }
