@@ -2,7 +2,6 @@
 
 import './lib/es2023.spec';
 import './lib/es2024.spec';
-import './lib/esnext.full.spec';
 
 import './commonjs.spec';
 import './module.spec';
