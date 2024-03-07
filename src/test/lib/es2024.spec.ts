@@ -44,7 +44,7 @@ import { describe, it } from '../describe-it';
   });
 
   // https://github.com/tc39/proposal-promise-with-resolvers
-  it.failing('supports Promise.withResolvers', async () => {
+  it.skip('supports Promise.withResolvers', async () => {
     assert.equal(typeof Promise.withResolvers, 'function');
   });
 
