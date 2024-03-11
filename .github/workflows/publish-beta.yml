@@ -23,6 +23,8 @@ jobs:
         uses: checkdigit/github-actions/check-label@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install latest npm
+        run: npm install -g npm@latest
       - name: Install Dependencies
         run: npm ci --ignore-scripts
       - name: Audit Signatures
