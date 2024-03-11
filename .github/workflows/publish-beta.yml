@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish Beta
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
@@ -22,12 +23,14 @@ jobs:
         uses: checkdigit/github-actions/check-label@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install dependencies
+      - name: Install latest npm
+        run: npm install -g npm@latest
+      - name: Install Dependencies
         run: npm ci --ignore-scripts
       - name: Audit Signatures
         run: npm audit signatures
       - name: Run Test
-        run: npm run test
+        run: npm run ci:test
       - name: Prepare Beta
         id: prepare-beta
         uses: checkdigit/github-actions/prepare-beta@main
@@ -35,7 +38,7 @@ jobs:
         run: npm publish --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN_PUBLISH }}
-      - name: Comment
+      - name: Comment npm publish result
         uses: checkdigit/github-actions/comment-npm-publish@main
         with:
           betaPackage: ${{ steps.prepare-beta.outputs.betaPackage }}

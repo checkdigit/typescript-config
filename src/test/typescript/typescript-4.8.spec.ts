@@ -1,8 +1,8 @@
-// typescript-4.8.ts
+// test/typescript/typescript-4.8.ts
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../../describe-it.test';
+import { describe, it } from '../describe-it';
 
 describe('typescript-4.8', () => {
   it('has typescript 4.8 features', () => {

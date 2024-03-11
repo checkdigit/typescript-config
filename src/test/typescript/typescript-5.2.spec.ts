@@ -1,8 +1,8 @@
-// typescript-5.2.ts
+// test/typescript/typescript-5.2.ts
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../../describe-it.test';
+import { describe, it } from '../describe-it';
 
 describe('typescript-5.2', () => {
   it('has explicit resource management (but not testing "using" keyword)', () => {

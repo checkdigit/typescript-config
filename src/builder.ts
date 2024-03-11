@@ -1,24 +1,11 @@
-// builder/index.mts
+// builder.ts
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-/*
- * The below imports work, but tsc complains:
- * TS5097: An import path can only end with a .mts extension when allowImportingTsExtensions is enabled
- *
- * This will be fixed once this library can be 100% ESM and all the .mts files are converted to .ts.
- */
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import builder from './builder.mts';
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import analyze from './analyze.mts';
+import { compile, analyze } from './index';
 
 const {
   values: { type, inDir, outDir, entryPoint, outFile, external, minify, sourceMap },
@@ -35,11 +22,11 @@ const {
   },
 });
 
-assert.ok(type === 'module' || type === 'commonjs' || type === 'types', 'type must be types, module or commonjs');
+assert.ok(type === 'module' || type === 'types', 'type must be types or module');
 assert.ok(inDir !== undefined, 'inDir is required');
 assert.ok(outDir !== undefined, 'outDir is required');
 
-const buildResult = await builder({
+const compileResult = await compile({
   type,
   inDir: path.join(process.cwd(), inDir),
   outDir: path.join(process.cwd(), outDir),
@@ -52,16 +39,16 @@ const buildResult = await builder({
 
 // write output files
 await Promise.all(
-  buildResult.outputFiles.map(async (file) => {
+  compileResult.outputFiles.map(async (file) => {
     await fs.mkdir(path.join(path.dirname(file.path)), { recursive: true });
     await fs.writeFile(file.path, file.text);
   }),
 );
 
 // write metafile.json
-if (buildResult.metafile !== undefined) {
-  const analysis = analyze(buildResult.metafile);
-  await fs.writeFile(path.join(outDir, 'metafile.json'), JSON.stringify(buildResult.metafile, undefined, 2));
+if (compileResult.metafile !== undefined) {
+  const analysis = analyze(compileResult.metafile);
+  await fs.writeFile(path.join(outDir, 'metafile.json'), JSON.stringify(compileResult.metafile, undefined, 2));
 
   // eslint-disable-next-line no-console
   console.log(

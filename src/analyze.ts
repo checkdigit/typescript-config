@@ -1,4 +1,4 @@
-// builder/analyze.mts
+// analyze.ts
 
 import { strict as assert } from 'node:assert';
 
