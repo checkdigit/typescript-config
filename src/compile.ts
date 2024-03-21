@@ -203,16 +203,16 @@ export default async function ({
    */
   const program = typescript.createProgram(productionSourceFiles, {
     module: typescript.ModuleKind.ESNext,
-    moduleResolution: typescript.ModuleResolutionKind.Bundler,
     target: typescript.ScriptTarget.ESNext,
+    moduleResolution: typescript.ModuleResolutionKind.Bundler,
+    sourceMap: true,
+    inlineSources: true,
     declaration: true,
-    noEmit: type !== 'types',
-    noEmitOnError: true,
-    emitDeclarationOnly: type === 'types',
-    rootDir: inDir,
-    outDir,
+    removeComments: false,
     noLib: false,
-    skipLibCheck: true,
+    noEmitOnError: true,
+    skipLibCheck: false,
+    types: ['node'],
     strict: true,
     preserveConstEnums: true,
     noImplicitReturns: true,
@@ -232,6 +232,10 @@ export default async function ({
     noImplicitOverride: true,
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
+    noEmit: type !== 'types',
+    emitDeclarationOnly: type === 'types',
+    rootDir: inDir,
+    outDir,
   });
   const declarationFiles: OutputFile[] = [];
   const emitResult = program.emit(undefined, (fileName, data) => {
