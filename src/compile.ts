@@ -199,7 +199,7 @@ export default async function ({
     entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
 
   /**
-   * Emit declarations using typescript compiler, if type is 'types'.  Otherwise, just compile to ensure the build is good.
+   * Emit declarations using typescript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
   const program = typescript.createProgram(productionSourceFiles, {
     module: typescript.ModuleKind.ESNext,
