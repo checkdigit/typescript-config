@@ -4,7 +4,7 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it } from '../describe-it';
 
-(process.version < 'v21' ? describe.skip : describe)('supports es2024', () => {
+(process.version < 'v22' ? describe.skip : describe)('supports es2024', () => {
   // https://github.com/tc39/proposal-array-grouping
   it('supports array grouping', async () => {
     const objectGroupBy = Object.groupBy([0, 1, 2, 3, 4, 5], (num) => (num % 2 === 0 ? 'even' : 'odd'));
@@ -44,23 +44,18 @@ import { describe, it } from '../describe-it';
   });
 
   // https://github.com/tc39/proposal-promise-with-resolvers
-  it.skip('supports Promise.withResolvers', async () => {
+  it('supports Promise.withResolvers', async () => {
     assert.equal(typeof Promise.withResolvers, 'function');
   });
 
   // https://github.com/tc39/proposal-regexp-v-flag
   it('support RegExp v flag', async () => {
-    // Typescript does not yet support this syntax
-    /*
-     * assert.equal(/[\p{Decimal_Number}--[0-9]]/v.test('𑜹'), true);
-     * assert.equal(/[\p{Decimal_Number}--[0-9]]/v.test('4'), false);
-     */
+    assert.equal(/[\p{Decimal_Number}--[0-9]]/v.test('𑜹'), true);
+    assert.equal(/[\p{Decimal_Number}--[0-9]]/v.test('4'), false);
   });
 
   it('supports well-formed Unicode strings', async () => {
-    // @ts-expect-error
     assert.equal(typeof ''.isWellFormed, 'function');
-    // @ts-expect-error
     assert.equal(typeof ''.toWellFormed, 'function');
   });
 });
