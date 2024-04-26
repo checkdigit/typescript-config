@@ -12,7 +12,7 @@ import compile from './compile';
 import analyze from './analyze';
 
 const twoModules = {
-  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world';\n`,
+  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,
   [`thing.ts`]: `export const hello = 'world';`,
 };
 
@@ -20,7 +20,7 @@ const importExternalModule = {
   [`index.ts`]: `
 import { hello as test } from 'test-esm-module';
 import util from 'node:util';
-export const hello = { test, message: util.format('hello %s', 'world') };
+export const hello: {test: string, message: string} = { test, message: util.format('hello %s', 'world') };
 `,
 };
 

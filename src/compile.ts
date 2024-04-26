@@ -238,6 +238,7 @@ export default async function ({
     noImplicitOverride: true,
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
+    isolatedDeclarations: true,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,
