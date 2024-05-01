@@ -4,7 +4,7 @@
   "description": "Check Digit standard Typescript configuration",
   "prettier": "@checkdigit/prettier-config",
   "engines": {
-    "node": ">=20.11"
+    "node": ">=20.12"
   },
   "type": "module",
   "exports": {
@@ -18,7 +18,7 @@
     "builder": "./bin/builder.mjs"
   },
   "peerDependencies": {
-    "@types/node": ">=20.11",
+    "@types/node": ">=20.12",
     "esbuild": "0.20.2",
     "typescript": "5.5.0-beta"
   },
@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "scripts": {
+    "prepare": "",
     "prepublishOnly": "npm run build:builder && npm run build:dist-types && npm run build:dist-mjs",
     "lint:fix": "eslint --ignore-path .gitignore . --fix",
     "lint": "eslint  --max-warnings 0 --ignore-path .gitignore .",
