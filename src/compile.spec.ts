@@ -102,7 +102,7 @@ async function read(dir: string): Promise<Record<string, string>> {
   ) as Record<string, string>;
 }
 
-async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string; text: string }> }) {
+async function writeOutput({ outputFiles }: { outputFiles: { path: string; text: string }[] }) {
   return Promise.all(
     outputFiles.map(async (file) => {
       await fs.mkdir(path.join(path.dirname(file.path)), { recursive: true });
@@ -111,7 +111,7 @@ async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string;
   );
 }
 
-function convert(outputFiles: Array<{ path: string; text: string }>) {
+function convert(outputFiles: { path: string; text: string }[]) {
   return Object.fromEntries(
     outputFiles.map((file) => [
       path.basename(file.path),

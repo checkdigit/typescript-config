@@ -25,8 +25,9 @@ export type ImportKind =
   | 'url-token';
 
 export interface Metafile {
-  inputs: {
-    [path: string]: {
+  inputs: Record<
+    string,
+    {
       bytes: number;
       imports: {
         path: string;
@@ -35,16 +36,18 @@ export interface Metafile {
         original?: string;
       }[];
       format?: 'cjs' | 'esm';
-    };
-  };
-  outputs: {
-    [path: string]: {
+    }
+  >;
+  outputs: Record<
+    string,
+    {
       bytes: number;
-      inputs: {
-        [path: string]: {
+      inputs: Record<
+        string,
+        {
           bytesInOutput: number;
-        };
-      };
+        }
+      >;
       imports: {
         path: string;
         kind: ImportKind | 'file-loader';
@@ -53,8 +56,8 @@ export interface Metafile {
       exports: string[];
       entryPoint?: string;
       cssBundle?: string;
-    };
-  };
+    }
+  >;
 }
 
 export interface OutputFile {
@@ -175,7 +178,7 @@ function resolveTypescriptPaths() {
   };
 }
 
-// eslint-disable-next-line func-names,max-lines-per-function,max-statements
+// eslint-disable-next-line max-lines-per-function,max-statements
 export default async function ({
   type,
   entryPoint,
@@ -259,7 +262,6 @@ export default async function ({
       const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
       messages.push(`tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
     } else {
-      // eslint-disable-next-line no-console
       messages.push(`tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`);
     }
   }

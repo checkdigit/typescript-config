@@ -9,7 +9,7 @@ describe('typescript-5.5', () => {
     interface Bird {
       commonName: string;
     }
-    const nationalBirds: Map<string, Bird> = new Map();
+    const nationalBirds = new Map<string, Bird>();
     nationalBirds.set('USA', { commonName: 'Bald Eagle' });
     function getNames(countries: string[]) {
       const birds = countries.map((country) => nationalBirds.get(country)).filter((bird) => bird !== undefined);
