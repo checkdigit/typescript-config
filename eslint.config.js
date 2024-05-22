@@ -6,11 +6,13 @@ import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
-const ignores = (await fs.readFile('.gitignore', 'utf-8')).split('\n').filter((path) => path.trim() !== '');
+const ignores = [
+  ...(await fs.readFile('.gitignore', 'utf-8')).split('\n').filter((path) => path.trim() !== ''),
+  'eslint.config.js',
+];
 
 export default [
   { ignores },
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   eslint.configs.all,
   ...tseslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
