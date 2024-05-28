@@ -3,7 +3,7 @@
 import { promises as fs } from 'node:fs';
 
 import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import typescriptEslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
 const ignores = [
@@ -14,9 +14,9 @@ const ignores = [
 export default [
   { ignores },
   eslint.configs.all,
-  ...tseslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  ...tseslint.configs.strict,
+  ...typescriptEslint.configs.recommended,
+  ...typescriptEslint.configs.recommendedTypeChecked,
+  ...typescriptEslint.configs.strict,
   prettier,
   {
     languageOptions: {
