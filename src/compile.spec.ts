@@ -22,7 +22,7 @@ const singleModule = {
 };
 
 const twoModules = {
-  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world';\n`,
+  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,
   [`thing.ts`]: `export const hello = 'world';`,
 };
 
@@ -34,7 +34,7 @@ const importExternalModule = {
   [`index.ts`]: `
 import { hello as test } from 'test-esm-module';
 import util from 'node:util';
-export const hello = { test, message: util.format('hello %s', 'world') };
+export const hello: {test: string, message: string} = { test, message: util.format('hello %s', 'world') };
 `,
 };
 
@@ -102,7 +102,7 @@ async function read(dir: string): Promise<Record<string, string>> {
   ) as Record<string, string>;
 }
 
-async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string; text: string }> }) {
+async function writeOutput({ outputFiles }: { outputFiles: { path: string; text: string }[] }) {
   return Promise.all(
     outputFiles.map(async (file) => {
       await fs.mkdir(path.join(path.dirname(file.path)), { recursive: true });
@@ -111,7 +111,7 @@ async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string;
   );
 }
 
-function convert(outputFiles: Array<{ path: string; text: string }>) {
+function convert(outputFiles: { path: string; text: string }[]) {
   return Object.fromEntries(
     outputFiles.map((file) => [
       path.basename(file.path),

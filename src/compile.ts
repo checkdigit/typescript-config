@@ -25,8 +25,9 @@ export type ImportKind =
   | 'url-token';
 
 export interface Metafile {
-  inputs: {
-    [path: string]: {
+  inputs: Record<
+    string,
+    {
       bytes: number;
       imports: {
         path: string;
@@ -35,16 +36,18 @@ export interface Metafile {
         original?: string;
       }[];
       format?: 'cjs' | 'esm';
-    };
-  };
-  outputs: {
-    [path: string]: {
+    }
+  >;
+  outputs: Record<
+    string,
+    {
       bytes: number;
-      inputs: {
-        [path: string]: {
+      inputs: Record<
+        string,
+        {
           bytesInOutput: number;
-        };
-      };
+        }
+      >;
       imports: {
         path: string;
         kind: ImportKind | 'file-loader';
@@ -53,8 +56,8 @@ export interface Metafile {
       exports: string[];
       entryPoint?: string;
       cssBundle?: string;
-    };
-  };
+    }
+  >;
 }
 
 export interface OutputFile {
@@ -175,7 +178,7 @@ function resolveTypescriptPaths() {
   };
 }
 
-// eslint-disable-next-line func-names,max-lines-per-function,max-statements
+// eslint-disable-next-line max-lines-per-function,max-statements
 export default async function ({
   type,
   entryPoint,
@@ -199,7 +202,7 @@ export default async function ({
     entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
 
   /**
-   * Emit declarations using typescript compiler, if type is 'types'.  Otherwise, just compile to ensure the build is good.
+   * Emit declarations using typescript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
   const program = typescript.createProgram(productionSourceFiles, {
     module: typescript.ModuleKind.ESNext,
@@ -211,8 +214,14 @@ export default async function ({
     removeComments: false,
     noLib: false,
     noEmitOnError: true,
-    skipLibCheck: false,
-    types: ['node'],
+    /*
+     * skipLibCheck is different between tsconfig.json and the compiler:
+     * 1) it is not the job of the builder to enforce the type-correctness of external 3rd party libraries.
+     * This should be caught by the initial `tsc` compilation.
+     * 2) this check might be overridden by the user in their own tsconfig.json,
+     * if an external type issue is not resolvable.
+     */
+    skipLibCheck: true,
     strict: true,
     preserveConstEnums: true,
     noImplicitReturns: true,
@@ -232,6 +241,7 @@ export default async function ({
     noImplicitOverride: true,
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
+    isolatedDeclarations: true,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,
@@ -252,7 +262,6 @@ export default async function ({
       const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
       messages.push(`tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
     } else {
-      // eslint-disable-next-line no-console
       messages.push(`tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`);
     }
   }
