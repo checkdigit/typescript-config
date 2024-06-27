@@ -30,6 +30,6 @@
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true,
-    "isolatedDeclarations": true
+    "isolatedDeclarations": false
   }
 }
