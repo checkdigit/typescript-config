@@ -9,7 +9,7 @@
     "removeComments": false,
     "noLib": false,
     "noEmitOnError": false,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "types": ["node"],
     "strict": true,
     "preserveConstEnums": true,

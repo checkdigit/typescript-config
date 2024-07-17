@@ -214,13 +214,6 @@ export default async function ({
     removeComments: false,
     noLib: false,
     noEmitOnError: true,
-    /*
-     * skipLibCheck is different between tsconfig.json and the compiler:
-     * 1) it is not the job of the builder to enforce the type-correctness of external 3rd party libraries.
-     * This should be caught by the initial `tsc` compilation.
-     * 2) this check might be overridden by the user in their own tsconfig.json,
-     * if an external type issue is not resolvable.
-     */
     skipLibCheck: true,
     strict: true,
     preserveConstEnums: true,
