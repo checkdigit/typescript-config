@@ -1,4 +1,4 @@
-// module.ts
+// test/module.ts
 
 export function test() {
   return 'export function test';

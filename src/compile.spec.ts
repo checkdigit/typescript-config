@@ -1,17 +1,14 @@
-// builder/builder.spec.mts
+// compile.spec.ts
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
-import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
 
+import { describe, it } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 
-// @ts-expect-error
-import builder from './builder.mts';
-
-const require = createRequire(import.meta.url);
+import compile from './compile';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
@@ -25,7 +22,7 @@ const singleModule = {
 };
 
 const twoModules = {
-  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world';\n`,
+  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,
   [`thing.ts`]: `export const hello = 'world';`,
 };
 
@@ -37,7 +34,7 @@ const importExternalModule = {
   [`index.ts`]: `
 import { hello as test } from 'test-esm-module';
 import util from 'node:util';
-export const hello = { test, message: util.format('hello %s', 'world') };
+export const hello: {test: string, message: string} = { test, message: util.format('hello %s', 'world') };
 `,
 };
 
@@ -105,7 +102,7 @@ async function read(dir: string): Promise<Record<string, string>> {
   ) as Record<string, string>;
 }
 
-async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string; text: string }> }) {
+async function writeOutput({ outputFiles }: { outputFiles: { path: string; text: string }[] }) {
   return Promise.all(
     outputFiles.map(async (file) => {
       await fs.mkdir(path.join(path.dirname(file.path)), { recursive: true });
@@ -114,7 +111,7 @@ async function writeOutput({ outputFiles }: { outputFiles: Array<{ path: string;
   );
 }
 
-function convert(outputFiles: Array<{ path: string; text: string }>) {
+function convert(outputFiles: { path: string; text: string }[]) {
   return Object.fromEntries(
     outputFiles.map((file) => [
       path.basename(file.path),
@@ -126,13 +123,13 @@ function convert(outputFiles: Array<{ path: string; text: string }>) {
   );
 }
 
-describe('test builder', () => {
+describe('compile', () => {
   it('should not build bad code', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, { 'index.ts': 'bad code' });
-    await assert.rejects(builder({ type: 'module', inDir, outDir }), {
+    await assert.rejects(compile({ type: 'module', inDir, outDir }), {
       message: `tsc failed ${JSON.stringify([
         `tsc: ${inDir}/index.ts (1,1): Unexpected keyword or identifier.`,
         `tsc: ${inDir}/index.ts (1,1): Cannot find name 'bad'.`,
@@ -148,7 +145,7 @@ describe('test builder', () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
-    await assert.rejects(builder({ type: 'module', inDir, outDir }), {
+    await assert.rejects(compile({ type: 'module', inDir, outDir }), {
       message: `ENOENT: no such file or directory, scandir '${inDir}'`,
     });
     await assert.rejects(read(outDir), {
@@ -161,7 +158,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, {});
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     await assert.rejects(read(outDir), {
       message: `ENOENT: no such file or directory, scandir '${outDir}'`,
     });
@@ -172,7 +169,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    const result = await builder({ type: 'types', inDir, outDir });
+    const result = await compile({ type: 'types', inDir, outDir });
     assert.deepEqual(convert(result.outputFiles), {
       'index.d.ts': 'export declare const hello = "world";\n',
     });
@@ -183,7 +180,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
@@ -198,7 +195,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    await writeOutput(await builder({ type: 'module', inDir, outDir, minify: true }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir, minify: true }));
     assert.deepEqual(await read(outDir), {
       'index.mjs': 'var o="world";export{o as hello};\n',
     });
@@ -213,7 +210,7 @@ describe('test builder', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, exportDefaultFunctionModule);
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         'function src_default() {\n' +
@@ -230,54 +227,12 @@ describe('test builder', () => {
     assert.equal(output.default(), 'hello world');
   });
 
-  it('should build a single CJS module that exports function as default', async () => {
-    const id = uuid();
-    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, exportDefaultFunctionModule);
-    await writeOutput(await builder({ type: 'commonjs', inDir, outDir }));
-    assert.deepEqual(await read(outDir), {
-      'index.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var src_exports = {};\n' +
-        '__export(src_exports, {\n' +
-        '  default: () => src_default\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(src_exports);\n' +
-        'function src_default() {\n' +
-        '  return "hello world";\n' +
-        '}\n',
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output = require(path.join(outDir, 'index.cjs'));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    assert.equal(output.default(), 'hello world');
-  });
-
   it('should build an ESM module that imports a second ESM module', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await writeOutput(await builder({ type: 'module', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         'import { hello } from "./thing.mjs";\n' +
@@ -292,122 +247,12 @@ describe('test builder', () => {
     assert.equal(output.default, 'worldworld');
   });
 
-  it('should build a single CJS module', async () => {
-    const id = uuid();
-    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, singleModule);
-    const result = await builder({ type: 'commonjs', inDir, outDir });
-    assert.deepEqual(convert(result.outputFiles), {
-      'index.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var src_exports = {};\n' +
-        '__export(src_exports, {\n' +
-        '  hello: () => hello\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(src_exports);\n' +
-        'var hello = "world";\n' +
-        '0 && (module.exports = {\n' +
-        '  hello\n' +
-        '});\n',
-    });
-  });
-
-  it('should build a CJS module that requires a second CJS module', async () => {
-    const id = uuid();
-    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, twoModules);
-    await writeOutput(await builder({ type: 'commonjs', inDir, outDir }));
-    assert.deepEqual(await read(outDir), {
-      'index.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var src_exports = {};\n' +
-        '__export(src_exports, {\n' +
-        '  default: () => src_default\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(src_exports);\n' +
-        'var import_thing = require("./thing.cjs");\n' +
-        'var src_default = import_thing.hello + "world";\n',
-      'thing.cjs':
-        'var __defProp = Object.defineProperty;\n' +
-        'var __getOwnPropDesc = Object.getOwnPropertyDescriptor;\n' +
-        'var __getOwnPropNames = Object.getOwnPropertyNames;\n' +
-        'var __hasOwnProp = Object.prototype.hasOwnProperty;\n' +
-        'var __export = (target, all) => {\n' +
-        '  for (var name in all)\n' +
-        '    __defProp(target, name, { get: all[name], enumerable: true });\n' +
-        '};\n' +
-        'var __copyProps = (to, from, except, desc) => {\n' +
-        '  if (from && typeof from === "object" || typeof from === "function") {\n' +
-        '    for (let key of __getOwnPropNames(from))\n' +
-        '      if (!__hasOwnProp.call(to, key) && key !== except)\n' +
-        '        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });\n' +
-        '  }\n' +
-        '  return to;\n' +
-        '};\n' +
-        'var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);\n' +
-        '\n' +
-        'var thing_exports = {};\n' +
-        '__export(thing_exports, {\n' +
-        '  hello: () => hello\n' +
-        '});\n' +
-        'module.exports = __toCommonJS(thing_exports);\n' +
-        'var hello = "world";\n' +
-        '0 && (module.exports = {\n' +
-        '  hello\n' +
-        '});\n',
-    });
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output1 = require(path.join(outDir, 'index.cjs'));
-    assert.equal(output1.default, 'worldworld');
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output2 = await import(path.join(outDir, 'index.cjs'));
-    assert.equal(output2.default.default, 'worldworld');
-  });
-
   it('should bundle an ESM module that imports a second ESM module', async () => {
     const id = uuid();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await writeOutput(await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
@@ -430,7 +275,7 @@ describe('test builder', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    await writeOutput(await builder({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
@@ -457,7 +302,7 @@ describe('test builder', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    const result = await builder({
+    const result = await compile({
       type: 'module',
       entryPoint: 'index.ts',
       outFile: 'index.mjs',
@@ -474,30 +319,6 @@ describe('test builder', () => {
         `export {\n` +
         `  hello\n` +
         `};\n`,
-    });
-  });
-
-  it('should bundle a commonjs module that imports external ESM modules', async () => {
-    const id = uuid();
-    const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
-    const inDir = path.join(moduleDir, 'src');
-    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
-    await writeInput(inDir, importExternalModule);
-    await writeNodeModules(moduleDir, testNodeModules);
-    await writeOutput(
-      await builder({
-        type: 'commonjs',
-        entryPoint: 'index.ts',
-        outFile: 'index.cjs',
-        inDir,
-        outDir,
-      }),
-    );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const output = require(path.join(outDir, 'index.cjs'));
-    assert.deepEqual(output.hello, {
-      message: 'hello world',
-      test: 'world',
     });
   });
 });

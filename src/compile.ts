@@ -1,10 +1,10 @@
-// builder/builder.mts
+// compile.ts
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import typescript from 'typescript';
 
+import typescript from 'typescript';
 import { type PluginBuild, build } from 'esbuild';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
@@ -25,8 +25,9 @@ export type ImportKind =
   | 'url-token';
 
 export interface Metafile {
-  inputs: {
-    [path: string]: {
+  inputs: Record<
+    string,
+    {
       bytes: number;
       imports: {
         path: string;
@@ -35,16 +36,18 @@ export interface Metafile {
         original?: string;
       }[];
       format?: 'cjs' | 'esm';
-    };
-  };
-  outputs: {
-    [path: string]: {
+    }
+  >;
+  outputs: Record<
+    string,
+    {
       bytes: number;
-      inputs: {
-        [path: string]: {
+      inputs: Record<
+        string,
+        {
           bytesInOutput: number;
-        };
-      };
+        }
+      >;
       imports: {
         path: string;
         kind: ImportKind | 'file-loader';
@@ -53,8 +56,8 @@ export interface Metafile {
       exports: string[];
       entryPoint?: string;
       cssBundle?: string;
-    };
-  };
+    }
+  >;
 }
 
 export interface OutputFile {
@@ -62,16 +65,16 @@ export interface OutputFile {
   text: string;
 }
 
-export interface BuildResult {
+export interface CompileResult {
   metafile?: Metafile | undefined;
   outputFiles: OutputFile[];
 }
 
-export interface BuilderOptions {
+export interface CompileOptions {
   /**
-   * whether to produce Typescript types, ESM or CommonJS code
+   * whether to produce Typescript types or ESM code
    */
-  type: 'module' | 'commonjs' | 'types';
+  type: 'module' | 'types';
 
   /**
    * the entry point for the bundle, relative to the inDir.  if not provided, the files in the inDir will be processed
@@ -135,7 +138,7 @@ function excludeSourceMaps(filter: RegExp) {
   return (pluginBuild: PluginBuild) => {
     // ignore source maps for any Javascript file that matches filter
     pluginBuild.onLoad({ filter }, async (args) => {
-      if (args.path.endsWith('.js') || args.path.endsWith('.mjs') || args.path.endsWith('.cjs')) {
+      if (args.path.endsWith('.js') || args.path.endsWith('.mjs')) {
         return {
           contents: `${await fs.readFile(
             args.path,
@@ -149,8 +152,7 @@ function excludeSourceMaps(filter: RegExp) {
   };
 }
 
-function resolveTypescriptPaths(type: 'module' | 'commonjs') {
-  const extension = type === 'module' ? 'mjs' : 'cjs';
+function resolveTypescriptPaths() {
   return (pluginBuild: PluginBuild) => {
     // rewrite paths based on standard node resolution
     pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
@@ -170,13 +172,13 @@ function resolveTypescriptPaths(type: 'module' | 'commonjs') {
         // do nothing
       }
       let newPath = resolved.path;
-      newPath += isDirectory ? `/index.${extension}` : `.${extension}`;
+      newPath += isDirectory ? `/index.mjs` : `.mjs`;
       return { path: newPath, external: true };
     });
   };
 }
 
-// eslint-disable-next-line func-names,max-lines-per-function,max-statements
+// eslint-disable-next-line max-lines-per-function,max-statements
 export default async function ({
   type,
   entryPoint,
@@ -187,7 +189,7 @@ export default async function ({
   minify = false,
   sourceMap,
   workingDirectory = process.cwd(),
-}: BuilderOptions): Promise<BuildResult> {
+}: CompileOptions): Promise<CompileResult> {
   const messages: string[] = [];
 
   assert.ok(
@@ -200,19 +202,18 @@ export default async function ({
     entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
 
   /**
-   * Emit declarations using typescript compiler, if type is 'types'.  Otherwise, just compile to ensure the build is good.
+   * Emit declarations using typescript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
   const program = typescript.createProgram(productionSourceFiles, {
     module: typescript.ModuleKind.ESNext,
-    moduleResolution: typescript.ModuleResolutionKind.Bundler,
     target: typescript.ScriptTarget.ESNext,
+    moduleResolution: typescript.ModuleResolutionKind.Bundler,
+    sourceMap: true,
+    inlineSources: true,
     declaration: true,
-    noEmit: type !== 'types',
-    noEmitOnError: true,
-    emitDeclarationOnly: type === 'types',
-    rootDir: inDir,
-    outDir,
+    removeComments: false,
     noLib: false,
+    noEmitOnError: true,
     skipLibCheck: true,
     strict: true,
     preserveConstEnums: true,
@@ -233,6 +234,11 @@ export default async function ({
     noImplicitOverride: true,
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
+    isolatedDeclarations: false,
+    noEmit: type !== 'types',
+    emitDeclarationOnly: type === 'types',
+    rootDir: inDir,
+    outDir,
   });
   const declarationFiles: OutputFile[] = [];
   const emitResult = program.emit(undefined, (fileName, data) => {
@@ -249,7 +255,6 @@ export default async function ({
       const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
       messages.push(`tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
     } else {
-      // eslint-disable-next-line no-console
       messages.push(`tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`);
     }
   }
@@ -273,7 +278,7 @@ export default async function ({
     minify,
     absWorkingDir: workingDirectory,
     platform: 'node',
-    format: type === 'module' ? 'esm' : 'cjs',
+    format: 'esm',
     treeShaking: type === 'module',
     write: false,
     metafile: outFile !== undefined,
@@ -289,11 +294,11 @@ export default async function ({
       ? {
           // individual files
           outdir: outDir,
-          outExtension: { '.js': type === 'module' ? '.mjs' : '.cjs' },
+          outExtension: { '.js': '.mjs' },
           plugins: [
             {
               name: 'resolve-typescript-paths',
-              setup: resolveTypescriptPaths(type),
+              setup: resolveTypescriptPaths(),
             },
           ],
         }

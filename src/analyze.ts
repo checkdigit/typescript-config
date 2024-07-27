@@ -1,10 +1,10 @@
-// builder/analyze.mts
+// analyze.ts
 
 import { strict as assert } from 'node:assert';
 
 import type { Metafile } from 'esbuild';
 
-export default function analyze(metafile: Metafile) {
+export default function analyze(metafile: Metafile): { sourceBytes: number; moduleBytes: number; totalBytes: number } {
   const source = new Set(Object.keys(metafile.inputs).filter((key) => !key.startsWith('node_modules')));
   const modules = new Set(Object.keys(metafile.inputs).filter((key) => key.startsWith('node_modules')));
 

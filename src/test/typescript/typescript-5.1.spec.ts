@@ -1,8 +1,8 @@
-// typescript-5.1.ts
+// test/typescript/typescript-5.1.ts
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../../describe-it.test';
+import { describe, it } from '../describe-it';
 
 describe('typescript-5.1', () => {
   it('has easier implicit returns', () => {

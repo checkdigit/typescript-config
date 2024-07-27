@@ -1,14 +1,14 @@
-// typescript-5.2.ts
+// test/typescript/typescript-5.2.ts
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../../describe-it.test';
+import { describe, it } from '../describe-it';
 
 describe('typescript-5.2', () => {
   it('has explicit resource management (but not testing "using" keyword)', () => {
     let disposed = false;
 
-    // currently Node does not support "using", but the compiler will still fail pre-5.2 on the Symbol.dispose
+    // currently Node.js does not support "using", but the compiler will still fail pre-5.2 on the Symbol.dispose
     function maybeThrowAnError(error: boolean) {
       const /* using */ disposable = {
           [Symbol.dispose]() {
