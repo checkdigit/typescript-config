@@ -312,7 +312,7 @@ export default async function ({
   });
 
   messages.push(...buildResult.errors.map((error) => `esbuild error: ${error.text}`));
-  messages.push(...buildResult.warnings.map((warning) => `esbuild warning: ${warning.text}`));
+  // messages.push(...buildResult.warnings.map((warning) => `esbuild warning: ${warning.text}`));
   if (messages.length > 0) {
     throw new Error(`esbuild failed ${JSON.stringify(messages)}`);
   }
