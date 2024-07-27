@@ -22,7 +22,7 @@ const {
   },
 });
 
-assert.ok(type === 'module' || type === 'types', 'type must be types or module');
+assert.ok(type === 'module' || type === 'types' || type === 'commonjs', 'type must be types or module');
 assert.ok(inDir !== undefined, 'inDir is required');
 assert.ok(outDir !== undefined, 'outDir is required');
 

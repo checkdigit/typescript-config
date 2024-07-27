@@ -74,7 +74,7 @@ export interface CompileOptions {
   /**
    * whether to produce Typescript types or ESM code
    */
-  type: 'module' | 'types';
+  type: 'module' | 'types' | 'commonjs';
 
   /**
    * the entry point for the bundle, relative to the inDir.  if not provided, the files in the inDir will be processed
