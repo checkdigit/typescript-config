@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "7.1.2",
+  "version": "7.2.0",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -100,26 +100,27 @@
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.6.4",
     "@checkdigit/prettier-config": "^5.5.0",
-    "@eslint/js": "^9.7.0",
+    "@eslint/js": "^9.8.0",
     "@jest/globals": "^29.7.0",
     "@types/uuid": "^10.0.0",
-    "eslint": "9.7.0",
+    "eslint": "9.8.0",
     "eslint-config-prettier": "^9.1.0",
     "jest": "^29.7.0",
     "rimraf": "^6.0.1",
-    "ts-jest": "^29.2.2",
-    "typescript-eslint": "^7.16.1",
+    "ts-jest": "^29.2.3",
+    "typescript-eslint": "^7.18.0",
     "uuid": "^10.0.0"
   },
   "peerDependencies": {
-    "@types/node": ">=20.14",
+    "@types/node": ">=20.16",
     "esbuild": "0.23.0",
-    "typescript": ">=5.5.3 <5.6.0"
+    "typescript": "5.6.0-beta"
   },
   "engines": {
-    "node": ">=20.14"
+    "node": ">=20.16"
   },
   "overrides": {
-    "eslint": "9.7.0"
+    "eslint": "9.8.0",
+    "typescript": "5.6.0-beta"
   }
 }
