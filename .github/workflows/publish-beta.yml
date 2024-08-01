@@ -17,7 +17,7 @@ jobs:
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
-          allow-licenses:  ${{ env.ALLOW_LICENSES }}
+          allow-licenses: ${{ env.ALLOW_LICENSES }}
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
