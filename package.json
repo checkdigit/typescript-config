@@ -99,7 +99,7 @@
   },
   "devDependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.6.4",
-    "@checkdigit/prettier-config": "^5.5.0",
+    "@checkdigit/prettier-config": "^5.5.1",
     "@eslint/js": "^9.8.0",
     "@jest/globals": "^29.7.0",
     "@types/uuid": "^10.0.0",
