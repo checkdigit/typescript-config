@@ -7,6 +7,7 @@ import { describe, it } from '../describe-it';
 describe('typescript-4.8', () => {
   it('has typescript 4.8 features', () => {
     // improved intersection reduction, union compatibility, and narrowing
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     function f48(x: unknown, y: {} | null | undefined) {
       x = y;
       y = x; // works in 4.8
