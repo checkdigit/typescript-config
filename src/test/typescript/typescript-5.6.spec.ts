@@ -46,7 +46,7 @@ describe('typescript-5.6', () => {
         const { value, done } = iter.next();
         // @ts-expect-error
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        yield value.toUppercase();  // method should be "toUpperCase", value is possibly undefined
+        yield value.toUppercase(); // method should be "toUpperCase", value is possibly undefined
         if (done) {
           return;
         }
