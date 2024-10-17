@@ -4,7 +4,6 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it } from '../describe-it';
 
-// file.only
 describe('typescript-5.6', () => {
   it('disallowed nullish and truthy checks', () => {
     // @ts-expect-error
