@@ -54,7 +54,7 @@
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
     "ci:test": "npm run build && npm run test:jest-mjs && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
-    "lint": "eslint  --max-warnings 0 .",
+    "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint . --fix",
     "prepare": "",
     "prepublishOnly": "npm run build:builder && npm run build:dist-types && npm run build:dist-mjs",
@@ -107,7 +107,7 @@
     "jest": "^29.7.0",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.2.5",
-    "typescript-eslint": "^8.9.0",
+    "typescript-eslint": "^8.10.0",
     "uuid": "^10.0.0"
   },
   "peerDependencies": {
