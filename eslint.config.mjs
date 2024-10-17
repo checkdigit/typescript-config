@@ -8,7 +8,7 @@ import prettier from 'eslint-config-prettier';
 
 const ignores = [
   ...(await fs.readFile('.gitignore', 'utf-8')).split('\n').filter((path) => path.trim() !== ''),
-  'eslint.config.js',
+  'eslint.config.mjs',
 ];
 
 export default [

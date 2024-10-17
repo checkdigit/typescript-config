@@ -9,7 +9,7 @@
     "removeComments": false,
     "noLib": false,
     "noEmitOnError": false,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "types": ["node"],
     "strict": true,
     "preserveConstEnums": true,
@@ -30,6 +30,6 @@
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true,
-    "isolatedDeclarations": false
+    "isolatedDeclarations": true
   }
 }
