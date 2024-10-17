@@ -10,7 +10,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 
 ### Typescript Configuration
 
-- currently requires Node 20.13 or above.
+- currently requires Node 20.17 or above.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
   up any issues with using newer features unavailable in a particular environment. Browsers and Node.js are fast-moving
   targets, and can add language features at any time.
@@ -23,7 +23,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 It is intended to be used when publishing a package to NPM, or to bundle a package for deployment.
 It uses `tsc` for generating types, and `esbuild` for generating code.
 
-**Note:** the `require` function will be defined as a global variable, to allow
+**Note:** th[README.md](README.md)e `require` function will be defined as a global variable, to allow
 dynamic `require`s by CommonJS submodules. This is not a problem for Node.js, but will cause issues in a browser environment.
 
 #### Options
