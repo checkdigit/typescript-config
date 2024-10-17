@@ -23,7 +23,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 It is intended to be used when publishing a package to NPM, or to bundle a package for deployment.
 It uses `tsc` for generating types, and `esbuild` for generating code.
 
-**Note:** th[README.md](README.md)e `require` function will be defined as a global variable, to allow
+**Note:** the `require` function will be defined as a global variable, to allow
 dynamic `require`s by CommonJS submodules. This is not a problem for Node.js, but will cause issues in a browser environment.
 
 #### Options
