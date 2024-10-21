@@ -18,3 +18,4 @@ import './typescript/typescript-5.3.spec';
 import './typescript/typescript-5.4.spec';
 import './typescript/typescript-5.5.spec';
 import './typescript/typescript-5.6.spec';
+import './typescript/typescript-5.7.spec';
