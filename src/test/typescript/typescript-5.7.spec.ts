@@ -4,7 +4,7 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it } from '../describe-it';
 
-describe.only('typescript-5.7', () => {
+describe('typescript-5.7', () => {
   it('checks for never-initialized variables', () => {
     // eslint-disable-next-line init-declarations
     let result: number;
