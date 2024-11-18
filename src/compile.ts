@@ -173,6 +173,10 @@ function resolveTypescriptPaths() {
       }
       let newPath = resolved.path;
       newPath += isDirectory ? `/index.mjs` : `.mjs`;
+      // we need to trim the .ts out, now that "allowImportingTsExtensions": true
+      if (newPath.endsWith('.ts.mjs')) {
+        newPath = `${newPath.slice(0, -'.ts.mjs'.length)}.mjs`;
+      }
       return { path: newPath, external: true };
     });
   };
@@ -235,6 +239,7 @@ export default async function ({
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
     isolatedDeclarations: false,
+    allowImportingTsExtensions: true,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,

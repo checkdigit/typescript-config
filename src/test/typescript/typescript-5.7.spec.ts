@@ -2,7 +2,8 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+// "allowImportingTsExtensions": true
+import { describe, it } from '../describe-it.ts';
 
 describe('typescript-5.7', () => {
   it('checks for never-initialized variables', () => {
