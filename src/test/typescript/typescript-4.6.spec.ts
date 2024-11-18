@@ -13,6 +13,7 @@ describe('typescript-4.6', () => {
       const { kind, payload } = action;
       if (kind === 'NumberContents') {
         assert.ok(payload * 2);
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       } else if (kind === 'StringContents') {
         assert.ok(payload.trim());
       }

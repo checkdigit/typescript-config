@@ -9,5 +9,7 @@ import { describe as nodeDescribe, it as nodeIt } from 'node:test';
  */
 
 export const describe: typeof jestDescribe =
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   (globalThis as unknown as { describe: typeof jestDescribe }).describe ?? nodeDescribe;
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 export const it: typeof jestIt = (globalThis as unknown as { it: typeof jestIt }).it ?? nodeIt;

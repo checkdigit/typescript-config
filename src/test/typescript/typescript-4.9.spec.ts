@@ -11,7 +11,7 @@ describe('typescript-4.9', () => {
     const palette49 = {
       red: [255, 0, 0],
       green: '#00ff00',
-      // @ts-expect-error
+      // @ts-expect-error now an error in Typescript 4.9
       bleu: [0, 0, 255], //  typo is now caught
     } satisfies Record<Colors49, string | RGB49>;
     assert.equal(typeof palette49, 'object');

@@ -4,11 +4,11 @@
 
 Copyright (c) 2022–2024 [Check Digit, LLC](https://checkdigit.com)
 
-### Introduction
+## Introduction
 
 This module contains the standard Check Digit Typescript configuration, along with our standard build tool `builder`.
 
-### Typescript Configuration
+## Typescript Configuration
 
 - currently requires Node 20.17 or above.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
@@ -17,7 +17,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 - uses the `module` type of `esnext`.
 - all compiler options set for maximum strictness.
 
-### Builder
+## Builder
 
 `builder` is a command line tool that generates ESM modules from the Typescript source.
 It is intended to be used when publishing a package to NPM, or to bundle a package for deployment.
@@ -26,7 +26,7 @@ It uses `tsc` for generating types, and `esbuild` for generating code.
 **Note:** the `require` function will be defined as a global variable, to allow
 dynamic `require`s by CommonJS submodules. This is not a problem for Node.js, but will cause issues in a browser environment.
 
-#### Options
+### Options
 
 - `--type` the type of output to generate. Defaults to `module` (ESM). Valid values are `module` or `types`.
 - `--entryPoint` the entry point for the bundle, relative to the inDir. if not provided, the files in the inDir will
@@ -39,9 +39,9 @@ dynamic `require`s by CommonJS submodules. This is not a problem for Node.js, bu
 - `--minify` whether to minify the output.
 - `--sourceMap` whether to include inline sourcemap.
 
-#### Examples
+### Examples
 
-```
+```shell
 # build ESM .mjs files from Typescript source
 npx builder --type=module --outDir=build-esm
 
@@ -49,7 +49,7 @@ npx builder --type=module --outDir=build-esm
 npx builder --type=module --outDir=build-esm-bundle --entryPoint=index.ts --outFile=index.mjs
 ```
 
-### Tests
+## Tests
 
 This module includes a number of integration-style tests, to ensure that a specific version of Typescript will interoperate
 with `builder`, in addition to libraries and frameworks used by Check Digit:
@@ -81,7 +81,7 @@ Bear in mind, any update of Typescript can potentially break your build. But hop
 
 ### Installation
 
-```
+```shell
 npm add -D @checkdigit/typescript-config
 ```
 
@@ -92,7 +92,7 @@ Make sure your project's `tsconfig.json` extends `@checkdigit/typescript-config`
 
 ### Example `tsconfig.json`
 
-```
+```json
 {
   "extends": "@checkdigit/typescript-config"
 }

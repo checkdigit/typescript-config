@@ -5,7 +5,8 @@ import { strict as assert } from 'node:assert';
 import { describe, it } from '../describe-it';
 
 // 4.5 introduces type modifiers on import names
-import { ok, type AssertPredicate } from 'node:assert';
+// eslint-disable-next-line no-duplicate-imports
+import { type AssertPredicate, ok } from 'node:assert';
 
 describe('typescript-4.5', () => {
   it('has typescript 4.5 features', () => {
@@ -25,10 +26,10 @@ describe('typescript-4.5', () => {
       message: string;
     }
 
-    function handler45(r: Success45 | Error45) {
-      if (r.type === 'HttpSuccess') {
+    function handler45(thing: Success45 | Error45) {
+      if (thing.type === 'HttpSuccess') {
         // 'r' has type 'Success'
-        assert.ok(r.body);
+        assert.ok(thing.body);
       }
     }
     handler45({ type: 'HttpSuccess', body: 'Hello' });

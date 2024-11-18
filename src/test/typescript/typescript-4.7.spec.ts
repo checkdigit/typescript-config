@@ -7,7 +7,7 @@ import { describe, it } from '../describe-it';
 describe('typescript-4.7', () => {
   it('has typescript 4.7 features', () => {
     // control-flow analysis for bracketed element access
-    const key = Symbol();
+    const key = Symbol('symbol');
     const numberOrString = Math.random() < 0.5 ? 42 : 'hello';
     const obj = {
       [key]: numberOrString,

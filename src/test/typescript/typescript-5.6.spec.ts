@@ -6,8 +6,8 @@ import { describe, it } from '../describe-it';
 
 describe('typescript-5.6', () => {
   it('disallowed nullish and truthy checks', () => {
-    // @ts-expect-error
-    // eslint-disable-next-line no-constant-condition
+    // @ts-expect-error now an error in 5.6
+    // eslint-disable-next-line no-constant-condition,@typescript-eslint/no-unnecessary-condition
     if (/0x[0-9a-f]/u) {
       // this block always runs
     }
@@ -15,13 +15,14 @@ describe('typescript-5.6', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function isValid(value: string | number, options: any, strictness: 'strict' | 'loose') {
       if (strictness === 'loose') {
+        // eslint-disable-next-line no-param-reassign
         value = Number(value);
       }
       return value < (options.max ?? 100);
     }
 
-    // @ts-expect-error
-    // eslint-disable-next-line no-constant-binary-expression
+    // @ts-expect-error now an error in 5.6
+    // eslint-disable-next-line no-constant-binary-expression,@typescript-eslint/no-unnecessary-condition
     if (isValid(1, {}, 'strict') || isValid(2, {}, 'strict') || isValid(1, {}, 'loose' || isValid(2, {}, 'loose'))) {
       // did we forget a closing ')'?
     }
@@ -30,6 +31,7 @@ describe('typescript-5.6', () => {
   (process.version < 'v22' ? it.skip : it)('iterator helper methods (node 22+)', () => {
     function* positiveIntegers() {
       let i = 1;
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       while (true) {
         yield i;
         i += 1;
@@ -41,17 +43,16 @@ describe('typescript-5.6', () => {
 
   it('strict built-in iterator checks', () => {
     function* uppercase(iter: Iterator<string, BuiltinIteratorReturn>) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       while (true) {
         const { value, done } = iter.next();
-        // @ts-expect-error
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        // @ts-expect-error now an error in 5.6
         yield value.toUppercase(); // method should be "toUpperCase", value is possibly undefined
         if (done) {
           return;
         }
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     assert.throws(() => [...uppercase(['a', 'b', 'c'].values())]);
   });
 });

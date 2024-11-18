@@ -5,7 +5,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { compile, analyze } from './index';
+import { analyze, compile } from './index';
 
 const {
   values: { type, inDir, outDir, entryPoint, outFile, external, minify, sourceMap },
@@ -23,8 +23,6 @@ const {
 });
 
 assert.ok(type === 'module' || type === 'types', 'type must be types or module');
-assert.ok(inDir !== undefined, 'inDir is required');
-assert.ok(outDir !== undefined, 'outDir is required');
 
 const compileResult = await compile({
   type,

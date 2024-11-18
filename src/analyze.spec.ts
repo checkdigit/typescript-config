@@ -40,14 +40,13 @@ const testNodeModules = {
   },
 } as const;
 
-interface NodeModule {
-  [name: string]: {
+type NodeModule = Record<
+  string,
+  {
     type?: 'module' | 'commonjs';
-    source: {
-      [file: string]: string;
-    };
-  };
-}
+    source: Record<string, string>;
+  }
+>;
 
 async function writeNodeModules(directory: string, nodeModules: NodeModule) {
   const nodeModulesDirectory = path.join(directory, 'node_modules');

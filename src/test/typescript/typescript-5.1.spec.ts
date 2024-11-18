@@ -13,6 +13,7 @@ describe('typescript-5.1', () => {
         return;
       }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     assert.ok(test() === undefined);
   });
 });

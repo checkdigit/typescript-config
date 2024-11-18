@@ -9,14 +9,18 @@ describe('typescript-4.8', () => {
     // improved intersection reduction, union compatibility, and narrowing
     // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     function f48(x: unknown, y: {} | null | undefined) {
+      // eslint-disable-next-line no-param-reassign
       x = y;
+      // eslint-disable-next-line no-param-reassign
       y = x; // works in 4.8
       assert.equal(x, y);
     }
     f48(null, undefined);
 
     function foo48<T>(x: NonNullable<T>, y: NonNullable<NonNullable<T>>) {
+      // eslint-disable-next-line no-param-reassign
       x = y;
+      // eslint-disable-next-line no-param-reassign
       y = x; // works in 4.8
       assert.equal(x, y);
     }
