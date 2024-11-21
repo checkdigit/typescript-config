@@ -4,7 +4,7 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it } from '../describe-it';
 
-(process.version < 'v22' ? describe.skip : describe)('supports es2024', () => {
+describe('supports es2024', () => {
   // https://github.com/tc39/proposal-array-grouping
   it('supports array grouping', async () => {
     const objectGroupBy = Object.groupBy([0, 1, 2, 3, 4, 5], (num) => (num % 2 === 0 ? 'even' : 'odd'));

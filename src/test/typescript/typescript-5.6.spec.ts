@@ -28,7 +28,7 @@ describe('typescript-5.6', () => {
     }
   });
 
-  (process.version < 'v22' ? it.skip : it)('iterator helper methods (node 22+)', () => {
+  it('iterator helper methods', () => {
     function* positiveIntegers() {
       let i = 1;
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
