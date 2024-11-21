@@ -9,11 +9,9 @@ describe('typescript-5.1', () => {
     // pre 5.1, this would be a "not all code paths return a value" error
     function test(): undefined {
       if (Math.random()) {
-        // eslint-disable-next-line no-useless-return
         return;
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     assert.ok(test() === undefined);
   });
 });

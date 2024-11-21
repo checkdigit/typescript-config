@@ -277,7 +277,16 @@ const tsConfigurations = [
     },
   },
   {
-    files: ['src/plugin/**'],
+    files: ['src/test/**/*.ts'],
+    rules: {
+      'no-constant-condition': 'off',
+      'no-constant-binary-expression': 'off',
+      'no-param-reassign': 'off',
+      'no-useless-return': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unnecessary-type-parameters': 'off',
+    },
   },
 ].map((config) => ({
   ...config,

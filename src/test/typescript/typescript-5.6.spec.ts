@@ -7,22 +7,18 @@ import { describe, it } from '../describe-it.ts';
 describe('typescript-5.6', () => {
   it('disallowed nullish and truthy checks', () => {
     // @ts-expect-error now an error in 5.6
-    // eslint-disable-next-line no-constant-condition,@typescript-eslint/no-unnecessary-condition
     if (/0x[0-9a-f]/u) {
       // this block always runs
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function isValid(value: string | number, options: any, strictness: 'strict' | 'loose') {
       if (strictness === 'loose') {
-        // eslint-disable-next-line no-param-reassign
         value = Number(value);
       }
       return value < (options.max ?? 100);
     }
 
     // @ts-expect-error now an error in 5.6
-    // eslint-disable-next-line no-constant-binary-expression,@typescript-eslint/no-unnecessary-condition
     if (isValid(1, {}, 'strict') || isValid(2, {}, 'strict') || isValid(1, {}, 'loose' || isValid(2, {}, 'loose'))) {
       // did we forget a closing ')'?
     }
@@ -31,7 +27,6 @@ describe('typescript-5.6', () => {
   it('iterator helper methods', () => {
     function* positiveIntegers() {
       let i = 1;
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       while (true) {
         yield i;
         i += 1;
@@ -43,7 +38,6 @@ describe('typescript-5.6', () => {
 
   it('strict built-in iterator checks', () => {
     function* uppercase(iter: Iterator<string, BuiltinIteratorReturn>) {
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       while (true) {
         const { value, done } = iter.next();
         // @ts-expect-error now an error in 5.6

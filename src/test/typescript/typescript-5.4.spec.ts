@@ -8,7 +8,6 @@ describe('typescript-5.4', () => {
   it('preserved narrowing in closures following last assignments', () => {
     function getUrls(url: string | URL, names: string[]) {
       if (typeof url === 'string') {
-        // eslint-disable-next-line no-param-reassign
         url = new URL(url);
       }
       return names.map((name) => {
@@ -43,7 +42,6 @@ describe('typescript-5.4', () => {
   });
 
   it('improved checking against template strings with interpolations', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
     function a<T extends { id: string }>() {
       const x: `-${keyof T & string}` = '-id'; // this was an error pre-5.4
       return x;
