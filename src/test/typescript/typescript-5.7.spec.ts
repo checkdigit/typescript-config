@@ -2,7 +2,6 @@
 
 import { strict as assert } from 'node:assert';
 
-// "allowImportingTsExtensions": true
 import { describe, it } from '../describe-it.ts';
 
 describe('typescript-5.7', () => {

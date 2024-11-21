@@ -5,7 +5,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { analyze, compile } from './index';
+import { analyze, compile } from './index.ts';
 
 const {
   values: { type, inDir, outDir, entryPoint, outFile, external, minify, sourceMap },

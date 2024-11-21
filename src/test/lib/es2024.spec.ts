@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
 describe('supports es2024', () => {
   // https://github.com/tc39/proposal-array-grouping

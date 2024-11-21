@@ -8,8 +8,8 @@ import path from 'node:path';
 import { describe, it } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 
-import compile from './compile';
-import analyze from './analyze';
+import compile from './compile.ts';
+import analyze from './analyze.ts';
 
 const twoModules = {
   [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,

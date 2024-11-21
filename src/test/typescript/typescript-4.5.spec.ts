@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
 // 4.5 introduces type modifiers on import names
 // eslint-disable-next-line no-duplicate-imports

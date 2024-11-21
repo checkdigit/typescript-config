@@ -8,7 +8,7 @@ import path from 'node:path';
 import { describe, it } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 
-import compile from './compile';
+import compile from './compile.ts';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";

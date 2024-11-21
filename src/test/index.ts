@@ -1,4 +1,4 @@
 // test/index.ts
 
-import './lib';
-import './typescript';
+import './lib/index.ts';
+import './typescript/index.ts';
