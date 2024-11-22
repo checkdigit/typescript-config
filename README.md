@@ -60,6 +60,7 @@ with `builder`, in addition to libraries and frameworks used by Check Digit:
 - prettier
 - tsc
 - esbuild
+- Wallaby.js (supports `node:test` by including `@swc-node/register` as a peer dependency)
 
 We do this to ensure that Typescript upgrades do not break these dependencies. New major versions of Typescript are not immediately
 supported by projects such as ts-jest, eslint, prettier, etc. Our policy is to wait until these projects fully support
