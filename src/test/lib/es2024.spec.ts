@@ -2,9 +2,9 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
-(process.version < 'v22' ? describe.skip : describe)('supports es2024', () => {
+describe('supports es2024', () => {
   // https://github.com/tc39/proposal-array-grouping
   it('supports array grouping', async () => {
     const objectGroupBy = Object.groupBy([0, 1, 2, 3, 4, 5], (num) => (num % 2 === 0 ? 'even' : 'odd'));
@@ -30,16 +30,13 @@ import { describe, it } from '../describe-it';
 
   // https://github.com/tc39/proposal-resizablearraybuffer
   it('supports resizable ArrayBuffer', async () => {
-    // @ts-expect-error
     const resizableArrayBuffer = new ArrayBuffer(1024, { maxByteLength: 1024 ** 2 });
-    // @ts-expect-error
     assert.equal(typeof resizableArrayBuffer.resize, 'function');
   });
 
   // https://github.com/tc39/proposal-arraybuffer-transfer
   it('supports ArrayBuffer.transfer', async () => {
     const resizableArrayBuffer = new ArrayBuffer(1024);
-    // @ts-expect-error
     assert.equal(typeof resizableArrayBuffer.transfer, 'function');
   });
 

@@ -30,6 +30,7 @@
     "noImplicitOverride": true,
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true,
-    "isolatedDeclarations": true
+    "isolatedDeclarations": true,
+    "allowImportingTsExtensions": true
   }
 }

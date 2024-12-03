@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
 describe('typescript-5.4', () => {
   it('preserved narrowing in closures following last assignments', () => {
@@ -25,17 +25,17 @@ describe('typescript-5.4', () => {
     function createStreetLight<C extends string>(colors: C[], defaultColor?: NoInfer<C>) {
       return defaultColor === undefined ? undefined : colors.indexOf(defaultColor);
     }
-    // @ts-expect-error
+    // @ts-expect-error now an error in 5.4
     assert.equal(createStreetLight(['red', 'yellow', 'green'], 'blue'), -1);
   });
 
   it('more accurate conditional type constraints', () => {
     type IsArray<T> = T extends unknown[] ? true : false;
     function foo<U extends object>(x: IsArray<U>) {
-      // @ts-expect-error
-      const first: true = x; // this has been an error
-      // @ts-expect-error
-      const second: false = x; // this was not an error pre-5.4
+      // @ts-expect-error now an error in 5.4
+      const first: true = x;
+      // @ts-expect-error now an error in 5.4
+      const second: false = x;
       assert.equal(first, second);
     }
     foo(false);

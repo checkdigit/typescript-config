@@ -5,7 +5,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 import typescript from 'typescript';
-import { type PluginBuild, build } from 'esbuild';
+import { build, type PluginBuild } from 'esbuild';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
@@ -173,12 +173,16 @@ function resolveTypescriptPaths() {
       }
       let newPath = resolved.path;
       newPath += isDirectory ? `/index.mjs` : `.mjs`;
+      // we need to trim the .ts out, now that "allowImportingTsExtensions": true
+      if (newPath.endsWith('.ts.mjs')) {
+        newPath = `${newPath.slice(0, -'.ts.mjs'.length)}.mjs`;
+      }
       return { path: newPath, external: true };
     });
   };
 }
 
-// eslint-disable-next-line max-lines-per-function,max-statements
+// eslint-disable-next-line max-lines-per-function
 export default async function ({
   type,
   entryPoint,
@@ -235,6 +239,7 @@ export default async function ({
     useUnknownInCatchVariables: true,
     exactOptionalPropertyTypes: true,
     isolatedDeclarations: false,
+    allowImportingTsExtensions: true,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,
@@ -279,18 +284,18 @@ export default async function ({
     absWorkingDir: workingDirectory,
     platform: 'node',
     format: 'esm',
-    treeShaking: type === 'module',
+    treeShaking: true,
     write: false,
     metafile: outFile !== undefined,
     sourcesContent: false,
     logLevel: 'error',
     banner:
-      type === 'module' && outFile !== undefined
-        ? {
+      outFile === undefined
+        ? {}
+        : {
             js: commonJsCompatabilityBanner,
-          }
-        : {},
-    sourcemap: sourceMap ? 'inline' : false,
+          },
+    sourcemap: sourceMap === true ? 'inline' : false,
     ...(outFile === undefined
       ? {
           // individual files

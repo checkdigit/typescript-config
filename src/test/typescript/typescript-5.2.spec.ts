@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
 describe('typescript-5.2', () => {
   it('has explicit resource management (but not testing "using" keyword)', () => {

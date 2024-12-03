@@ -2,11 +2,13 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
 describe('typescript-5.0', () => {
   it('supports const type parameters', async () => {
-    type HasNames = { names: readonly string[] };
+    interface HasNames {
+      names: readonly string[];
+    }
 
     function getNamesExactly<const T extends HasNames>(arg: T): T['names'] {
       return arg.names;

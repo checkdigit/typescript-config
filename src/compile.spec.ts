@@ -8,7 +8,7 @@ import path from 'node:path';
 import { describe, it } from '@jest/globals';
 import { v4 as uuid } from 'uuid';
 
-import compile from './compile';
+import compile from './compile.ts';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
@@ -54,14 +54,13 @@ const testNodeModules = {
   },
 } as const;
 
-interface NodeModule {
-  [name: string]: {
+type NodeModule = Record<
+  string,
+  {
     type?: 'module' | 'commonjs';
-    source: {
-      [file: string]: string;
-    };
-  };
-}
+    source: Record<string, string>;
+  }
+>;
 
 async function writeNodeModules(directory: string, nodeModules: NodeModule) {
   const nodeModulesDirectory = path.join(directory, 'node_modules');
@@ -185,7 +184,6 @@ describe('compile', () => {
       'index.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.hello, 'world');
   });
@@ -200,7 +198,6 @@ describe('compile', () => {
       'index.mjs': 'var o="world";export{o as hello};\n',
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.hello, 'world');
   });
@@ -221,9 +218,7 @@ describe('compile', () => {
         '};\n',
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     assert.equal(output.default(), 'hello world');
   });
 
@@ -242,7 +237,6 @@ describe('compile', () => {
         '};\n',
       'thing.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.default, 'worldworld');
   });
@@ -263,7 +257,6 @@ describe('compile', () => {
         `  src_default as default\n` +
         `};\n`,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.default, 'worldworld');
   });
@@ -287,7 +280,6 @@ describe('compile', () => {
         `  hello2 as hello\n` +
         `};\n`,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.deepEqual(output.hello, {
       message: 'hello world',

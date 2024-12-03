@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
 describe('supports es2023', () => {
   it('supports Array.findLastIndex (from es2023.array)', async () => {

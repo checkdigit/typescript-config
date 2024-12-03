@@ -2,7 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 
-import { describe, it } from '../describe-it';
+import { describe, it } from '../describe-it.ts';
 
 import packageJson from '../../../package.json' with { type: 'json' };
 
@@ -20,11 +20,13 @@ describe('typescript-5.3', () => {
       case typeof x === 'string': {
         // pre 5.3: error TS18046: 'x' is of type 'unknown'
         assert.equal(x.toUpperCase(), 'HELLO WORLD');
+        break;
       }
 
       case Array.isArray(x): {
         // pre 5.3: error TS18046: 'x' is of type 'unknown'
         assert.equal(x.length, 11);
+        break;
       }
 
       default: {
@@ -49,7 +51,7 @@ describe('typescript-5.3', () => {
     }
 
     function test(x: MyType) {
-      if (isA(x) === true) {
+      if (isA(x)) {
         // pre 5.3: error TS2339: Property 'a' does not exist on type 'MyType'
         assert.equal(x.a, 'hello');
       }

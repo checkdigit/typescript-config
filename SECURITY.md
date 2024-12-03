@@ -6,8 +6,8 @@ These versions of `@checkdigit/typescript-config` are currently being supported 
 
 | Version | Supported          |
 | ------- | ------------------ |
-| \>= 7.x | :white_check_mark: |
-| \< 7.0  | :x:                |
+| \>= 9.x | :white_check_mark: |
+| \< 9.0  | :x:                |
 
 ## Reporting a Vulnerability
 
