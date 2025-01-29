@@ -22,7 +22,7 @@ const singleModule = {
 };
 
 const twoModules = {
-  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,
+  [`two-modules.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,
   [`thing.ts`]: `export const hello = 'world';`,
 };
 
@@ -229,15 +229,15 @@ describe('compile', () => {
     await writeInput(inDir, twoModules);
     await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
+      'two-modules.mjs':
         'import { hello } from "./thing.mjs";\n' +
-        'var src_default = hello + "world";\n' +
+        'var two_modules_default = hello + "world";\n' +
         'export {\n' +
-        '  src_default as default\n' +
+        '  two_modules_default as default\n' +
         '};\n',
       'thing.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
-    const output = await import(path.join(outDir, 'index.mjs'));
+    const output = await import(path.join(outDir, 'two-modules.mjs'));
     assert.equal(output.default, 'worldworld');
   });
 
@@ -246,18 +246,18 @@ describe('compile', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await writeOutput(await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
+    await writeOutput(await compile({ type: 'module', entryPoint: 'two-modules.ts', outFile: 'two-modules.mjs', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
+      'two-modules.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
         `var hello = "world";\n` +
         `\n` +
-        `var src_default = hello + "world";\n` +
+        `var two_modules_default = hello + "world";\n` +
         `export {\n` +
-        `  src_default as default\n` +
+        `  two_modules_default as default\n` +
         `};\n`,
     });
-    const output = await import(path.join(outDir, 'index.mjs'));
+    const output = await import(path.join(outDir, 'two-modules.mjs'));
     assert.equal(output.default, 'worldworld');
   });
 
