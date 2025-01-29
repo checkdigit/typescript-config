@@ -241,6 +241,7 @@ export default async function ({
     isolatedDeclarations: false,
     allowImportingTsExtensions: true,
     erasableSyntaxOnly: true,
+    libReplacement: false,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,
