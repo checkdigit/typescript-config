@@ -240,6 +240,7 @@ export default async function ({
     exactOptionalPropertyTypes: true,
     isolatedDeclarations: false,
     allowImportingTsExtensions: true,
+    erasableSyntaxOnly: true,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,

@@ -31,6 +31,7 @@
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true,
     "isolatedDeclarations": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true
   }
 }
