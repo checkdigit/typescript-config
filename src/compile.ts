@@ -240,6 +240,7 @@ export default async function ({
     exactOptionalPropertyTypes: true,
     isolatedDeclarations: false,
     allowImportingTsExtensions: true,
+    noUncheckedSideEffectImports: true,
     erasableSyntaxOnly: true,
     libReplacement: false,
     noEmit: type !== 'types',

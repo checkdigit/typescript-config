@@ -32,6 +32,7 @@
     "exactOptionalPropertyTypes": true,
     "isolatedDeclarations": true,
     "allowImportingTsExtensions": true,
+    "noUncheckedSideEffectImports": true,
     "erasableSyntaxOnly": true,
     "libReplacement": false
   }
