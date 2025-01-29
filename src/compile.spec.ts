@@ -27,7 +27,7 @@ const twoModules = {
 };
 
 const exportDefaultFunctionModule = {
-  [`index.ts`]: `export default function () { return 'hello world' }\n`,
+  [`export-default=function-module.ts`]: `export default function () { return 'hello world' }\n`,
 };
 
 const importExternalModule = {
@@ -209,16 +209,16 @@ describe('compile', () => {
     await writeInput(inDir, exportDefaultFunctionModule);
     await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
-        'function src_default() {\n' +
+      'export-default=function-module.mjs':
+        'function export_default_function_module_default() {\n' +
         '  return "hello world";\n' +
         '}\n' +
         'export {\n' +
-        '  src_default as default\n' +
+        '  export_default_function_module_default as default\n' +
         '};\n',
     });
 
-    const output = await import(path.join(outDir, 'index.mjs'));
+    const output = await import(path.join(outDir, 'export-default=function-module.mjs'));
     assert.equal(output.default(), 'hello world');
   });
 
