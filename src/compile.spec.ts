@@ -246,7 +246,9 @@ describe('compile', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await writeOutput(await compile({ type: 'module', entryPoint: 'two-modules.ts', outFile: 'two-modules.mjs', inDir, outDir }));
+    await writeOutput(
+      await compile({ type: 'module', entryPoint: 'two-modules.ts', outFile: 'two-modules.mjs', inDir, outDir }),
+    );
     assert.deepEqual(await read(outDir), {
       'two-modules.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
