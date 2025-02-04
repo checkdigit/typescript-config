@@ -1,8 +1,7 @@
 // typescript/typescript-5.3.spec.ts
 
 import { strict as assert } from 'node:assert';
-
-import { describe, it } from '../describe-it.ts';
+import { describe, it } from 'node:test';
 
 import packageJson from '../../../package.json' with { type: 'json' };
 

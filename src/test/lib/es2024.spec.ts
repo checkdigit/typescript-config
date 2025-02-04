@@ -1,8 +1,7 @@
 // test/lib/es2024.spec.ts
 
 import { strict as assert } from 'node:assert';
-
-import { describe, it } from '../describe-it.ts';
+import { describe, it } from 'node:test';
 
 describe('supports es2024', () => {
   // https://github.com/tc39/proposal-array-grouping

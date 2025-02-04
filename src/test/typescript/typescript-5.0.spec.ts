@@ -1,8 +1,7 @@
 // test/typescript/typescript-5.0.spec.ts
 
 import { strict as assert } from 'node:assert';
-
-import { describe, it } from '../describe-it.ts';
+import { describe, it } from 'node:test';
 
 describe('typescript-5.0', () => {
   it('supports const type parameters', async () => {

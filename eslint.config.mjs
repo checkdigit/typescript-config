@@ -239,6 +239,39 @@ const tsConfigurations = [
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/strict-boolean-expressions': 'off',
       '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        {
+          allowForKnownSafeCalls: [
+            {
+              from: 'package',
+              name: [
+                'after',
+                'afterEach',
+                'before',
+                'beforeEach',
+                'describe',
+                'describe.only',
+                'describe.skip',
+                'describe.todo',
+                'it',
+                'it.only',
+                'it.skip',
+                'it.todo',
+                'suite',
+                'suite.only',
+                'suite.skip',
+                'suite.todo',
+                'test',
+                'test.only',
+                'test.skip',
+                'test.todo',
+              ],
+              package: 'node:test',
+            },
+          ],
+        },
+      ],
       'import/no-extraneous-dependencies': 'off',
       'n/no-process-env': 'off',
       'max-lines': 'off',
@@ -257,6 +290,7 @@ const tsConfigurations = [
     rules: {
       ...jest.configs['flat/recommended'].rules,
       'jest/expect-expect': 'off',
+      'jest/no-deprecated-functions': 'off',
       'jest/max-nested-describe': [
         'error',
         {
