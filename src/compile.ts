@@ -7,8 +7,7 @@ import path from 'node:path';
 import typescript from 'typescript';
 import { build, type PluginBuild } from 'esbuild';
 
-// until we drop Jest, we can't use import assertion since it doesn't understand it
-import tsConfigJson from '../tsconfig.json'; // assert { type: 'json' };
+import tsConfigJson from '../tsconfig.json' with { type: 'json' };
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
