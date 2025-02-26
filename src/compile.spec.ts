@@ -6,8 +6,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 
-import { v4 as uuid } from 'uuid';
-
 import compile from './compile.ts';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
@@ -124,7 +122,7 @@ function convert(outputFiles: { path: string; text: string }[]) {
 
 describe('compile', () => {
   it('should not build bad code', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, { 'index.ts': 'bad code' });
@@ -141,7 +139,7 @@ describe('compile', () => {
   });
 
   it('should not build from bad directory', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await assert.rejects(compile({ type: 'module', inDir, outDir }), {
@@ -153,7 +151,7 @@ describe('compile', () => {
   });
 
   it('should build from empty directory, but not create output directory', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, {});
@@ -164,7 +162,7 @@ describe('compile', () => {
   });
 
   it('should build types', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
@@ -175,7 +173,7 @@ describe('compile', () => {
   });
 
   it('should build a single ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
@@ -189,7 +187,7 @@ describe('compile', () => {
   });
 
   it('should minify a single ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
@@ -203,7 +201,7 @@ describe('compile', () => {
   });
 
   it('should build a single ESM module that exports function as default', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, exportDefaultFunctionModule);
@@ -223,7 +221,7 @@ describe('compile', () => {
   });
 
   it('should build an ESM module that imports a second ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
@@ -242,7 +240,7 @@ describe('compile', () => {
   });
 
   it('should bundle an ESM module that imports a second ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
@@ -264,7 +262,7 @@ describe('compile', () => {
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
@@ -290,7 +288,7 @@ describe('compile', () => {
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
