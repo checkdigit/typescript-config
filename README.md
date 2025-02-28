@@ -6,9 +6,9 @@ Copyright © 2021–2025 [Check Digit, LLC](https://checkdigit.com)
 
 ## Introduction
 
-This module contains the standard Check Digit Typescript configuration, along with our standard build tool `builder`.
+This module contains the standard Check Digit TypeScript configuration, along with our standard build tool `builder`.
 
-## Typescript Configuration
+## TypeScript Configuration
 
 - currently requires Node 22.11 or above.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
@@ -19,7 +19,7 @@ This module contains the standard Check Digit Typescript configuration, along wi
 
 ## Builder
 
-`builder` is a command line tool that generates ESM modules from the Typescript source.
+`builder` is a command line tool that generates ESM modules from the TypeScript source.
 It is intended to be used when publishing a package to NPM, or to bundle a package for deployment.
 It uses `tsc` for generating types, and `esbuild` for generating code.
 
@@ -42,19 +42,19 @@ dynamic `require`s by CommonJS submodules. This is not a problem for Node.js, bu
 ### Examples
 
 ```shell
-# build ESM .mjs files from Typescript source
+# build ESM .mjs files from TypeScript source
 npx builder --type=module --outDir=build-esm
 
-# build single-file ESM .mjs bundle from Typescript source
+# build single-file ESM .mjs bundle from TypeScript source
 npx builder --type=module --outDir=build-esm-bundle --entryPoint=index.ts --outFile=index.mjs
 ```
 
 ## Tests
 
-This module includes a number of integration-style tests, to ensure that a specific version of Typescript will interoperate
+This module includes a number of integration-style tests,
+to ensure that a specific version of TypeScript will interoperate
 with `builder`, in addition to libraries and frameworks used by Check Digit:
 
-- Jest and `ts-jest`
 - ESLint and `@typescript-eslint/eslint-plugin`
 - Built-in `node:test` runner
 - prettier
@@ -62,23 +62,25 @@ with `builder`, in addition to libraries and frameworks used by Check Digit:
 - esbuild
 - Wallaby.js (supports `node:test` by including `@swc-node/register` as a peer dependency)
 
-We do this to ensure that Typescript upgrades do not break these dependencies. New major versions of Typescript are not immediately
-supported by projects such as ts-jest, eslint, prettier, etc. Our policy is to wait until these projects fully support
-the new version of Typescript, and/or without emitting warnings during these tests, before publishing.
+We do this to ensure that TypeScript upgrades do not break these dependencies.
+New major versions of TypeScript are not immediately
+supported by projects such as eslint, prettier, typescript-eslint,
+etc. Our policy is to wait until these projects fully support
+the new version of TypeScript, and/or without emitting warnings during these tests, before publishing.
 
 ### A note about versioning
 
-Strict semver is a little complicated, as Typescript itself does not adhere to semver. So our "best effort" policy is:
+Strict semver is a little complicated, as TypeScript itself does not adhere to semver. So our "best effort" policy is:
 
 - Each update to the minimum Node target (e.g., Node 18 to Node 20), or a change to a major compiler output option
   (e.g. `module`, `target` or `moduleResolution`) will result in a new major version of this module.
   We coordinate this with whatever the latest LTS version of Node is currently supported by Amazon Lambda,
   Google Cloud Functions, and Azure Functions.
-- Each new "major" version of Typescript (e.g. `4.2.x` to `4.3.x`) will result in a new minor version of this module.
-- A new minor update of Typescript (e.g. `4.3.1` to `4.3.2`) _may_ result in a patch, in
-  a situation where a specific need or issue requires setting a new minimum version of Typescript.
+- Each new "major" version of TypeScript (e.g. `5.7.x` to `5.8.x`) will result in a new minor version of this module.
+- A new minor update of TypeScript (e.g. `5.7.2` to `5.7.3`) _may_ result in a patch, in
+  a situation where a specific need or issue requires setting a new minimum version of TypeScript.
 
-Bear in mind, any update of Typescript can potentially break your build. But hopefully in a way that's useful.
+Bear in mind, any update of TypeScript can potentially break your build. But hopefully in a way that's useful.
 
 ### Installation
 
@@ -86,7 +88,7 @@ Bear in mind, any update of Typescript can potentially break your build. But hop
 npm add -D @checkdigit/typescript-config
 ```
 
-Note: you do not need to explicitly install Typescript itself, as the most recent supported version comes in as a
+Note: you do not need to explicitly install TypeScript itself, as the most recent supported version comes in as a
 peer dependency of `@checkdigit/typescript-config`.
 
 Make sure your project's `tsconfig.json` extends `@checkdigit/typescript-config`.
@@ -99,9 +101,9 @@ Make sure your project's `tsconfig.json` extends `@checkdigit/typescript-config`
 }
 ```
 
-Note this configuration has `moduleResolution` set to `bundler`. This requires that you use the `builder` command
-to produce working code for deployment. However, for simply running Jest tests, this is not necessary if
-used in conjunction with [`@checkdigit/jest-config`](https://github.com/checkdigit/jest-config).
+Note this configuration has `moduleResolution` set to `bundler`.
+This requires the use of the `builder` command
+to produce working code for deployment.
 
 ## License
 

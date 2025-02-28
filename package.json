@@ -84,14 +84,14 @@
   },
   "peerDependencies": {
     "@swc-node/register": "1.10.9",
-    "@types/node": ">=22",
+    "@types/node": ">=22.11",
     "esbuild": "0.25.0",
-    "typescript": "5.8.1-rc"
+    "typescript": ">=5.8.2 <5.9.0"
   },
   "engines": {
     "node": ">=22.11"
   },
   "overrides": {
-    "typescript": "5.8.1-rc"
+    "typescript": ">=5.8.2 <5.9.0"
   }
 }
