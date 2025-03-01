@@ -43,8 +43,119 @@ describe('supports es2025', () => {
     // re2.test('aB'); // false
   });
 
+  // file.only
   // https://github.com/tc39/proposal-iterator-helpers
+  it('support sync iterator helpers', async () => {
+    function* naturals() {
+      let i = 0;
+      while (true) {
+        yield i;
+        i += 1;
+      }
+    }
+
+    // map(), filter(), drop(), take()
+    const iterator1 = naturals()
+      .map((value) => value * value)
+      .filter((value) => value % 2 === 0)
+      .drop(1)
+      .take(3);
+    assert.equal(iterator1.next().value, 4);
+    assert.equal(iterator1.next().value, 16);
+    assert.equal(iterator1.next().value, 36);
+    assert.equal(iterator1.next().done, true);
+
+    // reduce()
+    assert.equal(
+      naturals()
+        .take(5)
+        .reduce((sum, value) => sum + value, 3),
+      13,
+    );
+
+    // flatMap(), toArray()
+    const iterator2 = ["It's Sunny in", '', 'California'].values().flatMap((value) => value.split(' ').values());
+    assert.deepEqual(iterator2.toArray(), ["It's", 'Sunny', 'in', '', 'California']);
+
+    // forEach()
+    let counter = 0;
+    naturals()
+      .take(5)
+      .forEach((value) => {
+        counter += value;
+      });
+    assert.equal(counter, 10);
+
+    // some()
+    assert.equal(
+      naturals().some((value) => value === 3),
+      true,
+    );
+    assert.equal(
+      naturals()
+        .take(2)
+        .some((value) => value === 3),
+      false,
+    );
+
+    // every()
+    assert.equal(
+      naturals()
+        .take(3)
+        .every((value) => value < 3),
+      true,
+    );
+    assert.equal(
+      naturals().every((value) => value < 3),
+      false,
+    );
+
+    // find()
+    assert.equal(
+      naturals()
+        .take(4)
+        .find((value) => value === 3),
+      3,
+    );
+    assert.equal(
+      naturals()
+        .take(3)
+        .find((value) => value === 3),
+      undefined,
+    );
+
+    // Iterator.from()
+    const iterator3 = Iterator.from({ next: () => ({ value: 1, done: false }) });
+    assert(iterator3 instanceof Iterator);
+    assert.equal(iterator3.next().value, 1);
+  });
+
   // https://github.com/tc39/proposal-promise-try
+  it('support Promise.try()', async () => {
+    try {
+      const result1 = await Promise.try(() => 1 + 2);
+      const result2 = await Promise.try(async () => 1 + 2);
+      assert.equal(result1, 3);
+      assert.equal(result2, 3);
+    } catch (error) {
+      if (process.version < 'v23' && error instanceof TypeError) {
+        // Node 22 does not support Promise.try(), so we expect a TypeError
+      } else {
+        throw error;
+      }
+    }
+  });
+
   // https://github.com/tc39/proposal-float16array
+  it('supports Float16Array', async () => {
+    // neither Node 22 nor 23 currently support Float16Array
+    // const array = new Float16Array(8);
+    // assert.equal(array.length, 8);
+  });
+
   // https://github.com/tc39/proposal-regex-escaping
+  it('supports RegExp escaping', async () => {
+    // neither Node 22 nor 23 currently support RegExp.escape
+    // assert.equal(RegExp.escape('The Quick Brown Fox'), '\\x54he\\x20Quick\\x20Brown\\x20Fox');
+  });
 });
