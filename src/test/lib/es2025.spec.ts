@@ -6,22 +6,9 @@ import { describe, it } from 'node:test';
 describe('supports es2025', () => {
   // https://github.com/tc39/proposal-duplicate-named-capturing-groups
   it('supports duplicate named capturing groups', async () => {
-    // commented out due to parsing error in Node 22
+    // commented out due to parsing error in Node 22 (works in Node 23)
     // assert.equal(/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year'], '1984');
     // assert.equal(/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('1984-12')?.groups?.['year'], '1984');
-  });
-
-  // https://github.com/tc39/proposal-regexp-modifiers
-  it('supports regular expression pattern modifiers', async () => {
-    // commented out due to parsing error in Node 22
-    // const re1 = /^[a-z](?-i:[a-z])$/i;
-    // re1.test('ab'); // true
-    // re1.test('Ab'); // true
-    // re1.test('aB'); // false
-    // const re2 = /^(?i:[a-z])[a-z]$/;
-    // re2.test('ab'); // true
-    // re2.test('Ab'); // true
-    // re2.test('aB'); // false
   });
 
   // https://github.com/tc39/proposal-set-methods
@@ -42,4 +29,22 @@ describe('supports es2025', () => {
     assert.deepEqual(set1.isDisjointFrom(set2), false);
     assert.deepEqual(set1.isDisjointFrom(set3), true);
   });
+
+  // https://github.com/tc39/proposal-regexp-modifiers
+  it('supports regular expression pattern modifiers', async () => {
+    // commented out due to parsing error in Node 22 (works in Node 23)
+    // const re1 = /^[a-z](?-i:[a-z])$/i;
+    // re1.test('ab'); // true
+    // re1.test('Ab'); // true
+    // re1.test('aB'); // false
+    // const re2 = /^(?i:[a-z])[a-z]$/;
+    // re2.test('ab'); // true
+    // re2.test('Ab'); // true
+    // re2.test('aB'); // false
+  });
+
+  // https://github.com/tc39/proposal-iterator-helpers
+  // https://github.com/tc39/proposal-promise-try
+  // https://github.com/tc39/proposal-float16array
+  // https://github.com/tc39/proposal-regex-escaping
 });
