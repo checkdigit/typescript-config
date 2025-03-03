@@ -43,7 +43,6 @@ describe('supports es2025', () => {
     // re2.test('aB'); // false
   });
 
-  // file.only
   // https://github.com/tc39/proposal-iterator-helpers
   it('support sync iterator helpers', async () => {
     function* naturals() {
