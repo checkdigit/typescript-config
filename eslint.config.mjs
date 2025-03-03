@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Check Digit, LLC
+ * Copyright (c) 2021-2025 Check Digit, LLC
  *
  * This code is licensed under the MIT license (see LICENSE.txt for details).
  */
@@ -7,8 +7,6 @@
 import { promises as fs } from 'node:fs';
 
 import ts from 'typescript-eslint';
-import tsParser from '@typescript-eslint/parser';
-import jest from 'eslint-plugin-jest';
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import json from '@eslint/json';
@@ -27,7 +25,7 @@ const tsConfigurations = [
   prettier,
   {
     languageOptions: {
-      parser: tsParser,
+      parser: ts.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
       parserOptions: {
@@ -239,6 +237,39 @@ const tsConfigurations = [
       '@typescript-eslint/no-confusing-void-expression': 'off',
       '@typescript-eslint/strict-boolean-expressions': 'off',
       '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-floating-promises': [
+        'error',
+        {
+          allowForKnownSafeCalls: [
+            {
+              from: 'package',
+              name: [
+                'after',
+                'afterEach',
+                'before',
+                'beforeEach',
+                'describe',
+                'describe.only',
+                'describe.skip',
+                'describe.todo',
+                'it',
+                'it.only',
+                'it.skip',
+                'it.todo',
+                'suite',
+                'suite.only',
+                'suite.skip',
+                'suite.todo',
+                'test',
+                'test.only',
+                'test.skip',
+                'test.todo',
+              ],
+              package: 'node:test',
+            },
+          ],
+        },
+      ],
       'import/no-extraneous-dependencies': 'off',
       'n/no-process-env': 'off',
       'max-lines': 'off',
@@ -249,31 +280,6 @@ const tsConfigurations = [
       'no-undefined': 'off',
       'prefer-promise-reject-errors': 'off',
       'require-yield': 'off',
-    },
-  },
-  {
-    files: ['**/*.spec.ts'],
-    ...jest.configs['flat/recommended'],
-    rules: {
-      ...jest.configs['flat/recommended'].rules,
-      'jest/expect-expect': 'off',
-      'jest/max-nested-describe': [
-        'error',
-        {
-          max: 1,
-        },
-      ],
-      'jest/no-duplicate-hooks': ['error'],
-      'jest/prefer-hooks-in-order': ['error'],
-      'jest/prefer-hooks-on-top': ['error'],
-      'jest/no-disabled-tests': ['error'],
-      'jest/no-commented-out-tests': ['error'],
-      'jest/require-top-level-describe': [
-        'error',
-        {
-          maxNumberOfTopLevelDescribes: 1,
-        },
-      ],
     },
   },
   {

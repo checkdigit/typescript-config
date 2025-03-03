@@ -1,8 +1,7 @@
 // test/lib/es2024.spec.ts
 
 import { strict as assert } from 'node:assert';
-
-import { describe, it } from '../describe-it.ts';
+import { describe, it } from 'node:test';
 
 describe('supports es2024', () => {
   // https://github.com/tc39/proposal-array-grouping
@@ -51,6 +50,7 @@ describe('supports es2024', () => {
     assert.equal(/[\p{Decimal_Number}--[0-9]]/v.test('4'), false);
   });
 
+  // https://github.com/tc39/proposal-is-usv-string
   it('supports well-formed Unicode strings', async () => {
     assert.equal(typeof ''.isWellFormed, 'function');
     assert.equal(typeof ''.toWellFormed, 'function');

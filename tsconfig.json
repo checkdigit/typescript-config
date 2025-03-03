@@ -8,7 +8,7 @@
     "declaration": true,
     "removeComments": false,
     "noLib": false,
-    "noEmitOnError": false,
+    "noEmit": true,
     "skipLibCheck": false,
     "types": ["node"],
     "strict": true,
@@ -31,6 +31,9 @@
     "useUnknownInCatchVariables": true,
     "exactOptionalPropertyTypes": true,
     "isolatedDeclarations": true,
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noUncheckedSideEffectImports": true,
+    "erasableSyntaxOnly": true,
+    "libReplacement": false
   }
 }

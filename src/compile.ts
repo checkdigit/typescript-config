@@ -7,6 +7,8 @@ import path from 'node:path';
 import typescript from 'typescript';
 import { build, type PluginBuild } from 'esbuild';
 
+import tsConfigJson from '../tsconfig.json' with { type: 'json' };
+
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
 import { default as __path } from "node:path";
@@ -206,40 +208,11 @@ export default async function ({
     entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
 
   /**
-   * Emit declarations using typescript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
+   * Emit declarations using TypeScript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
+  const compilerOptions = typescript.parseJsonConfigFileContent(tsConfigJson, typescript.sys, outDir).options;
   const program = typescript.createProgram(productionSourceFiles, {
-    module: typescript.ModuleKind.ESNext,
-    target: typescript.ScriptTarget.ESNext,
-    moduleResolution: typescript.ModuleResolutionKind.Bundler,
-    sourceMap: true,
-    inlineSources: true,
-    declaration: true,
-    removeComments: false,
-    noLib: false,
-    noEmitOnError: true,
-    skipLibCheck: true,
-    strict: true,
-    preserveConstEnums: true,
-    noImplicitReturns: true,
-    noUnusedLocals: true,
-    noUnusedParameters: true,
-    alwaysStrict: true,
-    verbatimModuleSyntax: true,
-    forceConsistentCasingInFileNames: true,
-    emitDecoratorMetadata: true,
-    experimentalDecorators: true,
-    resolveJsonModule: true,
-    esModuleInterop: true,
-    noUncheckedIndexedAccess: true,
-    noPropertyAccessFromIndexSignature: true,
-    allowUnusedLabels: false,
-    allowUnreachableCode: false,
-    noImplicitOverride: true,
-    useUnknownInCatchVariables: true,
-    exactOptionalPropertyTypes: true,
-    isolatedDeclarations: false,
-    allowImportingTsExtensions: true,
+    ...compilerOptions,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,

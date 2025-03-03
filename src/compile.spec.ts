@@ -4,9 +4,7 @@ import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-
-import { describe, it } from '@jest/globals';
-import { v4 as uuid } from 'uuid';
+import { describe, it } from 'node:test';
 
 import compile from './compile.ts';
 
@@ -22,12 +20,12 @@ const singleModule = {
 };
 
 const twoModules = {
-  [`index.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,
+  [`two-modules.ts`]: `import { hello } from './thing';\nexport default hello + 'world' as string;\n`,
   [`thing.ts`]: `export const hello = 'world';`,
 };
 
 const exportDefaultFunctionModule = {
-  [`index.ts`]: `export default function () { return 'hello world' }\n`,
+  [`export-default-function-module.ts`]: `export default function () { return 'hello world' }\n`,
 };
 
 const importExternalModule = {
@@ -124,7 +122,7 @@ function convert(outputFiles: { path: string; text: string }[]) {
 
 describe('compile', () => {
   it('should not build bad code', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, { 'index.ts': 'bad code' });
@@ -141,7 +139,7 @@ describe('compile', () => {
   });
 
   it('should not build from bad directory', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await assert.rejects(compile({ type: 'module', inDir, outDir }), {
@@ -153,7 +151,7 @@ describe('compile', () => {
   });
 
   it('should build from empty directory, but not create output directory', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
     await writeInput(inDir, {});
@@ -164,7 +162,7 @@ describe('compile', () => {
   });
 
   it('should build types', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
@@ -175,7 +173,7 @@ describe('compile', () => {
   });
 
   it('should build a single ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
@@ -189,7 +187,7 @@ describe('compile', () => {
   });
 
   it('should minify a single ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
@@ -203,66 +201,68 @@ describe('compile', () => {
   });
 
   it('should build a single ESM module that exports function as default', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, exportDefaultFunctionModule);
     await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
-        'function src_default() {\n' +
+      'export-default-function-module.mjs':
+        'function export_default_function_module_default() {\n' +
         '  return "hello world";\n' +
         '}\n' +
         'export {\n' +
-        '  src_default as default\n' +
+        '  export_default_function_module_default as default\n' +
         '};\n',
     });
 
-    const output = await import(path.join(outDir, 'index.mjs'));
+    const output = await import(path.join(outDir, 'export-default-function-module.mjs'));
     assert.equal(output.default(), 'hello world');
   });
 
   it('should build an ESM module that imports a second ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
     await writeOutput(await compile({ type: 'module', inDir, outDir }));
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
+      'two-modules.mjs':
         'import { hello } from "./thing.mjs";\n' +
-        'var src_default = hello + "world";\n' +
+        'var two_modules_default = hello + "world";\n' +
         'export {\n' +
-        '  src_default as default\n' +
+        '  two_modules_default as default\n' +
         '};\n',
       'thing.mjs': 'var hello = "world";\nexport {\n  hello\n};\n',
     });
-    const output = await import(path.join(outDir, 'index.mjs'));
+    const output = await import(path.join(outDir, 'two-modules.mjs'));
     assert.equal(output.default, 'worldworld');
   });
 
   it('should bundle an ESM module that imports a second ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    await writeOutput(await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
+    await writeOutput(
+      await compile({ type: 'module', entryPoint: 'two-modules.ts', outFile: 'two-modules.mjs', inDir, outDir }),
+    );
     assert.deepEqual(await read(outDir), {
-      'index.mjs':
+      'two-modules.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
         `var hello = "world";\n` +
         `\n` +
-        `var src_default = hello + "world";\n` +
+        `var two_modules_default = hello + "world";\n` +
         `export {\n` +
-        `  src_default as default\n` +
+        `  two_modules_default as default\n` +
         `};\n`,
     });
-    const output = await import(path.join(outDir, 'index.mjs'));
+    const output = await import(path.join(outDir, 'two-modules.mjs'));
     assert.equal(output.default, 'worldworld');
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
@@ -288,7 +288,7 @@ describe('compile', () => {
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');

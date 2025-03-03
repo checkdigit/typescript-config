@@ -4,9 +4,7 @@ import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-
-import { describe, it } from '@jest/globals';
-import { v4 as uuid } from 'uuid';
+import { describe, it } from 'node:test';
 
 import compile from './compile.ts';
 import analyze from './analyze.ts';
@@ -72,7 +70,7 @@ async function writeInput(directory: string, files: Record<string, string>): Pro
 
 describe('analyze', () => {
   it('should bundle an ESM module that imports a second ESM module', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
@@ -85,7 +83,7 @@ describe('analyze', () => {
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
@@ -107,7 +105,7 @@ describe('analyze', () => {
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {
-    const id = uuid();
+    const id = crypto.randomUUID();
     const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
     const inDir = path.join(moduleDir, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
