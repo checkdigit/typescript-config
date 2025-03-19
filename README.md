@@ -53,13 +53,15 @@ npx builder --type=module --outDir=build-esm-bundle --entryPoint=index.ts --outF
 
 This module includes a number of integration-style tests,
 to ensure that a specific version of TypeScript will interoperate
-with `builder`, in addition to libraries and frameworks used by Check Digit:
+with `builder`, in addition to runtimes, libraries and frameworks used by Check Digit:
 
+- Recent TC39 proposals
+- Node versions supported by AWS Lambda, Google Cloud Functions, and Azure Functions
 - ESLint and `@typescript-eslint/eslint-plugin`
 - Built-in `node:test` runner
-- prettier
-- tsc
-- esbuild
+- `prettier`
+- `tsc`, and specific features introduced in each version of TypeScript
+- `esbuild`
 - Wallaby.js (supports `node:test` by including `@swc-node/register` as a peer dependency)
 
 We do this to ensure that TypeScript upgrades do not break these dependencies.
