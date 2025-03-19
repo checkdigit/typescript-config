@@ -3,7 +3,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-describe('supports es2025', () => {
+describe('es2025', () => {
   // https://github.com/tc39/proposal-duplicate-named-capturing-groups
   if (process.version < 'v23') {
     it('does not support duplicate named capturing groups', async () => {
