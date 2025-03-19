@@ -64,8 +64,10 @@ with `builder`, in addition to runtimes, libraries and frameworks used by Check 
 - `esbuild`
 - Wallaby.js (supports `node:test` by including `@swc-node/register` as a peer dependency)
 
-We do this to ensure that TypeScript upgrades do not break these dependencies.
-New major versions of TypeScript are not immediately
+We do this to ensure that TypeScript upgrades do not break these dependencies,
+and that updates to these related projects do not break builds.
+
+Note: New major versions of TypeScript are not immediately
 supported by projects such as eslint, prettier, typescript-eslint,
 etc. Our policy is to wait until these projects fully support
 the new version of TypeScript, and/or without emitting warnings during these tests, before publishing.
@@ -79,8 +81,7 @@ Strict semver is a little complicated, as TypeScript itself does not adhere to s
   We coordinate this with whatever the latest LTS version of Node is currently supported by Amazon Lambda,
   Google Cloud Functions, and Azure Functions.
 - Each new "major" version of TypeScript (e.g. `5.7.x` to `5.8.x`) will result in a new minor version of this module.
-- A new minor update of TypeScript (e.g. `5.7.2` to `5.7.3`) _may_ result in a patch, in
-  a situation where a specific need or issue requires setting a new minimum version of TypeScript.
+- A new minor update of TypeScript (e.g. `5.7.2` to `5.7.3`) or a key dependency (e.g., Node `22.11` to Node `22.14`) _may_ result in a patch.
 
 Bear in mind, any update of TypeScript can potentially break your build. But hopefully in a way that's useful.
 
