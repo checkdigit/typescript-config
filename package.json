@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -46,9 +46,9 @@
     "build:dist-mjs": "rimraf dist-mjs && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
     "build:dist-types": "rimraf dist-types && npx builder --type=types --outDir=dist-types",
     "build:mjs": "rimraf build-mjs && bin/builder.mjs --type=module --outDir=build-mjs",
-    "build:mjs-bundle": "rimraf build-mjs-bundle && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=test/index.ts --outFile=test/index.mjs",
-    "build:mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=test/index.ts --outFile=test/index.mjs",
-    "build:mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=test/index.ts --outFile=test/index.mjs --minify",
+    "build:mjs-bundle": "rimraf build-mjs-bundle && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=index.test.ts --outFile=index.test.mjs",
+    "build:mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
+    "build:mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
     "build:types": "rimraf build-types && bin/builder.mjs --type=types --outDir=build-types",
     "ci:compile": "tsc --noEmit --rootDir src",
     "ci:lint": "npm run lint",
@@ -62,30 +62,30 @@
     "prettier:fix": "prettier --ignore-path .gitignore --write .",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
     "test:mjs": "node --test build-mjs/test/index.mjs",
-    "test:mjs-bundle": "node --test build-mjs-bundle/test/index.mjs",
-    "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/test/index.mjs",
-    "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/test/index.mjs",
+    "test:mjs-bundle": "node --test build-mjs-bundle/index.test.mjs",
+    "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/index.test.mjs",
+    "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/index.test.mjs",
     "test:node-mjs": "node --disable-warning ExperimentalWarning --experimental-strip-types --test-timeout 600000 --test \"src/**/*.spec.ts\""
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
     "@checkdigit/prettier-config": "^6.3.0",
-    "@eslint/js": "^9.21.0",
-    "@eslint/json": "^0.10.0",
-    "@eslint/markdown": "^6.2.2",
-    "eslint": "^9.21.0",
-    "eslint-config-prettier": "^10.0.2",
+    "@eslint/js": "^9.22.0",
+    "@eslint/json": "^0.11.0",
+    "@eslint/markdown": "^6.3.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-yml": "^1.17.0",
     "rimraf": "^6.0.1",
-    "typescript-eslint": "^8.26.0"
+    "typescript-eslint": "^8.26.1"
   },
   "peerDependencies": {
-    "@swc-node/register": "1.10.9",
-    "@types/node": ">=22.11",
-    "esbuild": "0.25.0",
+    "@swc-node/register": "1.10.10",
+    "@types/node": ">=22",
+    "esbuild": "0.25.1",
     "typescript": ">=5.8.2 <5.9.0"
   },
   "engines": {
-    "node": ">=22.11"
+    "node": ">=22.14"
   }
 }
