@@ -147,14 +147,25 @@ describe('supports es2025', () => {
 
   // https://github.com/tc39/proposal-float16array
   it('supports Float16Array', async () => {
-    // neither Node 22 nor 23 currently support Float16Array
+    // neither Node 22 nor 23 currently support Float16Array or Math.f16round()
+    assert.throws(() => new Float16Array(8), {
+      name: 'ReferenceError',
+      message: 'Float16Array is not defined',
+    });
+    assert.equal(Math.f16round, undefined);
     // const array = new Float16Array(8);
     // assert.equal(array.length, 8);
+    // assert.equal(Math.f16round(1.2), 1.2001953125);
   });
 
   // https://github.com/tc39/proposal-regex-escaping
   it('supports RegExp escaping', async () => {
     // neither Node 22 nor 23 currently support RegExp.escape
+    // eslint-disable-next-line no-eval
+    assert.throws(() => eval('RegExp.escape("")'), {
+      name: 'TypeError',
+      message: 'RegExp.escape is not a function',
+    });
     // assert.equal(RegExp.escape('The Quick Brown Fox'), '\\x54he\\x20Quick\\x20Brown\\x20Fox');
   });
 });
