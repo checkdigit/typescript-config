@@ -1,4 +1,4 @@
-// test/typescript/typescript-5.0.spec.ts
+// test/node/node-22.spec.ts
 
 import { strict as assert } from 'node:assert';
 import module from 'node:module';

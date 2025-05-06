@@ -1,4 +1,4 @@
-// typescript/typescript-5.4.spec.ts
+// test/typescript/typescript-5.4.spec.ts
 
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';

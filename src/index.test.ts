@@ -1,3 +1,3 @@
-// index.ts
+// index.test.ts
 
 import './test/index.ts';
