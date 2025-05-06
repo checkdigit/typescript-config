@@ -21,8 +21,13 @@ describe('typescript-5.4', () => {
   });
 
   it('NoInfer utility type', () => {
-    function createStreetLight<C extends string>(colors: C[], defaultColor?: NoInfer<C>) {
-      return defaultColor === undefined ? undefined : colors.indexOf(defaultColor);
+    function createStreetLight<C extends string>(
+      colors: C[],
+      defaultColor?: NoInfer<C>,
+    ) {
+      return defaultColor === undefined
+        ? undefined
+        : colors.indexOf(defaultColor);
     }
     // @ts-expect-error now an error in 5.4
     assert.equal(createStreetLight(['red', 'yellow', 'green'], 'blue'), -1);

@@ -7,10 +7,18 @@ import packageJson from '../../../package.json' with { type: 'json' };
 
 describe('typescript-5.3', () => {
   it('supports import attributes', async () => {
-    const dynamicPackageJson = await import('../../../package.json', { with: { type: 'json' } });
+    const dynamicPackageJson = await import('../../../package.json', {
+      with: { type: 'json' },
+    });
     assert.deepEqual(dynamicPackageJson.default, packageJson);
-    assert.equal(dynamicPackageJson.default.description, 'Check Digit standard Typescript configuration');
-    assert.equal(dynamicPackageJson.default.name, '@checkdigit/typescript-config');
+    assert.equal(
+      dynamicPackageJson.default.description,
+      'Check Digit standard Typescript configuration',
+    );
+    assert.equal(
+      dynamicPackageJson.default.name,
+      '@checkdigit/typescript-config',
+    );
   });
 
   it('supports switch (true) narrowing', () => {

@@ -8,8 +8,11 @@ describe('es2025', () => {
   if (process.version < 'v23') {
     it('does not support duplicate named capturing groups', async () => {
       assert.throws(
-        // eslint-disable-next-line no-eval
-        () => eval("/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']"),
+        () =>
+          // eslint-disable-next-line no-eval
+          eval(
+            "/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']",
+          ),
         {
           name: 'SyntaxError',
           message:
@@ -21,7 +24,9 @@ describe('es2025', () => {
     it('supports duplicate named capturing groups', async () => {
       assert.equal(
         // eslint-disable-next-line no-eval
-        eval("/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']"),
+        eval(
+          "/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']",
+        ),
         '1984',
       );
       // commented out due to parsing error in Node 22 (works in Node 23)
@@ -92,8 +97,16 @@ describe('es2025', () => {
     );
 
     // flatMap(), toArray()
-    const iterator2 = ["It's Sunny in", '', 'California'].values().flatMap((value) => value.split(' ').values());
-    assert.deepEqual(iterator2.toArray(), ["It's", 'Sunny', 'in', '', 'California']);
+    const iterator2 = ["It's Sunny in", '', 'California']
+      .values()
+      .flatMap((value) => value.split(' ').values());
+    assert.deepEqual(iterator2.toArray(), [
+      "It's",
+      'Sunny',
+      'in',
+      '',
+      'California',
+    ]);
 
     // forEach()
     let counter = 0;
@@ -143,7 +156,9 @@ describe('es2025', () => {
     );
 
     // Iterator.from()
-    const iterator3 = Iterator.from({ next: () => ({ value: 1, done: false }) });
+    const iterator3 = Iterator.from({
+      next: () => ({ value: 1, done: false }),
+    });
     assert(iterator3 instanceof Iterator);
     assert.equal(iterator3.next().value, 1);
   });

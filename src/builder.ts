@@ -8,7 +8,16 @@ import { parseArgs } from 'node:util';
 import { analyze, compile } from './index.ts';
 
 const {
-  values: { type, inDir, outDir, entryPoint, outFile, external, minify, sourceMap },
+  values: {
+    type,
+    inDir,
+    outDir,
+    entryPoint,
+    outFile,
+    external,
+    minify,
+    sourceMap,
+  },
 } = parseArgs({
   options: {
     type: { type: 'string', short: 't', default: 'module' },
@@ -22,7 +31,10 @@ const {
   },
 });
 
-assert.ok(type === 'module' || type === 'types', 'type must be types or module');
+assert.ok(
+  type === 'module' || type === 'types',
+  'type must be types or module',
+);
 
 const compileResult = await compile({
   type,
@@ -46,7 +58,10 @@ await Promise.all(
 // write metafile.json
 if (compileResult.metafile !== undefined) {
   const analysis = analyze(compileResult.metafile);
-  await fs.writeFile(path.join(outDir, 'metafile.json'), JSON.stringify(compileResult.metafile, undefined, 2));
+  await fs.writeFile(
+    path.join(outDir, 'metafile.json'),
+    JSON.stringify(compileResult.metafile, undefined, 2),
+  );
 
   // eslint-disable-next-line no-console
   console.log(

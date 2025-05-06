@@ -14,7 +14,9 @@ import markdown from '@eslint/markdown';
 import yaml from 'eslint-plugin-yml';
 
 const ignores = [
-  ...(await fs.readFile('.gitignore', 'utf-8')).split('\n').filter((path) => path.trim() !== ''),
+  ...(await fs.readFile('.gitignore', 'utf-8'))
+    .split('\n')
+    .filter((path) => path.trim() !== ''),
   'eslint.config.mjs',
 ];
 

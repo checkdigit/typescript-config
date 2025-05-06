@@ -77,9 +77,16 @@ async function writeNodeModules(directory: string, nodeModules: NodeModule) {
   }
 }
 
-async function writeInput(directory: string, files: Record<string, string>): Promise<void> {
+async function writeInput(
+  directory: string,
+  files: Record<string, string>,
+): Promise<void> {
   await fs.mkdir(directory, { recursive: true });
-  await Promise.all(Object.entries(files).map(([name, content]) => fs.writeFile(path.join(directory, name), content)));
+  await Promise.all(
+    Object.entries(files).map(([name, content]) =>
+      fs.writeFile(path.join(directory, name), content),
+    ),
+  );
 }
 
 async function read(dir: string): Promise<Record<string, string>> {
@@ -99,7 +106,11 @@ async function read(dir: string): Promise<Record<string, string>> {
   ) as Record<string, string>;
 }
 
-async function writeOutput({ outputFiles }: { outputFiles: { path: string; text: string }[] }) {
+async function writeOutput({
+  outputFiles,
+}: {
+  outputFiles: { path: string; text: string }[];
+}) {
   return Promise.all(
     outputFiles.map(async (file) => {
       await fs.mkdir(path.join(path.dirname(file.path)), { recursive: true });
@@ -191,7 +202,9 @@ describe('compile', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, singleModule);
-    await writeOutput(await compile({ type: 'module', inDir, outDir, minify: true }));
+    await writeOutput(
+      await compile({ type: 'module', inDir, outDir, minify: true }),
+    );
     assert.deepEqual(await read(outDir), {
       'index.mjs': 'var o="world";export{o as hello};\n',
     });
@@ -216,7 +229,9 @@ describe('compile', () => {
         '};\n',
     });
 
-    const output = await import(path.join(outDir, 'export-default-function-module.mjs'));
+    const output = await import(
+      path.join(outDir, 'export-default-function-module.mjs')
+    );
     assert.equal(output.default(), 'hello world');
   });
 
@@ -245,7 +260,13 @@ describe('compile', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
     await writeOutput(
-      await compile({ type: 'module', entryPoint: 'two-modules.ts', outFile: 'two-modules.mjs', inDir, outDir }),
+      await compile({
+        type: 'module',
+        entryPoint: 'two-modules.ts',
+        outFile: 'two-modules.mjs',
+        inDir,
+        outDir,
+      }),
     );
     assert.deepEqual(await read(outDir), {
       'two-modules.mjs':
@@ -268,7 +289,15 @@ describe('compile', () => {
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, importExternalModule);
     await writeNodeModules(moduleDir, testNodeModules);
-    await writeOutput(await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir }));
+    await writeOutput(
+      await compile({
+        type: 'module',
+        entryPoint: 'index.ts',
+        outFile: 'index.mjs',
+        inDir,
+        outDir,
+      }),
+    );
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +

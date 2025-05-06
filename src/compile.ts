@@ -168,7 +168,9 @@ function resolveTypescriptPaths() {
       }
       let isDirectory = false;
       try {
-        const stats = await fs.lstat(path.join(resolved.resolveDir, resolved.path));
+        const stats = await fs.lstat(
+          path.join(resolved.resolveDir, resolved.path),
+        );
         isDirectory = stats.isDirectory();
       } catch {
         // do nothing
@@ -199,18 +201,25 @@ export default async function ({
   const messages: string[] = [];
 
   assert.ok(
-    (entryPoint === undefined && outFile === undefined) || (entryPoint !== undefined && outFile !== undefined),
+    (entryPoint === undefined && outFile === undefined) ||
+      (entryPoint !== undefined && outFile !== undefined),
     'entryPoint and outFile must both be provided',
   );
 
   const allSourceFiles = await getFiles(inDir);
   const productionSourceFiles =
-    entryPoint === undefined ? allSourceFiles.filter((file) => file.endsWith('.ts')) : [path.join(inDir, entryPoint)];
+    entryPoint === undefined
+      ? allSourceFiles.filter((file) => file.endsWith('.ts'))
+      : [path.join(inDir, entryPoint)];
 
   /**
    * Emit declarations using TypeScript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
-  const compilerOptions = typescript.parseJsonConfigFileContent(tsConfigJson, typescript.sys, outDir).options;
+  const compilerOptions = typescript.parseJsonConfigFileContent(
+    tsConfigJson,
+    typescript.sys,
+    outDir,
+  ).options;
   const program = typescript.createProgram(productionSourceFiles, {
     ...compilerOptions,
     noEmit: type !== 'types',
@@ -229,11 +238,21 @@ export default async function ({
   for (const diagnostic of allDiagnostics) {
     if (diagnostic.file) {
       assert.ok(diagnostic.start !== undefined);
-      const { line, character } = typescript.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
-      const message = typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-      messages.push(`tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+      const { line, character } = typescript.getLineAndCharacterOfPosition(
+        diagnostic.file,
+        diagnostic.start,
+      );
+      const message = typescript.flattenDiagnosticMessageText(
+        diagnostic.messageText,
+        '\n',
+      );
+      messages.push(
+        `tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`,
+      );
     } else {
-      messages.push(`tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`);
+      messages.push(
+        `tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+      );
     }
   }
 
@@ -295,7 +314,9 @@ export default async function ({
         }),
   });
 
-  messages.push(...buildResult.errors.map((error) => `esbuild error: ${error.text}`));
+  messages.push(
+    ...buildResult.errors.map((error) => `esbuild error: ${error.text}`),
+  );
   if (messages.length > 0) {
     throw new Error(`esbuild failed ${JSON.stringify(messages)}`);
   }
