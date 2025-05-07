@@ -5,7 +5,11 @@ import { describe, it } from 'node:test';
 
 describe('es2025', () => {
   // https://github.com/tc39/proposal-duplicate-named-capturing-groups
-  if (process.version < 'v23') {
+  if (process.version < 'v24') {
+    /*
+     * Node 22
+     */
+
     it('does not support duplicate named capturing groups', async () => {
       assert.throws(
         () =>
@@ -20,7 +24,30 @@ describe('es2025', () => {
         },
       );
     });
+
+    // https://github.com/tc39/proposal-float16array
+    it('does not support Float16Array', async () => {
+      // neither Node 22 nor 23 currently support Float16Array or Math.f16round()
+      assert.throws(() => new Float16Array(8), {
+        name: 'ReferenceError',
+        message: 'Float16Array is not defined',
+      });
+      assert.equal(Math.f16round, undefined);
+    });
+
+    // https://github.com/tc39/proposal-regex-escaping
+    it('does not support RegExp escaping', async () => {
+      // eslint-disable-next-line no-eval
+      assert.throws(() => eval('RegExp.escape("")'), {
+        name: 'TypeError',
+        message: 'RegExp.escape is not a function',
+      });
+    });
   } else {
+    /*
+     * Node 24+
+     */
+
     it('supports duplicate named capturing groups', async () => {
       assert.equal(
         // eslint-disable-next-line no-eval
@@ -29,9 +56,25 @@ describe('es2025', () => {
         ),
         '1984',
       );
-      // commented out due to parsing error in Node 22 (works in Node 23)
+      // commented out due to parsing error in Node 22 (works in Node 24)
       // assert.equal(/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year'], '1984');
       // assert.equal(/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('1984-12')?.groups?.['year'], '1984');
+    });
+
+    // https://github.com/tc39/proposal-float16array
+    it('supports Float16Array', async () => {
+      const array = new Float16Array(8);
+      assert.equal(array.length, 8);
+      assert.equal(Math.f16round(1.2), 1.2001953125);
+    });
+
+    // https://github.com/tc39/proposal-regex-escaping
+    it('supports RegExp escaping', async () => {
+      assert.equal(
+        // eslint-disable-next-line no-eval
+        eval('RegExp.escape("The Quick Brown Fox")'),
+        '\\x54he\\x20Quick\\x20Brown\\x20Fox',
+      );
     });
   }
 
@@ -56,7 +99,7 @@ describe('es2025', () => {
 
   // https://github.com/tc39/proposal-regexp-modifiers
   it('supports regular expression pattern modifiers', async () => {
-    // commented out due to parsing error in Node 22 (works in Node 23)
+    // commented out due to parsing error in Node 22 (works in Node 24)
     // const re1 = /^[a-z](?-i:[a-z])$/i;
     // re1.test('ab'); // true
     // re1.test('Ab'); // true
@@ -177,29 +220,5 @@ describe('es2025', () => {
         throw error;
       }
     }
-  });
-
-  // https://github.com/tc39/proposal-float16array
-  it('does not support Float16Array', async () => {
-    // neither Node 22 nor 23 currently support Float16Array or Math.f16round()
-    assert.throws(() => new Float16Array(8), {
-      name: 'ReferenceError',
-      message: 'Float16Array is not defined',
-    });
-    assert.equal(Math.f16round, undefined);
-    // const array = new Float16Array(8);
-    // assert.equal(array.length, 8);
-    // assert.equal(Math.f16round(1.2), 1.2001953125);
-  });
-
-  // https://github.com/tc39/proposal-regex-escaping
-  it('does not support RegExp escaping', async () => {
-    // neither Node 22 nor 23 currently support RegExp.escape
-    // eslint-disable-next-line no-eval
-    assert.throws(() => eval('RegExp.escape("")'), {
-      name: 'TypeError',
-      message: 'RegExp.escape is not a function',
-    });
-    // assert.equal(RegExp.escape('The Quick Brown Fox'), '\\x54he\\x20Quick\\x20Brown\\x20Fox');
   });
 });
