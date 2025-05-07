@@ -157,7 +157,9 @@ function excludeSourceMaps(filter: RegExp) {
 function resolveTypescriptPaths() {
   return (pluginBuild: PluginBuild) => {
     // rewrite paths based on standard node resolution
-    pluginBuild.onResolve({ filter: /.*/u }, async (resolved) => {
+    // Note: the /u flag cannot be used here because the underlying Go implementation does not support it
+    // eslint-disable-next-line require-unicode-regexp
+    pluginBuild.onResolve({ filter: /.*/ }, async (resolved) => {
       if (
         resolved.kind === 'entry-point' ||
         !resolved.path.startsWith('.') ||
@@ -308,7 +310,9 @@ export default async function ({
           plugins: [
             {
               name: 'exclude-source-maps',
-              setup: excludeSourceMaps(/node_modules/u),
+              // Note: the /u flag cannot be used here because the underlying Go implementation does not support it
+              // eslint-disable-next-line require-unicode-regexp
+              setup: excludeSourceMaps(/node_modules/),
             },
           ],
         }),
