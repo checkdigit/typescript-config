@@ -82,7 +82,7 @@
   "peerDependencies": {
     "@swc-node/register": "1.10.10",
     "@types/node": ">=22 <=24.0.8",
-    "esbuild": "0.25.5",
+    "esbuild": "0.25.6",
     "typescript": ">=5.8.3 <5.9.0"
   },
   "engines": {
