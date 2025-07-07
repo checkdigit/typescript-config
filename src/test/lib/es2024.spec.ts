@@ -6,7 +6,9 @@ import { describe, it } from 'node:test';
 describe('es2024', () => {
   // https://github.com/tc39/proposal-array-grouping
   it('supports array grouping', async () => {
-    const objectGroupBy = Object.groupBy([0, 1, 2, 3, 4, 5], (num) => (num % 2 === 0 ? 'even' : 'odd'));
+    const objectGroupBy = Object.groupBy([0, 1, 2, 3, 4, 5], (num) =>
+      num % 2 === 0 ? 'even' : 'odd',
+    );
     assert.deepEqual(
       { ...objectGroupBy },
       {
@@ -15,7 +17,9 @@ describe('es2024', () => {
       },
     );
 
-    const mapGroupBy = Map.groupBy([0, 1, 2, 3, 4, 5], (num) => (num % 2 === 0 ? 'even' : 'odd'));
+    const mapGroupBy = Map.groupBy([0, 1, 2, 3, 4, 5], (num) =>
+      num % 2 === 0 ? 'even' : 'odd',
+    );
     assert.deepEqual(Object.fromEntries(mapGroupBy), {
       even: [0, 2, 4],
       odd: [1, 3, 5],
@@ -29,7 +33,9 @@ describe('es2024', () => {
 
   // https://github.com/tc39/proposal-resizablearraybuffer
   it('supports resizable ArrayBuffer', async () => {
-    const resizableArrayBuffer = new ArrayBuffer(1024, { maxByteLength: 1024 ** 2 });
+    const resizableArrayBuffer = new ArrayBuffer(1024, {
+      maxByteLength: 1024 ** 2,
+    });
     assert.equal(typeof resizableArrayBuffer.resize, 'function');
   });
 

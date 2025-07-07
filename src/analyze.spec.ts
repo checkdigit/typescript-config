@@ -63,9 +63,16 @@ async function writeNodeModules(directory: string, nodeModules: NodeModule) {
   }
 }
 
-async function writeInput(directory: string, files: Record<string, string>): Promise<void> {
+async function writeInput(
+  directory: string,
+  files: Record<string, string>,
+): Promise<void> {
   await fs.mkdir(directory, { recursive: true });
-  await Promise.all(Object.entries(files).map(([name, content]) => fs.writeFile(path.join(directory, name), content)));
+  await Promise.all(
+    Object.entries(files).map(([name, content]) =>
+      fs.writeFile(path.join(directory, name), content),
+    ),
+  );
 }
 
 describe('analyze', () => {
@@ -74,12 +81,20 @@ describe('analyze', () => {
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
     const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
     await writeInput(inDir, twoModules);
-    const result = await compile({ type: 'module', entryPoint: 'index.ts', outFile: 'index.mjs', inDir, outDir });
+    const result = await compile({
+      type: 'module',
+      entryPoint: 'index.ts',
+      outFile: 'index.mjs',
+      inDir,
+      outDir,
+    });
     assert.ok(result.metafile !== undefined);
     const analysis = analyze(result.metafile);
     assert.ok(analysis.moduleBytes === 0);
     assert.ok(analysis.sourceBytes > 0);
-    assert.ok(analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes);
+    assert.ok(
+      analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes,
+    );
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
@@ -101,7 +116,9 @@ describe('analyze', () => {
     const analysis = analyze(result.metafile);
     assert.ok(analysis.sourceBytes > 0);
     assert.ok(analysis.moduleBytes > 0);
-    assert.ok(analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes);
+    assert.ok(
+      analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes,
+    );
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {
@@ -123,6 +140,8 @@ describe('analyze', () => {
     const analysis = analyze(result.metafile);
     assert.ok(analysis.moduleBytes === 0);
     assert.ok(analysis.sourceBytes > 0);
-    assert.ok(analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes);
+    assert.ok(
+      analysis.totalBytes > analysis.sourceBytes + analysis.moduleBytes,
+    );
   });
 });

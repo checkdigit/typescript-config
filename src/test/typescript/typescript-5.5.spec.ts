@@ -1,4 +1,4 @@
-// typescript/typescript-5.5.spec.ts
+// test/typescript/typescript-5.5.spec.ts
 
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
@@ -11,7 +11,9 @@ describe('typescript-5.5', () => {
     const nationalBirds = new Map<string, Bird>();
     nationalBirds.set('USA', { commonName: 'Bald Eagle' });
     function getNames(countries: string[]) {
-      const birds = countries.map((country) => nationalBirds.get(country)).filter((bird) => bird !== undefined);
+      const birds = countries
+        .map((country) => nationalBirds.get(country))
+        .filter((bird) => bird !== undefined);
       const result: string[] = [];
       for (const bird of birds) {
         result.push(bird.commonName); // pre-5.5, errors with TS18048: bird is possibly undefined

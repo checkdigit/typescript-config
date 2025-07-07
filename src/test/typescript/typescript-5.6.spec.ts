@@ -1,4 +1,4 @@
-// typescript/typescript-5.6.spec.ts
+// test/typescript/typescript-5.6.spec.ts
 
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
@@ -10,15 +10,23 @@ describe('typescript-5.6', () => {
       // this block always runs
     }
 
-    function isValid(value: string | number, options: any, strictness: 'strict' | 'loose') {
+    function isValid(
+      value: string | number,
+      options: any,
+      strictness: 'strict' | 'loose',
+    ) {
       if (strictness === 'loose') {
         value = Number(value);
       }
       return value < (options.max ?? 100);
     }
 
-    // @ts-expect-error now an error in 5.6
-    if (isValid(1, {}, 'strict') || isValid(2, {}, 'strict') || isValid(1, {}, 'loose' || isValid(2, {}, 'loose'))) {
+    if (
+      isValid(1, {}, 'strict') ||
+      isValid(2, {}, 'strict') ||
+      // @ts-expect-error now an error in 5.6
+      isValid(1, {}, 'loose' || isValid(2, {}, 'loose'))
+    ) {
       // did we forget a closing ')'?
     }
   });

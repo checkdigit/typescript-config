@@ -42,7 +42,9 @@ describe('typescript-5.2', () => {
   it('has easier method usage for unions of arrays', () => {
     const arrayOfStringOrNumberThings: string[] | number[] = [];
     // use of the filter method here would have been an "expression not callable" error before 5.2
-    const result = arrayOfStringOrNumberThings.filter((item) => typeof item === 'string');
+    const result = arrayOfStringOrNumberThings.filter(
+      (item) => typeof item === 'string',
+    );
     assert.deepEqual(result, []);
   });
 });
