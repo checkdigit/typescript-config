@@ -5,14 +5,13 @@ import { describe, it } from 'node:test';
 
 await (process.version < 'v24' ? describe.skip : describe)('node-24', () => {
   it('URLPattern exists as a global', async () => {
-    // eslint-disable-next-line no-eval
-    assert.equal(eval('typeof URLPattern'), 'function');
+    assert.equal(typeof URLPattern, 'function');
   });
 
   // 24.2+
   it('import.meta.main is available', async () => {
-    const importMeta: object = import.meta;
-    assert.ok('main' in importMeta);
-    assert.ok(typeof importMeta.main === 'boolean');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    assert.ok(typeof import.meta.main === 'boolean');
   });
 });
