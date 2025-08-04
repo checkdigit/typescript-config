@@ -10,8 +10,6 @@ await (process.version < 'v24' ? describe.skip : describe)('node-24', () => {
 
   // 24.2+
   it('import.meta.main is available', async () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     assert.ok(typeof import.meta.main === 'boolean');
   });
 });
