@@ -9,3 +9,4 @@ import './typescript-5.5.spec.ts';
 import './typescript-5.6.spec.ts';
 import './typescript-5.7.spec.ts';
 import './typescript-5.8.spec.ts';
+import './typescript-5.9.spec.ts';
