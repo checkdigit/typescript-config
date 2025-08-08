@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "9.3.0",
+  "version": "9.3.1",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -84,6 +84,9 @@
     "@types/node": ">=22",
     "esbuild": "0.25.8",
     "typescript": ">=5.9.2 <6"
+  },
+  "optionalDependencies": {
+    "@esbuild/linux-x64": "0.25.8"
   },
   "engines": {
     "node": ">=22.15"
