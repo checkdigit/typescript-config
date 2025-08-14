@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "9.3.1",
+  "version": "10.0.0",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -21,7 +21,8 @@
     }
   },
   "bin": {
-    "builder": "./bin/builder.mjs"
+    "builder": "./bin/builder.mjs",
+    "tsc": "./node_modules/.bin/tscgo"
   },
   "files": [
     "bin",
@@ -50,7 +51,7 @@
     "build:mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
     "build:mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
     "build:types": "rimraf build-types && bin/builder.mjs --type=types --outDir=build-types",
-    "ci:compile": "tsc --noEmit --rootDir src",
+    "ci:compile": "tsgo --noEmit --rootDir src",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
     "ci:test": "npm run build && npm run test:node-mjs && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
@@ -70,25 +71,23 @@
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
     "@checkdigit/prettier-config": "^7.1.1",
-    "@eslint/js": "^9.32.0",
+    "@eslint/js": "^9.33.0",
     "@eslint/json": "^0.13.1",
     "@eslint/markdown": "^7.1.0",
-    "eslint": "^9.32.0",
+    "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^1.18.0",
     "rimraf": "^6.0.1",
-    "typescript-eslint": "^8.39.0"
+    "typescript-eslint": "^8.39.1"
   },
   "peerDependencies": {
     "@swc-node/register": "1.10.10",
     "@types/node": ">=22",
+    "@typescript/native-preview": "^7.0.0-dev.20250814.1",
     "esbuild": "0.25.8",
-    "typescript": ">=5.9.2 <6"
-  },
-  "optionalDependencies": {
-    "@esbuild/linux-x64": "0.25.8"
+    "typescript": ">=5.8 <5.9"
   },
   "engines": {
-    "node": ">=22.15"
+    "node": ">=24"
   }
 }
