@@ -71,19 +71,19 @@
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
     "@checkdigit/prettier-config": "^7.1.1",
-    "@eslint/js": "^9.33.0",
-    "@eslint/json": "^0.13.1",
+    "@eslint/js": "^9.34.0",
+    "@eslint/json": "^0.13.2",
     "@eslint/markdown": "^7.2.0",
-    "eslint": "^9.33.0",
+    "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^1.18.0",
     "rimraf": "^6.0.1",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.41.0"
   },
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
-    "@typescript/native-preview": "^7.0.0-dev.20250822.1",
+    "@typescript/native-preview": "^7.0.0-dev.20250826.1",
     "esbuild": "0.25.9",
     "typescript": ">=5.8 <5.9"
   },
