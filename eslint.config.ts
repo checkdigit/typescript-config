@@ -340,4 +340,4 @@ export default [
   ...markdownConfigurations,
   ...jsonConfigurations,
   ...yamlConfigurations,
-] as const;
+] as Linter.Config[];
