@@ -51,7 +51,7 @@
     "build:mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
     "build:mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
     "build:types": "rimraf build-types && bin/builder.mjs --type=types --outDir=build-types",
-    "ci:compile": "tsgo --noEmit --rootDir src",
+    "ci:compile": "tsgo --noEmit",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
     "ci:test": "npm run build && npm run test:node-mjs && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
@@ -77,6 +77,7 @@
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^1.18.0",
+    "jiti": "^2.5.1",
     "rimraf": "^6.0.1",
     "typescript-eslint": "^8.41.0"
   },
