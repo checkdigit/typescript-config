@@ -128,7 +128,7 @@ export interface CompileOptions {
 async function getFiles(directory: string): Promise<string[]> {
   const entries = await fs.readdir(directory, { withFileTypes: true });
   const files = await Promise.all(
-    entries.map((entry) => {
+    entries.map(async (entry) => {
       const result = path.resolve(directory, entry.name);
       return entry.isDirectory() ? getFiles(result) : result;
     }),
