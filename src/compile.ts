@@ -130,7 +130,7 @@ async function getFiles(directory: string): Promise<string[]> {
   const files = await Promise.all(
     entries.map(async (entry) => {
       const result = path.resolve(directory, entry.name);
-      return entry.isDirectory() ? getFiles(result) : result;
+      return entry.isDirectory() ? await getFiles(result) : result;
     }),
   );
   return files.flat();
