@@ -69,24 +69,21 @@
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
-    "@checkdigit/prettier-config": "^7.1.1",
-    "@eslint/js": "^9.32.0",
-    "@eslint/json": "^0.13.1",
-    "@eslint/markdown": "^7.1.0",
-    "eslint": "^9.32.0",
+    "@checkdigit/prettier-config": "^7.1.2",
+    "@eslint/js": "^9.36.0",
+    "@eslint/json": "^0.13.2",
+    "@eslint/markdown": "^7.3.0",
+    "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^1.18.0",
     "rimraf": "^6.0.1",
-    "typescript-eslint": "^8.39.0"
+    "typescript-eslint": "^8.45.0"
   },
   "peerDependencies": {
-    "@swc-node/register": "1.10.10",
+    "@swc-node/register": "1.11.1",
     "@types/node": ">=22",
-    "esbuild": "0.25.8",
-    "typescript": ">=5.9.2 <6"
-  },
-  "optionalDependencies": {
-    "@esbuild/linux-x64": "0.25.8"
+    "esbuild": "0.25.10",
+    "typescript": ">=5.9.3 <6"
   },
   "engines": {
     "node": ">=22.15"
