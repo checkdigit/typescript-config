@@ -83,7 +83,6 @@ const tsConfigurations = [
       'prefer-spread': 'error',
       'require-yield': 'error',
       'no-console': 'error',
-      'no-return-await': 'error',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'error',
       '@typescript-eslint/ban-ts-comment': 'error',
