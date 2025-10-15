@@ -84,8 +84,8 @@
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
-    "@typescript/native-preview": "^7.0.0-dev.20251014.1",
-    "esbuild": "0.25.10",
+    "@typescript/native-preview": "^7.0.0-dev.20251015.1",
+    "esbuild": "0.25.11",
     "typescript": ">=5.9.3 <6"
   },
   "engines": {
