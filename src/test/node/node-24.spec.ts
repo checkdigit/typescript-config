@@ -27,4 +27,12 @@ describe('node-24', () => {
     assert.equal(typeof crypto.encapsulate, 'function');
     assert.equal(typeof crypto.decapsulate, 'function');
   });
+
+  // 24.11+
+  if (process.version.startsWith('v24')) {
+    // Node 24
+    it('Long Term Support (LTS)', async () => {
+      assert.equal(process.release.lts, 'Krypton');
+    });
+  }
 });
