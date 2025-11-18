@@ -7,13 +7,6 @@ describe('es2025', () => {
   // https://github.com/tc39/proposal-duplicate-named-capturing-groups
   it('supports duplicate named capturing groups', async () => {
     assert.equal(
-      // eslint-disable-next-line no-eval
-      eval(
-        "/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']",
-      ),
-      '1984',
-    );
-    assert.equal(
       /(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')
         ?.groups?.['year'],
       '1984',
