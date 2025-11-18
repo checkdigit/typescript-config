@@ -63,13 +63,13 @@ describe('es2025', () => {
   // https://github.com/tc39/proposal-regexp-modifiers
   it('supports regular expression pattern modifiers', async () => {
     const re1 = /^[a-z](?-i:[a-z])$/iu;
-    re1.test('ab'); // true
-    re1.test('Ab'); // true
-    re1.test('aB'); // false
+    assert.equal(re1.test('ab'), true);
+    assert.equal(re1.test('Ab'), true);
+    assert.equal(re1.test('aB'), false);
     const re2 = /^(?i:[a-z])[a-z]$/u;
-    re2.test('ab'); // true
-    re2.test('Ab'); // true
-    re2.test('aB'); // false
+    assert.equal(re2.test('ab'), true);
+    assert.equal(re2.test('Ab'), true);
+    assert.equal(re2.test('aB'), false);
   });
 
   // https://github.com/tc39/proposal-iterator-helpers
