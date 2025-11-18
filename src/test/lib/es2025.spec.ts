@@ -5,78 +5,41 @@ import { describe, it } from 'node:test';
 
 describe('es2025', () => {
   // https://github.com/tc39/proposal-duplicate-named-capturing-groups
-  if (process.version < 'v24') {
-    /*
-     * Node 22
-     */
-
-    it('does not support duplicate named capturing groups', async () => {
-      assert.throws(
-        () =>
-          // eslint-disable-next-line no-eval
-          eval(
-            "/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']",
-          ),
-        {
-          name: 'SyntaxError',
-          message:
-            'Invalid regular expression: /(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u: Duplicate capture group name',
-        },
-      );
-    });
-
-    // https://github.com/tc39/proposal-float16array
-    it('does not support Float16Array', async () => {
-      // neither Node 22 nor 23 currently support Float16Array or Math.f16round()
-      assert.throws(() => new Float16Array(8), {
-        name: 'ReferenceError',
-        message: 'Float16Array is not defined',
-      });
-      assert.equal(Math.f16round, undefined);
-    });
-
-    // https://github.com/tc39/proposal-regex-escaping
-    it('does not support RegExp escaping', async () => {
+  it('supports duplicate named capturing groups', async () => {
+    assert.equal(
       // eslint-disable-next-line no-eval
-      assert.throws(() => eval('RegExp.escape("")'), {
-        name: 'TypeError',
-        message: 'RegExp.escape is not a function',
-      });
-    });
-  } else {
-    /*
-     * Node 24+
-     */
+      eval(
+        "/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']",
+      ),
+      '1984',
+    );
+    assert.equal(
+      /(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')
+        ?.groups?.['year'],
+      '1984',
+    );
+    assert.equal(
+      /(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('1984-12')
+        ?.groups?.['year'],
+      '1984',
+    );
+  });
 
-    it('supports duplicate named capturing groups', async () => {
-      assert.equal(
-        // eslint-disable-next-line no-eval
-        eval(
-          "/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year']",
-        ),
-        '1984',
-      );
-      // commented out due to parsing error in Node 22 (works in Node 24)
-      // assert.equal(/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('12-1984')?.groups?.['year'], '1984');
-      // assert.equal(/(?<year>[0-9]{4})-[0-9]{2}|[0-9]{2}-(?<year>[0-9]{4})/u.exec('1984-12')?.groups?.['year'], '1984');
-    });
+  // https://github.com/tc39/proposal-float16array
+  it('supports Float16Array', async () => {
+    const array = new Float16Array(8);
+    assert.equal(array.length, 8);
+    assert.equal(Math.f16round(1.2), 1.2001953125);
+  });
 
-    // https://github.com/tc39/proposal-float16array
-    it('supports Float16Array', async () => {
-      const array = new Float16Array(8);
-      assert.equal(array.length, 8);
-      assert.equal(Math.f16round(1.2), 1.2001953125);
-    });
-
-    // https://github.com/tc39/proposal-regex-escaping
-    it('supports RegExp escaping', async () => {
-      assert.equal(
-        // eslint-disable-next-line no-eval
-        eval('RegExp.escape("The Quick Brown Fox")'),
-        '\\x54he\\x20Quick\\x20Brown\\x20Fox',
-      );
-    });
-  }
+  // https://github.com/tc39/proposal-regex-escaping
+  it('supports RegExp escaping', async () => {
+    assert.equal(
+      // eslint-disable-next-line no-eval
+      eval('RegExp.escape("The Quick Brown Fox")'),
+      '\\x54he\\x20Quick\\x20Brown\\x20Fox',
+    );
+  });
 
   // https://github.com/tc39/proposal-set-methods
   it('supports new Set methods', async () => {
@@ -99,15 +62,14 @@ describe('es2025', () => {
 
   // https://github.com/tc39/proposal-regexp-modifiers
   it('supports regular expression pattern modifiers', async () => {
-    // commented out due to parsing error in Node 22 (works in Node 24)
-    // const re1 = /^[a-z](?-i:[a-z])$/i;
-    // re1.test('ab'); // true
-    // re1.test('Ab'); // true
-    // re1.test('aB'); // false
-    // const re2 = /^(?i:[a-z])[a-z]$/;
-    // re2.test('ab'); // true
-    // re2.test('Ab'); // true
-    // re2.test('aB'); // false
+    const re1 = /^[a-z](?-i:[a-z])$/iu;
+    re1.test('ab'); // true
+    re1.test('Ab'); // true
+    re1.test('aB'); // false
+    const re2 = /^(?i:[a-z])[a-z]$/u;
+    re2.test('ab'); // true
+    re2.test('Ab'); // true
+    re2.test('aB'); // false
   });
 
   // https://github.com/tc39/proposal-iterator-helpers
@@ -208,17 +170,9 @@ describe('es2025', () => {
 
   // https://github.com/tc39/proposal-promise-try
   it('support Promise.try()', async () => {
-    try {
-      const result1 = await Promise.try(() => 1 + 2);
-      const result2 = await Promise.try(async () => 1 + 2);
-      assert.equal(result1, 3);
-      assert.equal(result2, 3);
-    } catch (error) {
-      if (process.version < 'v23' && error instanceof TypeError) {
-        // Node 22 does not support Promise.try(), so we expect a TypeError
-      } else {
-        throw error;
-      }
-    }
+    const result1 = await Promise.try(() => 1 + 2);
+    const result2 = await Promise.try(async () => 1 + 2);
+    assert.equal(result1, 3);
+    assert.equal(result2, 3);
   });
 });

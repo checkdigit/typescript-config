@@ -3,7 +3,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-await (process.version < 'v24' ? describe.skip : describe)('node-24', () => {
+describe('node-24', () => {
   it('URLPattern exists as a global', async () => {
     assert.equal(typeof URLPattern, 'function');
   });

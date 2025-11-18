@@ -4,10 +4,10 @@
 
 These versions of `@checkdigit/typescript-config` are currently being supported with security updates.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| \>= 9.x | :white_check_mark: |
-| \< 9.0  | :x:                |
+| Version  | Supported          |
+| -------- | ------------------ |
+| \>= 10.x | :white_check_mark: |
+| \< 10.0  | :x:                |
 
 ## Reporting a Vulnerability
 
