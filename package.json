@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "9.3.2",
+  "version": "10.0.0",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -53,7 +53,7 @@
     "ci:compile": "tsc --noEmit --rootDir src",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
-    "ci:test": "npm run build && npm run test:node-mjs && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
+    "ci:test": "npm run build && npm run test:node && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint . --fix",
     "prepare": "",
@@ -65,27 +65,27 @@
     "test:mjs-bundle": "node --test build-mjs-bundle/index.test.mjs",
     "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/index.test.mjs",
     "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/index.test.mjs",
-    "test:node-mjs": "node --disable-warning ExperimentalWarning --experimental-strip-types --test-timeout 600000 --test \"src/**/*.spec.ts\""
+    "test:node": "node --disable-warning ExperimentalWarning --experimental-strip-types --test-timeout 600000 --test \"src/**/*.spec.ts\""
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
     "@checkdigit/prettier-config": "^7.1.2",
-    "@eslint/js": "^9.36.0",
-    "@eslint/json": "^0.13.2",
-    "@eslint/markdown": "^7.3.0",
-    "eslint": "^9.36.0",
+    "@eslint/js": "^9.39.1",
+    "@eslint/json": "^0.14.0",
+    "@eslint/markdown": "^7.5.1",
+    "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-yml": "^1.18.0",
-    "rimraf": "^6.0.1",
-    "typescript-eslint": "^8.45.0"
+    "eslint-plugin-yml": "^1.19.0",
+    "rimraf": "^6.1.0",
+    "typescript-eslint": "^8.47.0"
   },
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
-    "@types/node": ">=22",
-    "esbuild": "0.25.10",
+    "@types/node": ">=24",
+    "esbuild": "0.27.0",
     "typescript": ">=5.9.3 <6"
   },
   "engines": {
-    "node": ">=22.18"
+    "node": ">=24.11"
   }
 }
