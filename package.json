@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "10.0.0",
+  "version": "11.0.0",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -21,7 +21,8 @@
     }
   },
   "bin": {
-    "builder": "./bin/builder.mjs"
+    "builder": "./bin/builder.mjs",
+    "tsc": "./node_modules/.bin/tscgo"
   },
   "files": [
     "bin",
@@ -50,12 +51,12 @@
     "build:mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
     "build:mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
     "build:types": "rimraf build-types && bin/builder.mjs --type=types --outDir=build-types",
-    "ci:compile": "tsc --noEmit --rootDir src",
+    "ci:compile": "time tsgo && time tsc",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
     "ci:test": "npm run build && npm run test:node && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
-    "lint": "eslint --max-warnings 0 .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint . --max-warnings=0 --concurrency=auto",
+    "lint:fix": "eslint . --fix --concurrency=auto",
     "prepare": "",
     "prepublishOnly": "npm run build:builder && npm run build:dist-types && npm run build:dist-mjs",
     "prettier": "prettier --ignore-path .gitignore --list-different .",
@@ -76,12 +77,14 @@
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^1.19.0",
-    "rimraf": "^6.1.0",
+    "jiti": "^2.6.1",
+    "rimraf": "^6.1.2",
     "typescript-eslint": "^8.47.0"
   },
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
+    "@typescript/native-preview": "^7.0.0-dev.20251120.1",
     "esbuild": "0.27.0",
     "typescript": ">=5.9.3 <6"
   },
