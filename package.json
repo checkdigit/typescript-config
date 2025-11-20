@@ -54,7 +54,7 @@
     "ci:compile": "time tsgo && time tsc",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
-    "ci:test": "npm run build && npm run test:node-mjs && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
+    "ci:test": "npm run build && npm run test:node && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
     "lint": "eslint . --max-warnings=0 --concurrency=auto",
     "lint:fix": "eslint . --fix --concurrency=auto",
     "prepare": "",
@@ -75,26 +75,17 @@
     "@eslint/json": "^0.14.0",
     "@eslint/markdown": "^7.5.1",
     "eslint": "^9.39.1",
-    "@eslint/js": "^9.37.0",
-    "@eslint/json": "^0.13.2",
-    "@eslint/markdown": "^7.4.0",
-    "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^1.19.0",
-    "rimraf": "^6.1.0",
-    "typescript-eslint": "^8.47.0"
-    "eslint-plugin-yml": "^1.19.0",
     "jiti": "^2.6.1",
-    "rimraf": "^6.0.1",
-    "typescript-eslint": "^8.46.1"
+    "rimraf": "^6.1.2",
+    "typescript-eslint": "^8.47.0"
   },
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
+    "@typescript/native-preview": "^7.0.0-dev.20251120.1",
     "esbuild": "0.27.0",
-    "@types/node": ">=24",
-    "@typescript/native-preview": "^7.0.0-dev.20251015.1",
-    "esbuild": "0.25.11",
     "typescript": ">=5.9.3 <6"
   },
   "engines": {
