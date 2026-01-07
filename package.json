@@ -79,14 +79,13 @@
     "eslint-plugin-yml": "^1.19.1",
     "jiti": "^2.6.1",
     "rimraf": "^6.1.2",
-    "typescript-eslint": "^8.51.0"
+    "typescript-eslint": "^8.52.0"
   },
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
-    "@typescript/native-preview": "^7.0.0-dev.20251229.1",
+    "@typescript/native-preview": "^7.0.0-dev.20260107.1",
     "esbuild": "0.27.2",
-    "oxc-resolver": "11.13.2",
     "typescript": ">=5.9.3 <6"
   },
   "engines": {
