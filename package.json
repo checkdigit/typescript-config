@@ -69,8 +69,11 @@
     "test:node": "node --disable-warning ExperimentalWarning --experimental-strip-types --test-timeout 600000 --test \"src/**/*.spec.ts\""
   },
   "prettier": "@checkdigit/prettier-config",
+  "overrides": {
+    "typescript": "6.0.0-beta"
+  },
   "devDependencies": {
-    "@checkdigit/prettier-config": "^7.1.2",
+    "@checkdigit/prettier-config": "^8.0.0",
     "@eslint/js": "^9.39.2",
     "@eslint/json": "^0.14.0",
     "@eslint/markdown": "^7.5.1",
@@ -84,9 +87,9 @@
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
-    "@typescript/native-preview": "^7.0.0-dev.20260107.1",
+    "@typescript/native-preview": "7.0.0-dev.20260212.1",
     "esbuild": "0.27.2",
-    "typescript": ">=5.9.3 <6"
+    "typescript": "6.0.0-beta"
   },
   "engines": {
     "node": ">=24.11"
