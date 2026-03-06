@@ -70,7 +70,7 @@
   },
   "prettier": "@checkdigit/prettier-config",
   "overrides": {
-    "typescript": "6.0.0-beta"
+    "typescript": "6.0.1-rc"
   },
   "devDependencies": {
     "@checkdigit/prettier-config": "^8.0.0",
@@ -87,9 +87,9 @@
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
-    "@typescript/native-preview": "7.0.0-dev.20260212.1",
+    "@typescript/native-preview": "7.0.0-dev.20260306.1",
     "esbuild": "0.27.2",
-    "typescript": "6.0.0-beta"
+    "typescript": "6.0.1-rc"
   },
   "engines": {
     "node": ">=24.11"
