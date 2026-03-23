@@ -29,11 +29,7 @@ describe('es2026', () => {
       const array = new Uint8Array([
         72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100,
       ]);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assert.equal(array.toBase64, undefined);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assert.equal(array.toHex, undefined);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
@@ -48,17 +44,9 @@ describe('es2026', () => {
       const array = new Uint8Array([
         72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100,
       ]);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assert.deepEqual(array.toBase64(), 'SGVsbG8gV29ybGQ=');
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assert.deepEqual(array.toHex(), '48656c6c6f20576f726c64');
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assert.deepEqual(Uint8Array.fromBase64('SGVsbG8gV29ybGQ='), array);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       assert.deepEqual(Uint8Array.fromHex('48656c6c6f20576f726c64'), array);
     });
   }
