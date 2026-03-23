@@ -10,6 +10,7 @@
     "noEmit": true,
     "skipLibCheck": false,
     "types": ["node"],
+    "strict": true,
     "preserveConstEnums": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
@@ -30,7 +31,6 @@
     "isolatedDeclarations": true,
     "allowImportingTsExtensions": true,
     "erasableSyntaxOnly": true,
-    "stableTypeOrdering": true,
-    "rootDir": "./src"
+    "stableTypeOrdering": true
   }
 }
