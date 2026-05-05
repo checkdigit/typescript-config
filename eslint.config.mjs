@@ -12,6 +12,7 @@ import prettier from 'eslint-config-prettier';
 import json from '@eslint/json';
 import markdown from '@eslint/markdown';
 import yaml from 'eslint-plugin-yml';
+import importPlugin from 'eslint-plugin-import';
 
 const ignores = [
   ...(await fs.readFile('.gitignore', 'utf-8'))
@@ -25,6 +26,7 @@ const tsConfigurations = [
   ...ts.configs.strictTypeChecked,
   ...ts.configs.stylisticTypeChecked,
   prettier,
+  importPlugin.flatConfigs.typescript,
   {
     languageOptions: {
       parser: ts.parser,
