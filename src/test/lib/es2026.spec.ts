@@ -41,7 +41,7 @@ describe('es2026', () => {
       assert.equal(Uint8Array.fromHex, undefined);
     });
   } else {
-    // Node 25+
+    // Node 26+
     it('supports Uint8Array to/from base64 and hex', async () => {
       const array = new Uint8Array([
         72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100,
@@ -54,22 +54,37 @@ describe('es2026', () => {
   }
 
   // https://github.com/tc39/proposal-iterator-sequencing
-  it('does not support Iterator Sequencing yet', async () => {
-    const lows = Iterator.from([0, 1, 2, 3]);
-    const highs = Iterator.from([6, 7, 8, 9]);
-    assert.throws(
-      () =>
-        assert.deepEqual(
-          // @ts-expect-error not supported by TypeScript 6.0
-          Iterator.concat(lows, [4, 5], highs),
-          [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        ),
-      {
-        name: 'TypeError',
-        message: 'Iterator.concat is not a function',
-      },
-    );
-  });
+  if (process.version < 'v25') {
+    // Node 24
+    it('does not support Iterator Sequencing yet', async () => {
+      const lows = Iterator.from([0, 1, 2, 3]);
+      const highs = Iterator.from([6, 7, 8, 9]);
+      assert.throws(
+        () =>
+          assert.deepEqual(
+            // @ts-expect-error not supported by TypeScript 6.0
+            [...Iterator.concat(lows, [4, 5], highs)],
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+          ),
+        {
+          name: 'TypeError',
+          message:
+            'Iterator.concat is not a function or its return value is not iterable',
+        },
+      );
+    });
+  } else {
+    // Node 26+
+    it('supports Iterator Sequencing', async () => {
+      const lows = Iterator.from([0, 1, 2, 3]);
+      const highs = Iterator.from([6, 7, 8, 9]);
+      assert.deepEqual(
+        // @ts-expect-error not supported by TypeScript 6.0
+        [...Iterator.concat(lows, [4, 5], highs)],
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      );
+    });
+  }
 
   // https://github.com/tc39/proposal-json-parse-with-source
   it('supports JSON.parse source text access', async () => {
@@ -90,23 +105,53 @@ describe('es2026', () => {
   });
 
   // https://github.com/tc39/proposal-upsert
-  it('supports upsert', async () => {
-    const map = new Map<string, number>();
-    // compiles, but unfortunately, Node.js does not support yet
-    assert.throws(() => map.getOrInsert('x', 1), {
-      name: 'TypeError',
+  if (process.version < 'v25') {
+    // Node 24
+    it('does not support upsert yet', async () => {
+      const map = new Map<string, number>();
+      assert.throws(() => map.getOrInsert('x', 1), {
+        name: 'TypeError',
+      });
+      assert.throws(() => map.getOrInsertComputed('x', () => 1), {
+        name: 'TypeError',
+      });
     });
-    assert.throws(() => map.getOrInsertComputed('x', () => 1), {
-      name: 'TypeError',
+  } else {
+    // Node 26+
+    it('supports upsert', async () => {
+      const map = new Map<string, number>();
+      assert.equal(map.getOrInsert('x', 123), 123);
+      assert.equal(map.getOrInsert('x', 456), 123);
+      assert.equal(
+        map.getOrInsertComputed('x', () => 456),
+        123,
+      );
+      assert.equal(
+        map.getOrInsertComputed('y', () => 789),
+        789,
+      );
     });
-  });
+  }
 
   // https://github.com/tc39/proposal-temporal
-  it('supports Temporal', () => {
-    // compiles, but unfortunately, Node.js does not support yet
-    assert.throws(() => Temporal.Now.instant(), {
-      name: 'ReferenceError',
-      message: 'Temporal is not defined',
+  if (process.version < 'v25') {
+    // Node 24
+    it('does not support Temporal yet', () => {
+      // compiles, but unfortunately, Node.js does not support yet
+      assert.throws(() => Temporal.Now.instant(), {
+        name: 'ReferenceError',
+        message: 'Temporal is not defined',
+      });
     });
-  });
+  } else {
+    // Node 26+
+    it('supports Temporal', () => {
+      assert.equal(
+        Temporal.ZonedDateTime.from('2026-05-05T12:00:00[America/New_York]')
+          .toInstant()
+          .toString(),
+        '2026-05-05T16:00:00Z',
+      );
+    });
+  }
 });
