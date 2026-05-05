@@ -3,7 +3,6 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-// file.only
 describe('es2026', () => {
   // https://github.com/tc39/proposal-array-from-async
   it('supports Array.fromAsync', async () => {
@@ -54,7 +53,7 @@ describe('es2026', () => {
   }
 
   // https://github.com/tc39/proposal-iterator-sequencing
-  if (process.version < 'v25') {
+  if (process.version < 'v26') {
     // Node 24
     it('does not support Iterator Sequencing yet', async () => {
       const lows = Iterator.from([0, 1, 2, 3]);
@@ -105,7 +104,7 @@ describe('es2026', () => {
   });
 
   // https://github.com/tc39/proposal-upsert
-  if (process.version < 'v25') {
+  if (process.version < 'v26') {
     // Node 24
     it('does not support upsert yet', async () => {
       const map = new Map<string, number>();
@@ -134,7 +133,7 @@ describe('es2026', () => {
   }
 
   // https://github.com/tc39/proposal-temporal
-  if (process.version < 'v25') {
+  if (process.version < 'v26') {
     // Node 24
     it('does not support Temporal yet', () => {
       // compiles, but unfortunately, Node.js does not support yet

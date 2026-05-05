@@ -10,7 +10,8 @@ This module contains the standard Check Digit TypeScript configuration, along wi
 
 ## TypeScript Configuration
 
-- currently requires Node 24.14.1 or above.
+- currently supports Node 24.14.1 up to, but not including, Node 25, or Node 26 and above.
+- Node 25 is intentionally not part of the support contract.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
   up any issues with using newer features unavailable in a particular environment. Browsers and Node.js are fast-moving
   targets, and can add language features at any time.
