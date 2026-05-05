@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "module": "esnext",
     "target": "esnext",
     "moduleResolution": "bundler",
     "sourceMap": true,
@@ -22,7 +21,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowUnusedLabels": false,
@@ -32,8 +30,7 @@
     "exactOptionalPropertyTypes": true,
     "isolatedDeclarations": true,
     "allowImportingTsExtensions": true,
-    "noUncheckedSideEffectImports": true,
     "erasableSyntaxOnly": true,
-    "libReplacement": false
+    "stableTypeOrdering": true
   }
 }
