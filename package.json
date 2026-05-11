@@ -71,10 +71,10 @@
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
     "@checkdigit/prettier-config": "^8.0.0",
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.39.4",
     "@eslint/json": "^1.2.0",
     "@eslint/markdown": "^8.0.1",
-    "eslint": "^10.2.1",
+    "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^3.3.1",
     "jiti": "^2.6.1",
@@ -89,6 +89,6 @@
     "typescript": ">=6.0.3 <7"
   },
   "engines": {
-    "node": ">=24.13"
+    "node": ">=24.14.1 <25 || >=26"
   }
 }
