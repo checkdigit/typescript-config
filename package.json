@@ -44,13 +44,13 @@
   "scripts": {
     "build": "npm run build:builder && npm run build:types && npm run build:mjs && npm run build:mjs-bundle && npm run build:mjs-bundle-minify && npm run build:mjs-bundle-no-external",
     "build:builder": "esbuild src/builder.ts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
-    "build:dist-mjs": "rimraf dist-mjs && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
-    "build:dist-types": "rimraf dist-types && npx builder --type=types --outDir=dist-types",
-    "build:mjs": "rimraf build-mjs && bin/builder.mjs --type=module --outDir=build-mjs",
-    "build:mjs-bundle": "rimraf build-mjs-bundle && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=index.test.ts --outFile=index.test.mjs",
-    "build:mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
-    "build:mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
-    "build:types": "rimraf build-types && bin/builder.mjs --type=types --outDir=build-types",
+    "build:dist-mjs": "node -e \"require('node:fs').rmSync('dist-mjs', { recursive: true, force: true })\" && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
+    "build:dist-types": "node -e \"require('node:fs').rmSync('dist-types', { recursive: true, force: true })\" && npx builder --type=types --outDir=dist-types",
+    "build:mjs": "node -e \"require('node:fs').rmSync('build-mjs', { recursive: true, force: true })\" && bin/builder.mjs --type=module --outDir=build-mjs",
+    "build:mjs-bundle": "node -e \"require('node:fs').rmSync('build-mjs-bundle', { recursive: true, force: true })\" && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=index.test.ts --outFile=index.test.mjs",
+    "build:mjs-bundle-minify": "node -e \"require('node:fs').rmSync('build-mjs-bundle-minify', { recursive: true, force: true })\" && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
+    "build:mjs-bundle-no-external": "node -e \"require('node:fs').rmSync('build-mjs-bundle-no-external', { recursive: true, force: true })\" && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
+    "build:types": "node -e \"require('node:fs').rmSync('build-types', { recursive: true, force: true })\" && bin/builder.mjs --type=types --outDir=build-types",
     "ci:compile": "time tsgo && time tsc",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
@@ -77,7 +77,6 @@
     "eslint": "^10.4.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^3.4.0",
-    "rimraf": "^6.1.3",
     "typescript-eslint": "^8.60.0"
   },
   "peerDependencies": {
