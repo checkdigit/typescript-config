@@ -3,7 +3,7 @@
     "target": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "@js-temporal/polyfill": ["./src/types/js-temporal-polyfill.ts"]
+      "@js-temporal/polyfill": ["./src/types/js-temporal-polyfill.d.ts"]
     },
     "sourceMap": true,
     "inlineSources": true,

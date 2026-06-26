@@ -3,6 +3,7 @@
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import typescript from 'typescript';
 import { build, type PluginBuild } from 'esbuild';
@@ -220,7 +221,8 @@ export default async function ({
   const compilerOptions = typescript.parseJsonConfigFileContent(
     tsConfigJson,
     typescript.sys,
-    workingDirectory,
+    // @checkdigit/typescript-config package root:
+    path.dirname(path.dirname(fileURLToPath(import.meta.url))),
   ).options;
   const program = typescript.createProgram(productionSourceFiles, {
     ...compilerOptions,
