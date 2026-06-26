@@ -2,6 +2,9 @@
   "compilerOptions": {
     "target": "esnext",
     "moduleResolution": "bundler",
+    "paths": {
+      "@js-temporal/polyfill": ["./src/types/js-temporal-polyfill.ts"]
+    },
     "sourceMap": true,
     "inlineSources": true,
     "declaration": true,

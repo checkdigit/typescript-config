@@ -220,7 +220,7 @@ export default async function ({
   const compilerOptions = typescript.parseJsonConfigFileContent(
     tsConfigJson,
     typescript.sys,
-    outDir,
+    workingDirectory,
   ).options;
   const program = typescript.createProgram(productionSourceFiles, {
     ...compilerOptions,
