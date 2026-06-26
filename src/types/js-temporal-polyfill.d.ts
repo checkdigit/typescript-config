@@ -1,4 +1,4 @@
-// types/js-temporal-polyfill-module.ts
+// types/js-temporal-polyfill.ts
 
 export declare const Temporal: typeof globalThis.Temporal;
 export declare const Intl: typeof globalThis.Intl;
