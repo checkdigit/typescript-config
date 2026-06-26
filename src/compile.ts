@@ -279,6 +279,7 @@ export default async function ({
     platform: 'node',
     format: 'esm',
     treeShaking: true,
+    tsconfigRaw: {}, // we don't need esbuild dealing with typing issues
     write: false,
     metafile: outFile !== undefined,
     sourcesContent: false,
