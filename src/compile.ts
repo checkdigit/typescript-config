@@ -2,6 +2,7 @@
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
+import module from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -189,6 +190,57 @@ function resolveTypescriptPaths() {
   };
 }
 
+/**
+ * The Temporal polyfill handling can be removed once Node 26 becomes minimum version
+ */
+interface TemporalPolyfillPackageJson {
+  exports?: {
+    '.'?: {
+      import?: {
+        default?: string;
+      };
+    }[];
+  };
+}
+
+function getTemporalPolyfillModulePath({
+  exports,
+}: TemporalPolyfillPackageJson): string | undefined {
+  return exports?.['.']?.find((entry) => entry.import?.default !== undefined)
+    ?.import?.default;
+}
+
+function resolveRuntimeTemporalPolyfill(external: string[]) {
+  return (pluginBuild: PluginBuild) => {
+    pluginBuild.onResolve(
+      // Note: the /u flag cannot be used here because the underlying Go implementation does not support it
+      // eslint-disable-next-line require-unicode-regexp
+      { filter: /^@js-temporal\/polyfill$/ },
+      async (resolved) => {
+        const packageJsonPath = module.findPackageJSON(
+          resolved.path,
+          resolved.resolveDir,
+        );
+
+        assert.ok(packageJsonPath !== undefined);
+        if (external.includes('./node_modules/*')) {
+          return { path: resolved.path, external: true };
+        }
+
+        const packageJson = JSON.parse(
+          await fs.readFile(packageJsonPath, 'utf8'),
+        ) as TemporalPolyfillPackageJson;
+        const modulePath = getTemporalPolyfillModulePath(packageJson);
+
+        assert.ok(modulePath !== undefined);
+        return {
+          path: path.join(path.dirname(packageJsonPath), modulePath),
+        };
+      },
+    );
+  };
+}
+
 // eslint-disable-next-line max-lines-per-function
 export default async function ({
   type,
@@ -281,11 +333,6 @@ export default async function ({
     platform: 'node',
     format: 'esm',
     treeShaking: true,
-    tsconfigRaw: {
-      compilerOptions: {
-        paths: {}, // clear paths so "@js-temporal/polyfill" is not rewritten
-      },
-    },
     write: false,
     metafile: outFile !== undefined,
     sourcesContent: false,
@@ -315,6 +362,10 @@ export default async function ({
           legalComments: 'none',
           external,
           plugins: [
+            {
+              name: 'resolve-runtime-temporal-polyfill',
+              setup: resolveRuntimeTemporalPolyfill(external),
+            },
             {
               name: 'exclude-source-maps',
               // Note: the /u flag cannot be used here because the underlying Go implementation does not support it
