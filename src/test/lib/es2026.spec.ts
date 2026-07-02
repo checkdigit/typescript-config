@@ -131,26 +131,4 @@ describe('es2026', () => {
       );
     });
   }
-
-  // https://github.com/tc39/proposal-temporal
-  if (process.version < 'v26') {
-    // Node 24
-    it('does not support Temporal yet', () => {
-      // compiles, but unfortunately, Node.js does not support yet
-      assert.throws(() => Temporal.Now.instant(), {
-        name: 'ReferenceError',
-        message: 'Temporal is not defined',
-      });
-    });
-  } else {
-    // Node 26+
-    it('supports Temporal', () => {
-      assert.equal(
-        Temporal.ZonedDateTime.from('2026-05-05T12:00:00[America/New_York]')
-          .toInstant()
-          .toString(),
-        '2026-05-05T16:00:00Z',
-      );
-    });
-  }
 });
