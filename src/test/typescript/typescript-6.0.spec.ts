@@ -3,7 +3,13 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
+import { Temporal as temporalPolyfill } from '@js-temporal/polyfill';
+
 describe('typescript-6.0', () => {
+  it('typing works with @js-temporal/polyfill', () => {
+    assert.equal(typeof temporalPolyfill.Now.instant, 'function');
+  });
+
   it('less context-Sensitivity on this-less functions', () => {
     function callIt<T>(obj: {
       produce: (x: number) => T;
