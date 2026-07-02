@@ -59,8 +59,8 @@
     "lint:fix": "eslint . --fix --concurrency=auto --flag unstable_native_nodejs_ts_config",
     "prepare": "",
     "prepublishOnly": "npm run build:builder && npm run build:dist-types && npm run build:dist-mjs",
-    "prettier": "prettier --ignore-path .gitignore --list-different .",
-    "prettier:fix": "prettier --ignore-path .gitignore --write .",
+    "prettier": "prettier . --check",
+    "prettier:fix": "prettier . --write",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
     "test:mjs": "node --test build-mjs/test/index.mjs",
     "test:mjs-bundle": "node --test build-mjs-bundle/index.test.mjs",
@@ -70,20 +70,20 @@
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
-    "@checkdigit/prettier-config": "^8.0.0",
+    "@checkdigit/prettier-config": "^8.1.0",
     "@eslint/js": "^10.0.1",
-    "@eslint/json": "^2.0.0",
-    "@eslint/markdown": "^8.0.2",
+    "@eslint/json": "^2.0.1",
+    "@eslint/markdown": "^8.0.3",
     "@js-temporal/polyfill": "^0.5.1",
-    "eslint": "^10.5.0",
+    "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-yml": "^3.4.0",
-    "typescript-eslint": "^8.62.0"
+    "eslint-plugin-yml": "^3.5.0",
+    "typescript-eslint": "^8.62.1"
   },
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
-    "@typescript/native-preview": "7.0.0-dev.20260622.1",
+    "@typescript/native-preview": "7.0.0-dev.20260702.3",
     "esbuild": "0.28.1",
     "typescript": ">=6.0.3 <7"
   },

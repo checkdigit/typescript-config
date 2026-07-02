@@ -41,7 +41,6 @@ describe('node-24', () => {
   it('randomUUIDv7() is available', async () => {
     const uuidV7Regex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
-    // @ts-expect-error node typings do not include it yet
     assert.ok(uuidV7Regex.test(crypto.randomUUIDv7()));
     assert.ok(!uuidV7Regex.test(crypto.randomUUID()));
   });
