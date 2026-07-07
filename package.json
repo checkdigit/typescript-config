@@ -77,8 +77,8 @@
     "@js-temporal/polyfill": "^0.5.1",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-yml": "^3.5.0",
-    "typescript-eslint": "^8.62.1"
+    "eslint-plugin-yml": "^3.6.0",
+    "typescript-eslint": "^8.63.0"
   },
   "peerDependencies": {
     "@swc-node/register": "1.11.1",
