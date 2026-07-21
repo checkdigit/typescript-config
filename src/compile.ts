@@ -10,13 +10,13 @@ import typescript from 'typescript';
 import { build, type PluginBuild } from 'esbuild';
 
 import tsConfigJson from '../tsconfig.json' with { type: 'json' };
+import commonJsCompatibility, {
+  commonJsCompatibilityInject,
+  emptySourceMap,
+  isNodeModulePath,
+} from './commonjs-compatibility.ts';
 
-const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
-import { fileURLToPath as __fileURLToPath } from "node:url";
-import { default as __path } from "node:path";
-const __filename = __fileURLToPath(import.meta.url);
-const __dirname = __path.dirname(__filename);
-const require = __createRequire(import.meta.url);`;
+const packageRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
 export type ImportKind =
   | 'entry-point'
@@ -142,12 +142,12 @@ function excludeSourceMaps(filter: RegExp) {
   return (pluginBuild: PluginBuild) => {
     // ignore source maps for any Javascript file that matches filter
     pluginBuild.onLoad({ filter }, async (args) => {
-      if (args.path.endsWith('.js') || args.path.endsWith('.mjs')) {
+      if (
+        isNodeModulePath(args.path) &&
+        (args.path.endsWith('.js') || args.path.endsWith('.mjs'))
+      ) {
         return {
-          contents: `${await fs.readFile(
-            args.path,
-            'utf8',
-          )}\n//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIiJdLCJtYXBwaW5ncyI6IkEifQ==`,
+          contents: `${await fs.readFile(args.path, 'utf8')}\n${emptySourceMap}`,
           loader: 'default',
         };
       }
@@ -274,7 +274,7 @@ export default async function ({
     tsConfigJson,
     typescript.sys,
     // @checkdigit/typescript-config package root:
-    path.dirname(path.dirname(fileURLToPath(import.meta.url))),
+    packageRoot,
   ).options;
   const program = typescript.createProgram(productionSourceFiles, {
     ...compilerOptions,
@@ -337,12 +337,7 @@ export default async function ({
     metafile: outFile !== undefined,
     sourcesContent: false,
     logLevel: 'error',
-    banner:
-      outFile === undefined
-        ? {}
-        : {
-            js: commonJsCompatabilityBanner,
-          },
+    inject: outFile === undefined ? [] : [commonJsCompatibilityInject],
     sourcemap: sourceMap === true ? 'inline' : false,
     ...(outFile === undefined
       ? {
@@ -362,6 +357,10 @@ export default async function ({
           legalComments: 'none',
           external,
           plugins: [
+            {
+              name: 'common-js-compatibility',
+              setup: commonJsCompatibility(),
+            },
             {
               name: 'resolve-runtime-temporal-polyfill',
               setup: resolveRuntimeTemporalPolyfill(external),
