@@ -10,10 +10,12 @@ import compile from './compile.ts';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
-import { default as __path } from "node:path";
 const __filename = __fileURLToPath(import.meta.url);
-const __dirname = __path.dirname(__filename);
 const require = __createRequire(import.meta.url);`;
+
+const dirnameInject = `import path from "node:path";
+import { fileURLToPath } from "node:url";
+var __dirname = path.dirname(fileURLToPath(import.meta.url));`;
 
 const singleModule = {
   [`index.ts`]: `export const hello = 'world';`,
@@ -271,6 +273,7 @@ describe('compile', () => {
     assert.deepEqual(await read(outDir), {
       'two-modules.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
+        `${dirnameInject}\n\n` +
         `var hello = "world";\n` +
         `\n` +
         `var two_modules_default = hello + "world";\n` +
@@ -280,6 +283,41 @@ describe('compile', () => {
     });
     const output = await import(path.join(outDir, 'two-modules.mjs'));
     assert.equal(output.default, 'worldworld');
+  });
+
+  it('should bundle an ESM module that declares __dirname', async () => {
+    const id = crypto.randomUUID();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await writeInput(inDir, {
+      'index.ts': `
+const __dirname = 'declared in project';
+export const localDirname: string = __dirname;
+export { injectedDirname } from './dependency.ts';
+`,
+      'dependency.ts': `export const injectedDirname: string = __dirname;`,
+    });
+    await writeOutput(
+      await compile({
+        type: 'module',
+        entryPoint: 'index.ts',
+        outFile: 'index.mjs',
+        inDir,
+        outDir,
+      }),
+    );
+
+    const output = await import(path.join(outDir, 'index.mjs'));
+    assert.deepEqual(
+      {
+        injectedDirname: output.injectedDirname as unknown,
+        localDirname: output.localDirname as unknown,
+      },
+      {
+        injectedDirname: await fs.realpath(outDir),
+        localDirname: 'declared in project',
+      },
+    );
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
@@ -301,6 +339,7 @@ describe('compile', () => {
     assert.deepEqual(await read(outDir), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
+        `${dirnameInject}\n\n` +
         `var hello = "world";\n` +
         `\n` +
         `import util from "node:util";\n` +
@@ -334,6 +373,7 @@ describe('compile', () => {
     assert.deepEqual(convert(result.outputFiles), {
       'index.mjs':
         `${commonJsCompatabilityBanner}\n\n` +
+        `${dirnameInject}\n\n` +
         `import { hello as test } from "test-esm-module";\n` +
         `import util from "node:util";\n` +
         `var hello = { test, message: util.format("hello %s", "world") };\n` +

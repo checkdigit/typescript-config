@@ -13,10 +13,11 @@ import tsConfigJson from '../tsconfig.json' with { type: 'json' };
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
-import { default as __path } from "node:path";
 const __filename = __fileURLToPath(import.meta.url);
-const __dirname = __path.dirname(__filename);
 const require = __createRequire(import.meta.url);`;
+
+const packageRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const dirnameInject = path.join(packageRoot, 'src', 'dirname-inject.mjs');
 
 export type ImportKind =
   | 'entry-point'
@@ -274,7 +275,7 @@ export default async function ({
     tsConfigJson,
     typescript.sys,
     // @checkdigit/typescript-config package root:
-    path.dirname(path.dirname(fileURLToPath(import.meta.url))),
+    packageRoot,
   ).options;
   const program = typescript.createProgram(productionSourceFiles, {
     ...compilerOptions,
@@ -337,6 +338,7 @@ export default async function ({
     metafile: outFile !== undefined,
     sourcesContent: false,
     logLevel: 'error',
+    inject: outFile === undefined ? [] : [dirnameInject],
     banner:
       outFile === undefined
         ? {}
