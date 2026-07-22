@@ -14,8 +14,7 @@ const __filename = __fileURLToPath(import.meta.url);
 const require = __createRequire(import.meta.url);`;
 
 const dirnameInject = `import path from "node:path";
-import { fileURLToPath } from "node:url";
-var __dirname = path.dirname(fileURLToPath(import.meta.url));`;
+var __dirname = path.dirname(__filename);`;
 
 const singleModule = {
   [`index.ts`]: `export const hello = 'world';`,

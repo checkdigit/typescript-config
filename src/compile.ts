@@ -17,7 +17,9 @@ const __filename = __fileURLToPath(import.meta.url);
 const require = __createRequire(import.meta.url);`;
 
 const packageRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const dirnameInject = path.join(packageRoot, 'src', 'dirname-inject.mjs');
+const dirNameJsCompatabilityInjection = `import path from 'node:path';
+export const __dirname = path.dirname(__filename);`; // relies on __filename from commonJsCompatabilityBanner
+const dirNameJsCompatabilityInjectionURL = `data:text/javascript,${encodeURIComponent(dirNameJsCompatabilityInjection)}`;
 
 export type ImportKind =
   | 'entry-point'
@@ -338,7 +340,7 @@ export default async function ({
     metafile: outFile !== undefined,
     sourcesContent: false,
     logLevel: 'error',
-    inject: outFile === undefined ? [] : [dirnameInject],
+    inject: outFile === undefined ? [] : [dirNameJsCompatabilityInjectionURL],
     banner:
       outFile === undefined
         ? {}
