@@ -63,7 +63,7 @@ with `builder`, in addition to runtimes, libraries and frameworks used by Check 
 - `prettier`
 - `tsc`, and specific features introduced in each version of TypeScript
 - `esbuild`
-- Wallaby.js (supports `node:test` by including `@swc-node/register` as a peer dependency)
+- Wallaby.js (supports `node:test` by relying on native Node type-stripping support)
 
 We do this to ensure that TypeScript upgrades do not break these dependencies,
 and that updates to these related projects do not break builds.
