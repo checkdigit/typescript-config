@@ -16,7 +16,6 @@ import { fileURLToPath as __fileURLToPath } from "node:url";
 const __filename = __fileURLToPath(import.meta.url);
 const require = __createRequire(import.meta.url);`;
 
-const packageRoot = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const dirNameJsCompatibilityInjection = `import path from 'node:path';
 export const __dirname = path.dirname(__filename);`; // relies on __filename from commonJsCompatabilityBanner
 const dirNameJsCompatibilityInjectionURL = `data:text/javascript,${encodeURIComponent(dirNameJsCompatibilityInjection)}`;
@@ -277,7 +276,7 @@ export default async function ({
     tsConfigJson,
     typescript.sys,
     // @checkdigit/typescript-config package root:
-    packageRoot,
+    path.dirname(path.dirname(fileURLToPath(import.meta.url))),
   ).options;
   const program = typescript.createProgram(productionSourceFiles, {
     ...compilerOptions,

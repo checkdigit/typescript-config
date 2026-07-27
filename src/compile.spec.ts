@@ -307,16 +307,8 @@ export { injectedDirname } from './dependency.ts';
     );
 
     const output = await import(path.join(outDir, 'index.mjs'));
-    assert.deepEqual(
-      {
-        injectedDirname: output.injectedDirname as unknown,
-        localDirname: output.localDirname as unknown,
-      },
-      {
-        injectedDirname: await fs.realpath(outDir),
-        localDirname: 'declared in project',
-      },
-    );
+    assert.equal(output.injectedDirname, await fs.realpath(outDir));
+    assert.equal(output.localDirname, 'declared in project');
   });
 
   it('should bundle an ESM module that imports external modules', async () => {
