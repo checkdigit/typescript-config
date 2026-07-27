@@ -70,23 +70,23 @@
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
-    "@checkdigit/prettier-config": "^8.1.0",
+    "@checkdigit/prettier-config": "^8.1.1",
     "@eslint/js": "^10.0.1",
     "@eslint/json": "^2.0.1",
     "@eslint/markdown": "^8.0.3",
     "@js-temporal/polyfill": "^0.5.1",
-    "eslint": "^10.6.0",
+    "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^3.6.0",
-    "typescript-eslint": "^8.63.0"
+    "typescript-eslint": "^8.65.0"
   },
   "peerDependencies": {
     "@types/node": ">=24",
-    "@typescript/native-preview": "7.0.0-dev.20260702.3",
+    "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "esbuild": "0.28.1",
     "typescript": ">=6.0.3 <7"
   },
   "engines": {
-    "node": ">=24.14.1 <25 || >=26"
+    "node": ">=24.18.0 <25 || >=26"
   }
 }
