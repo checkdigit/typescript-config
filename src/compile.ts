@@ -13,10 +13,12 @@ import tsConfigJson from '../tsconfig.json' with { type: 'json' };
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
 import { fileURLToPath as __fileURLToPath } from "node:url";
-import { default as __path } from "node:path";
 const __filename = __fileURLToPath(import.meta.url);
-const __dirname = __path.dirname(__filename);
 const require = __createRequire(import.meta.url);`;
+
+const dirNameJsCompatibilityInjection = `import path from 'node:path';
+export const __dirname = path.dirname(__filename);`; // relies on __filename from commonJsCompatabilityBanner
+const dirNameJsCompatibilityInjectionURL = `data:text/javascript,${encodeURIComponent(dirNameJsCompatibilityInjection)}`;
 
 export type ImportKind =
   | 'entry-point'
@@ -337,6 +339,7 @@ export default async function ({
     metafile: outFile !== undefined,
     sourcesContent: false,
     logLevel: 'error',
+    inject: outFile === undefined ? [] : [dirNameJsCompatibilityInjectionURL],
     banner:
       outFile === undefined
         ? {}
