@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "10.2.0",
+  "version": "10.2.1",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -43,13 +43,13 @@
   "scripts": {
     "build": "npm run build:builder && npm run build:types && npm run build:mjs && npm run build:mjs-bundle && npm run build:mjs-bundle-minify && npm run build:mjs-bundle-no-external",
     "build:builder": "esbuild src/builder.ts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
-    "build:dist-mjs": "rimraf dist-mjs && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
-    "build:dist-types": "rimraf dist-types && npx builder --type=types --outDir=dist-types",
-    "build:mjs": "rimraf build-mjs && bin/builder.mjs --type=module --outDir=build-mjs",
-    "build:mjs-bundle": "rimraf build-mjs-bundle && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=index.test.ts --outFile=index.test.mjs",
-    "build:mjs-bundle-minify": "rimraf build-mjs-bundle-minify && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
-    "build:mjs-bundle-no-external": "rimraf build-mjs-bundle-no-external && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
-    "build:types": "rimraf build-types && bin/builder.mjs --type=types --outDir=build-types",
+    "build:dist-mjs": "node -e \"require('node:fs').rmSync('dist-mjs', { recursive: true, force: true })\" && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
+    "build:dist-types": "node -e \"require('node:fs').rmSync('dist-types', { recursive: true, force: true })\" && npx builder --type=types --outDir=dist-types",
+    "build:mjs": "node -e \"require('node:fs').rmSync('build-mjs', { recursive: true, force: true })\" && bin/builder.mjs --type=module --outDir=build-mjs",
+    "build:mjs-bundle": "node -e \"require('node:fs').rmSync('build-mjs-bundle', { recursive: true, force: true })\" && bin/builder.mjs --type=module --outDir=build-mjs-bundle --entryPoint=index.test.ts --outFile=index.test.mjs",
+    "build:mjs-bundle-minify": "node -e \"require('node:fs').rmSync('build-mjs-bundle-minify', { recursive: true, force: true })\" && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
+    "build:mjs-bundle-no-external": "node -e \"require('node:fs').rmSync('build-mjs-bundle-no-external', { recursive: true, force: true })\" && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
+    "build:types": "node -e \"require('node:fs').rmSync('build-types', { recursive: true, force: true })\" && bin/builder.mjs --type=types --outDir=build-types",
     "ci:compile": "tsc --noEmit --rootDir src",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
@@ -58,37 +58,34 @@
     "lint:fix": "eslint . --fix --concurrency=auto",
     "prepare": "",
     "prepublishOnly": "npm run build:builder && npm run build:dist-types && npm run build:dist-mjs",
-    "prettier": "prettier --ignore-path .gitignore --list-different .",
-    "prettier:fix": "prettier --ignore-path .gitignore --write .",
+    "prettier": "prettier . --check",
+    "prettier:fix": "prettier . --write",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
     "test:mjs": "node --test build-mjs/test/index.mjs",
     "test:mjs-bundle": "node --test build-mjs-bundle/index.test.mjs",
     "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/index.test.mjs",
     "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/index.test.mjs",
-    "test:node": "node --disable-warning ExperimentalWarning --experimental-strip-types --test-timeout 600000 --test \"src/**/*.spec.ts\""
+    "test:node": "node --test-timeout 600000 --test \"src/**/*.spec.ts\""
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
-    "@checkdigit/prettier-config": "^8.0.0",
-    "@eslint/js": "^9.39.4",
-    "@eslint/json": "^2.0.0",
-    "@eslint/markdown": "^8.0.2",
+    "@checkdigit/prettier-config": "^8.1.1",
+    "@eslint/js": "^9.39.5",
+    "@eslint/json": "^2.0.1",
+    "@eslint/markdown": "^8.0.3",
     "@js-temporal/polyfill": "^0.5.1",
-    "eslint": "^9.39.4",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-yml": "^3.5.0",
-    "rimraf": "^6.1.3",
-    "typescript-eslint": "^8.62.0"
+    "eslint-plugin-yml": "^3.8.1",
+    "typescript-eslint": "^8.67.0"
   },
   "peerDependencies": {
-    "@swc-node/register": "1.11.1",
     "@types/node": ">=24",
-    "esbuild": "0.28.1",
-    "oxc-resolver": "11.13.2",
+    "esbuild": "0.28.2",
     "typescript": ">=6.0.3 <7"
   },
   "engines": {
-    "node": ">=24.14.1 <25 || >=26"
+    "node": ">=24.18.0 <25 || >=26"
   }
 }
