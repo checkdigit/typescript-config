@@ -1,6 +1,6 @@
 {
   "name": "@checkdigit/typescript-config",
-  "version": "10.2.1",
+  "version": "10.2.2",
   "description": "Check Digit standard Typescript configuration",
   "homepage": "https://github.com/checkdigit/typescript-config#readme",
   "bugs": {
@@ -53,10 +53,9 @@
     "ci:compile": "tsc --noEmit --rootDir src",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
-    "ci:test": "npm run build && npm run test:node && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
+    "ci:test": "npm run build && npm run test:node && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-minify && npm run test:mjs-bundle-no-external",
     "lint": "eslint . --max-warnings=0 --concurrency=auto",
     "lint:fix": "eslint . --fix --concurrency=auto",
-    "prepare": "",
     "prepublishOnly": "npm run build:builder && npm run build:dist-types && npm run build:dist-mjs",
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
@@ -65,20 +64,19 @@
     "test:mjs-bundle": "node --test build-mjs-bundle/index.test.mjs",
     "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/index.test.mjs",
     "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/index.test.mjs",
-    "test:node": "node --test-timeout 600000 --test \"src/**/*.spec.ts\""
+    "test:node": "node --pending-deprecation --throw-deprecation --test-timeout 600000 --test \"src/**/*.spec.ts\""
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
-    "@checkdigit/prettier-config": "^8.1.1",
-    "@eslint/js": "^9.39.5",
-    "@eslint/json": "^2.0.1",
+    "@checkdigit/prettier-config": "^8.2.0",
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^2.1.0",
     "@eslint/markdown": "^8.0.3",
     "@js-temporal/polyfill": "^0.5.1",
-    "eslint": "^9.39.5",
+    "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-yml": "^3.8.1",
-    "typescript-eslint": "^8.67.0"
+    "typescript-eslint": "^8.70.0"
   },
   "peerDependencies": {
     "@types/node": ">=24",
@@ -87,5 +85,8 @@
   },
   "engines": {
     "node": ">=24.18.0 <25 || >=26"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
   }
 }
