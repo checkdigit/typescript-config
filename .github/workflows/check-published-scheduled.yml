@@ -11,12 +11,16 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          node-version: '26.x'
+          package-manager-cache: false
+      - name: Update npm
+        run: npm install --global npm@latest
       - name: Check Published
         uses: checkdigit/github-actions/check-published@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN_PUBLISH }}
           DEBUG: '*'
           SLACK_PUBLISH_MISMATCH: ${{ secrets.SLACK_PUBLISH_MISMATCH }}
