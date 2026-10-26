@@ -21,8 +21,7 @@
     }
   },
   "bin": {
-    "builder": "./bin/builder.mjs",
-    "tsc": "./node_modules/.bin/tscgo"
+    "builder": "./bin/builder.mjs"
   },
   "files": [
     "bin",
@@ -43,7 +42,7 @@
   ],
   "scripts": {
     "build": "npm run build:builder && npm run build:types && npm run build:mjs && npm run build:mjs-bundle && npm run build:mjs-bundle-minify && npm run build:mjs-bundle-no-external",
-    "build:builder": "esbuild src/builder.ts --bundle --platform=node --format=esm --external:typescript --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
+    "build:builder": "esbuild src/builder.ts --bundle --platform=node --format=esm --external:@typescript/native --external:esbuild --outfile=build-builder/builder.mjs && mkdir -p bin && { echo '#!/usr/bin/env node'; cat build-builder/builder.mjs; } > bin/builder.mjs && chmod +x bin/builder.mjs",
     "build:dist-mjs": "node -e \"require('node:fs').rmSync('dist-mjs', { recursive: true, force: true })\" && npx builder --type=module --sourceMap --outDir=dist-mjs && node dist-mjs/index.mjs",
     "build:dist-types": "node -e \"require('node:fs').rmSync('dist-types', { recursive: true, force: true })\" && npx builder --type=types --outDir=dist-types",
     "build:mjs": "node -e \"require('node:fs').rmSync('build-mjs', { recursive: true, force: true })\" && bin/builder.mjs --type=module --outDir=build-mjs",
@@ -51,7 +50,7 @@
     "build:mjs-bundle-minify": "node -e \"require('node:fs').rmSync('build-mjs-bundle-minify', { recursive: true, force: true })\" && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
     "build:mjs-bundle-no-external": "node -e \"require('node:fs').rmSync('build-mjs-bundle-no-external', { recursive: true, force: true })\" && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
     "build:types": "node -e \"require('node:fs').rmSync('build-types', { recursive: true, force: true })\" && bin/builder.mjs --type=types --outDir=build-types",
-    "ci:compile": "time tsgo && time tsc",
+    "ci:compile": "time tsc",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
     "ci:test": "npm run build && npm run test:node && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
@@ -78,13 +77,13 @@
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^3.6.0",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.65.0"
   },
   "peerDependencies": {
     "@types/node": ">=24",
-    "@typescript/native-preview": "7.0.0-dev.20260707.2",
-    "esbuild": "0.28.1",
-    "typescript": ">=6.0.3 <7"
+    "@typescript/native": "npm:typescript@7.1.0-beta",
+    "esbuild": "0.28.1"
   },
   "engines": {
     "node": ">=24.18.0 <25 || >=26"

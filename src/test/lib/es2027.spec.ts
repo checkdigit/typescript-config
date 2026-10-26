@@ -31,7 +31,6 @@ describe('es2027', () => {
     assert.throws(
       () =>
         assert.deepEqual(
-          // @ts-expect-error not supported by TypeScript 6/7
           Iterator.zip([
             [0, 1, 2],
             [3, 4, 5],
@@ -47,7 +46,6 @@ describe('es2027', () => {
     assert.throws(
       () =>
         assert.deepEqual(
-          // @ts-expect-error not supported by TypeScript 6/7
           Iterator.zipKeyed({
             a: [0, 1, 2],
             b: [3, 4, 5, 6],

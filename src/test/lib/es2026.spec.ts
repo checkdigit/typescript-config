@@ -18,7 +18,6 @@ describe('es2026', () => {
   // https://github.com/tc39/proposal-math-sum
   it('does not support Math.sumPrecise yet', async () => {
     assert.throws(
-      // @ts-expect-error not supported by TypeScript 6.0
       () => assert.equal(Math.sumPrecise([1e20, 0.1, -1e20]), 0.1),
       {
         name: 'TypeError',
@@ -61,7 +60,6 @@ describe('es2026', () => {
       assert.throws(
         () =>
           assert.deepEqual(
-            // @ts-expect-error not supported by TypeScript 6.0
             [...Iterator.concat(lows, [4, 5], highs)],
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
           ),
@@ -78,7 +76,6 @@ describe('es2026', () => {
       const lows = Iterator.from([0, 1, 2, 3]);
       const highs = Iterator.from([6, 7, 8, 9]);
       assert.deepEqual(
-        // @ts-expect-error not supported by TypeScript 6.0
         [...Iterator.concat(lows, [4, 5], highs)],
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       );
@@ -89,15 +86,14 @@ describe('es2026', () => {
   it('supports JSON.parse source text access', async () => {
     const tooBigForNumber = BigInt(Number.MAX_SAFE_INTEGER) + 2n;
     assert.equal(
-      // @ts-expect-error not supported by TypeScript 6.0
-      JSON.parse(String(tooBigForNumber), (key, value, { source }) =>
-        /^[0-9]+$/u.test(source) ? BigInt(source) : value,
+      JSON.parse(String(tooBigForNumber), (_key, value, { source }) =>
+        typeof source === 'string' && /^[0-9]+$/u.test(source)
+          ? BigInt(source)
+          : value,
       ) === tooBigForNumber,
       true,
     );
-    // @ts-expect-error not supported by TypeScript 6.0
-    const embedded = JSON.stringify({ tooBigForNumber }, (key, val) =>
-      // @ts-expect-error not supported by TypeScript 6.0
+    const embedded = JSON.stringify({ tooBigForNumber }, (_key, val) =>
       typeof val === 'bigint' ? JSON.rawJSON(String(val)) : val,
     );
     assert.equal(embedded, '{"tooBigForNumber":9007199254740993}');

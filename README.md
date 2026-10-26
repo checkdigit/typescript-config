@@ -24,6 +24,10 @@ This module contains the standard Check Digit TypeScript configuration, along wi
 It is intended to be used when publishing a package to NPM, or to bundle a package for deployment.
 It uses `tsc` for generating types, and `esbuild` for generating code.
 
+The compiler and builder use TypeScript 7.1, installed as the
+`@typescript/native` npm alias. Development tooling uses the TypeScript 6
+compatibility package for `typescript-eslint`.
+
 **Note:** the `require` function will be defined as a global variable, to allow
 dynamic `require`s by CommonJS submodules. This is not a problem for Node.js, but will cause issues in a browser environment.
 

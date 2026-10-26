@@ -6,7 +6,7 @@ import module from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import typescript from 'typescript';
+import { API, type Diagnostic } from '@typescript/native/sync';
 import { build, type PluginBuild } from 'esbuild';
 
 import tsConfigJson from '../tsconfig.json' with { type: 'json' };
@@ -136,6 +136,15 @@ async function getFiles(directory: string): Promise<string[]> {
     }),
   );
   return files.flat();
+}
+
+function flattenDiagnosticMessage(diagnostic: Diagnostic, indent = 0): string {
+  return [
+    `${'  '.repeat(indent)}${diagnostic.text}`,
+    ...(diagnostic.messageChain ?? []).map((child) =>
+      flattenDiagnosticMessage(child, indent + 1),
+    ),
+  ].join('\n');
 }
 
 function excludeSourceMaps(filter: RegExp) {
@@ -270,55 +279,50 @@ export default async function ({
   /**
    * Emit declarations using TypeScript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
-  const compilerOptions = typescript.parseJsonConfigFileContent(
-    tsConfigJson,
-    typescript.sys,
+  using api = new API();
+  const compilerOptions = api.parseJsonConfigFileContent(tsConfigJson, {
     // @checkdigit/typescript-config package root:
-    path.dirname(path.dirname(fileURLToPath(import.meta.url))),
-  ).options;
-  const program = typescript.createProgram(productionSourceFiles, {
+    configDirectory: path.dirname(path.dirname(fileURLToPath(import.meta.url))),
+  }).options;
+  using program = api.createProgram(productionSourceFiles, {
     ...compilerOptions,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,
     outDir,
   });
-  const declarationFiles: OutputFile[] = [];
-  const emitResult = program.emit(undefined, (fileName, data) => {
-    declarationFiles.push({ path: fileName, text: data });
-  });
-  const allDiagnostics = typescript.sortAndDeduplicateDiagnostics([
-    ...typescript.getPreEmitDiagnostics(program),
+  const emitResult = program.emitToString();
+  const allDiagnostics = [
+    ...program.getGlobalDiagnostics(),
+    ...program.getProgramDiagnostics(),
+    ...program.getSyntacticDiagnostics(),
+    ...program.getSemanticDiagnostics(),
+    ...program.getDeclarationDiagnostics(),
     ...emitResult.diagnostics,
-  ]);
+  ];
   for (const diagnostic of allDiagnostics) {
-    if (diagnostic.file) {
-      assert.ok(diagnostic.start !== undefined);
-      const { line, character } = typescript.getLineAndCharacterOfPosition(
-        diagnostic.file,
-        diagnostic.start,
-      );
-      const message = typescript.flattenDiagnosticMessageText(
-        diagnostic.messageText,
-        '\n',
-      );
-      messages.push(
-        `tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`,
-      );
+    const message = flattenDiagnosticMessage(diagnostic);
+    if (diagnostic.fileName === undefined) {
+      messages.push(`tsc: ${message}`);
     } else {
+      assert.ok(diagnostic.startPosition !== undefined);
+      const { line, character } = diagnostic.startPosition;
       messages.push(
-        `tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+        `tsc: ${diagnostic.fileName} (${line + 1},${character + 1}): ${message}`,
       );
     }
   }
 
   if (messages.length > 0) {
-    throw new Error(`tsc failed ${JSON.stringify(messages)}`);
+    throw new Error(`tsc failed ${JSON.stringify([...new Set(messages)])}`);
   }
 
   if (type === 'types') {
     return {
-      outputFiles: declarationFiles,
+      outputFiles: [...emitResult.outputFiles].map(([filePath, file]) => ({
+        path: filePath,
+        text: file.text,
+      })),
     };
   }
 
