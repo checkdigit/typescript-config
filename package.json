@@ -69,21 +69,21 @@
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
-    "@checkdigit/prettier-config": "^8.1.1",
+    "@checkdigit/prettier-config": "^8.3.0",
     "@eslint/js": "^10.0.1",
-    "@eslint/json": "^2.0.1",
+    "@eslint/json": "^2.1.1",
     "@eslint/markdown": "^8.0.3",
     "@js-temporal/polyfill": "^0.5.1",
-    "eslint": "^10.8.0",
+    "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-yml": "^3.6.0",
+    "eslint-plugin-yml": "^3.9.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.65.0"
+    "typescript-eslint": "^8.72.1"
   },
   "peerDependencies": {
     "@types/node": ">=24",
     "@typescript/native": "npm:typescript@7.1.0-beta",
-    "esbuild": "0.28.1"
+    "esbuild": "0.28.2"
   },
   "engines": {
     "node": ">=24.18.0 <25 || >=26"
