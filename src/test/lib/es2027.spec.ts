@@ -27,39 +27,71 @@ describe('es2027', () => {
   }
 
   // https://github.com/tc39/proposal-joint-iteration
-  it('does not support Joint Iteration yet', () => {
-    assert.throws(
-      () =>
-        assert.deepEqual(
-          Iterator.zip([
-            [0, 1, 2],
-            [3, 4, 5],
-          ]).toArray(),
-          [
-            [0, 3],
-            [1, 4],
-            [2, 5],
-          ],
-        ),
-      { message: 'Iterator.zip is not a function' },
-    );
-    assert.throws(
-      () =>
-        assert.deepEqual(
-          Iterator.zipKeyed({
-            a: [0, 1, 2],
-            b: [3, 4, 5, 6],
-            c: [7, 8, 9],
-          }).toArray(),
-          [
-            { a: 0, b: 3, c: 7 },
-            { a: 1, b: 4, c: 8 },
-            { a: 2, b: 5, c: 9 },
-          ],
-        ),
-      { message: 'Iterator.zipKeyed is not a function' },
-    );
-  });
+  if (process.version < 'v27') {
+    // Node 24/26
+    it('does not support Joint Iteration yet', () => {
+      assert.throws(
+        () =>
+          assert.deepEqual(
+            Iterator.zip([
+              [0, 1, 2],
+              [3, 4, 5],
+            ]).toArray(),
+            [
+              [0, 3],
+              [1, 4],
+              [2, 5],
+            ],
+          ),
+        { message: 'Iterator.zip is not a function' },
+      );
+      assert.throws(
+        () =>
+          assert.deepEqual(
+            Iterator.zipKeyed({
+              a: [0, 1, 2],
+              b: [3, 4, 5, 6],
+              c: [7, 8, 9],
+            }).toArray(),
+            [
+              { a: 0, b: 3, c: 7 },
+              { a: 1, b: 4, c: 8 },
+              { a: 2, b: 5, c: 9 },
+            ],
+          ),
+        { message: 'Iterator.zipKeyed is not a function' },
+      );
+    });
+  } else {
+    // Node 27+
+    it('supports Joint Iteration', () => {
+      assert.deepEqual(
+        Iterator.zip([
+          [0, 1, 2],
+          [3, 4, 5],
+        ]).toArray(),
+        [
+          [0, 3],
+          [1, 4],
+          [2, 5],
+        ],
+      );
+      assert.deepEqual(
+        Iterator.zipKeyed({
+          a: [0, 1, 2],
+          b: [3, 4, 5, 6],
+          c: [7, 8, 9],
+        })
+          .map((value) => ({ ...value }))
+          .toArray(),
+        [
+          { a: 0, b: 3, c: 7 },
+          { a: 1, b: 4, c: 8 },
+          { a: 2, b: 5, c: 9 },
+        ],
+      );
+    });
+  }
 
   // https://github.com/tc39/proposal-atomics-microwait
   it('supports Atomics.pause()', async () => {

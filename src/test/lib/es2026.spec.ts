@@ -16,15 +16,23 @@ describe('es2026', () => {
   });
 
   // https://github.com/tc39/proposal-math-sum
-  it('does not support Math.sumPrecise yet', async () => {
-    assert.throws(
-      () => assert.equal(Math.sumPrecise([1e20, 0.1, -1e20]), 0.1),
-      {
-        name: 'TypeError',
-        message: 'Math.sumPrecise is not a function',
-      },
-    );
-  });
+  if (process.version < 'v27') {
+    // Node 24/26
+    it('does not support Math.sumPrecise yet', async () => {
+      assert.throws(
+        () => assert.equal(Math.sumPrecise([1e20, 0.1, -1e20]), 0.1),
+        {
+          name: 'TypeError',
+          message: 'Math.sumPrecise is not a function',
+        },
+      );
+    });
+  } else {
+    // Node 27+
+    it('supports Math.sumPrecise', async () => {
+      assert.equal(Math.sumPrecise([1e20, 0.1, -1e20]), 0.1);
+    });
+  }
 
   // https://github.com/tc39/proposal-arraybuffer-base64
   if (process.version < 'v25') {
