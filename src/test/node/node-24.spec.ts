@@ -6,6 +6,7 @@ import { describe, it } from 'node:test';
 import tls from 'node:tls';
 
 describe('node-24', () => {
+  // 24+
   it('URLPattern exists as a global', async () => {
     assert.equal(typeof URLPattern, 'function');
   });
@@ -35,4 +36,12 @@ describe('node-24', () => {
       assert.equal(process.release.lts, 'Krypton');
     });
   }
+
+  // 24.16+
+  it('randomUUIDv7() is available', async () => {
+    const uuidV7Regex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+    assert.ok(uuidV7Regex.test(crypto.randomUUIDv7()));
+    assert.ok(!uuidV7Regex.test(crypto.randomUUID()));
+  });
 });

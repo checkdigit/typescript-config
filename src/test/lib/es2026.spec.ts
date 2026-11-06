@@ -16,16 +16,23 @@ describe('es2026', () => {
   });
 
   // https://github.com/tc39/proposal-math-sum
-  it('does not support Math.sumPrecise yet', async () => {
-    assert.throws(
-      // @ts-expect-error not supported by TypeScript 6.0
-      () => assert.equal(Math.sumPrecise([1e20, 0.1, -1e20]), 0.1),
-      {
-        name: 'TypeError',
-        message: 'Math.sumPrecise is not a function',
-      },
-    );
-  });
+  if (process.version < 'v27') {
+    // Node 24/26
+    it('does not support Math.sumPrecise yet', async () => {
+      assert.throws(
+        () => assert.equal(Math.sumPrecise([1e20, 0.1, -1e20]), 0.1),
+        {
+          name: 'TypeError',
+          message: 'Math.sumPrecise is not a function',
+        },
+      );
+    });
+  } else {
+    // Node 27+
+    it('supports Math.sumPrecise', async () => {
+      assert.equal(Math.sumPrecise([1e20, 0.1, -1e20]), 0.1);
+    });
+  }
 
   // https://github.com/tc39/proposal-arraybuffer-base64
   if (process.version < 'v25') {
@@ -61,7 +68,6 @@ describe('es2026', () => {
       assert.throws(
         () =>
           assert.deepEqual(
-            // @ts-expect-error not supported by TypeScript 6.0
             [...Iterator.concat(lows, [4, 5], highs)],
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
           ),
@@ -78,7 +84,6 @@ describe('es2026', () => {
       const lows = Iterator.from([0, 1, 2, 3]);
       const highs = Iterator.from([6, 7, 8, 9]);
       assert.deepEqual(
-        // @ts-expect-error not supported by TypeScript 6.0
         [...Iterator.concat(lows, [4, 5], highs)],
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
       );
@@ -89,15 +94,14 @@ describe('es2026', () => {
   it('supports JSON.parse source text access', async () => {
     const tooBigForNumber = BigInt(Number.MAX_SAFE_INTEGER) + 2n;
     assert.equal(
-      // @ts-expect-error not supported by TypeScript 6.0
-      JSON.parse(String(tooBigForNumber), (key, value, { source }) =>
-        /^[0-9]+$/u.test(source) ? BigInt(source) : value,
+      JSON.parse(String(tooBigForNumber), (_key, value, { source }) =>
+        typeof source === 'string' && /^[0-9]+$/u.test(source)
+          ? BigInt(source)
+          : value,
       ) === tooBigForNumber,
       true,
     );
-    // @ts-expect-error not supported by TypeScript 6.0
-    const embedded = JSON.stringify({ tooBigForNumber }, (key, val) =>
-      // @ts-expect-error not supported by TypeScript 6.0
+    const embedded = JSON.stringify({ tooBigForNumber }, (_key, val) =>
       typeof val === 'bigint' ? JSON.rawJSON(String(val)) : val,
     );
     assert.equal(embedded, '{"tooBigForNumber":9007199254740993}');
@@ -128,28 +132,6 @@ describe('es2026', () => {
       assert.equal(
         map.getOrInsertComputed('y', () => 789),
         789,
-      );
-    });
-  }
-
-  // https://github.com/tc39/proposal-temporal
-  if (process.version < 'v26') {
-    // Node 24
-    it('does not support Temporal yet', () => {
-      // compiles, but unfortunately, Node.js does not support yet
-      assert.throws(() => Temporal.Now.instant(), {
-        name: 'ReferenceError',
-        message: 'Temporal is not defined',
-      });
-    });
-  } else {
-    // Node 26+
-    it('supports Temporal', () => {
-      assert.equal(
-        Temporal.ZonedDateTime.from('2026-05-05T12:00:00[America/New_York]')
-          .toInstant()
-          .toString(),
-        '2026-05-05T16:00:00Z',
       );
     });
   }

@@ -14,7 +14,7 @@ describe('node-22', () => {
   // 22.14+
   it('has module.findPackageJSON()', async () => {
     const packageJSONFileName = module.findPackageJSON(
-      'typescript',
+      '@typescript/native',
       fileURLToPath(import.meta.url),
     );
     assert.ok(packageJSONFileName !== undefined);

@@ -10,7 +10,7 @@ This module contains the standard Check Digit TypeScript configuration, along wi
 
 ## TypeScript Configuration
 
-- currently supports Node 24.18.0 up to, but not including, Node 25, or Node 26 and above.
+- currently supports Node 24 starting at 24.18.0, or Node 26 and above.
 - Node 25 is intentionally not part of the support contract.
 - emits `esnext`, with the default libraries, to avoid down-leveling. It is intended that application spec tests pick
   up any issues with using newer features unavailable in a particular environment. Browsers and Node.js are fast-moving
@@ -23,6 +23,10 @@ This module contains the standard Check Digit TypeScript configuration, along wi
 `builder` is a command line tool that generates ESM modules from the TypeScript source.
 It is intended to be used when publishing a package to NPM, or to bundle a package for deployment.
 It uses `tsc` for generating types, and `esbuild` for generating code.
+
+The compiler and builder use TypeScript 7.1, installed as the
+`@typescript/native` npm alias. Development tooling uses the TypeScript 6
+compatibility package for `typescript-eslint`.
 
 **Note:** the `require` function will be defined as a global variable, to allow
 dynamic `require`s by CommonJS submodules. This is not a problem for Node.js, but will cause issues in a browser environment.
