@@ -62,11 +62,11 @@
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
     "test": "npm run ci:compile && npm run ci:test && npm run ci:lint && npm run ci:style",
-    "test:mjs": "node --test build-mjs/test/index.mjs",
-    "test:mjs-bundle": "node --test build-mjs-bundle/index.test.mjs",
-    "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/index.test.mjs",
-    "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/index.test.mjs",
-    "test:node": "node --disable-warning ExperimentalWarning --test-timeout 600000 --test \"src/**/*.spec.ts\""
+    "test:mjs": "node --throw-deprecation --pending-deprecation --test build-mjs/test/index.mjs",
+    "test:mjs-bundle": "node --throw-deprecation --pending-deprecation --test build-mjs-bundle/index.test.mjs",
+    "test:mjs-bundle-minify": "node --throw-deprecation --pending-deprecation --test build-mjs-bundle-minify/index.test.mjs",
+    "test:mjs-bundle-no-external": "node --throw-deprecation --pending-deprecation --test build-mjs-bundle-no-external/index.test.mjs",
+    "test:node": "node --throw-deprecation --pending-deprecation --test-timeout 600000 --test \"src/**/*.spec.ts\""
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
