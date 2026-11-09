@@ -276,10 +276,7 @@ export default async function ({
     };
   }
 
-  /**
-   * Emit ESM javascript using esbuild
-   */
-  const buildResult = await build({
+  return await build({
     entryPoints: productionSourceFiles,
     bundle: true,
     minify,
@@ -326,13 +323,4 @@ export default async function ({
           ],
         }),
   });
-
-  messages.push(
-    ...buildResult.errors.map((error) => `esbuild error: ${error.text}`),
-  );
-  if (messages.length > 0) {
-    throw new Error(`esbuild failed ${JSON.stringify(messages)}`);
-  }
-
-  return buildResult;
 }

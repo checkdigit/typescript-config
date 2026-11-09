@@ -133,6 +133,21 @@ function convert(outputFiles: { path: string; text: string }[]) {
 }
 
 describe('compile', () => {
+  it('should require an entry point and output file together', async () => {
+    const id = crypto.randomUUID();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
+    for (const options of [
+      { entryPoint: 'index.ts' },
+      { outFile: 'index.mjs' },
+    ]) {
+      await assert.rejects(
+        compile({ type: 'module', inDir, outDir, ...options }),
+        { message: 'entryPoint and outFile must both be provided' },
+      );
+    }
+  });
+
   it('should not build bad code', async () => {
     const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
@@ -148,6 +163,46 @@ describe('compile', () => {
     await assert.rejects(read(outDir), {
       message: `ENOENT: no such file or directory, scandir '${outDir}'`,
     });
+  });
+
+  it('should include nested type errors in diagnostic messages', async () => {
+    const id = crypto.randomUUID();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
+    await writeInput(inDir, {
+      'index.ts': `const value: { nested: { count: string } } = { nested: { count: 'wrong' } };
+export const incompatible: { nested: { count: number } } = value;`,
+    });
+    await assert.rejects(compile({ type: 'module', inDir, outDir }), {
+      message: `tsc failed ${JSON.stringify([
+        `tsc: ${inDir}/index.ts (2,14): Type '{ nested: { count: string; }; }' is not assignable to type '{ nested: { count: number; }; }'.\n` +
+          `  The types of 'nested.count' are incompatible between these types.\n` +
+          `    Type 'string' is not assignable to type 'number'.`,
+      ])}`,
+    });
+  });
+
+  it('should report a missing entry point without a source location', async () => {
+    const id = crypto.randomUUID();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`);
+    await writeInput(inDir, {});
+    await assert.rejects(
+      compile({
+        type: 'module',
+        entryPoint: 'missing.ts',
+        outFile: 'index.mjs',
+        inDir,
+        outDir,
+      }),
+      {
+        message: `tsc failed ${JSON.stringify([
+          `tsc: File '${inDir}/missing.ts' not found.\n` +
+            `  The file is in the program because:\n` +
+            `    Root file specified for compilation`,
+        ])}`,
+      },
+    );
   });
 
   it('should not build from bad directory', async () => {
@@ -212,6 +267,35 @@ describe('compile', () => {
 
     const output = await import(path.join(outDir, 'index.mjs'));
     assert.equal(output.hello, 'world');
+  });
+
+  it('should include an inline source map without source content', async () => {
+    const id = crypto.randomUUID();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await writeInput(inDir, singleModule);
+    const { outputFiles } = await compile({
+      type: 'module',
+      inDir,
+      outDir,
+      sourceMap: true,
+      workingDirectory: inDir,
+    });
+    assert.equal(outputFiles.length, 1);
+    const inlineMap =
+      /\/\/# sourceMappingURL=data:application\/json;base64,(?<sourceMap>[^\n]+)/u.exec(
+        outputFiles[0]!.text,
+      )?.groups?.['sourceMap'];
+    assert.ok(inlineMap);
+    const sourceMap = JSON.parse(
+      Buffer.from(inlineMap, 'base64').toString('utf8'),
+    );
+    assert.equal(sourceMap.version, 3);
+    assert.deepEqual(sourceMap.sources, [
+      path.relative(outDir, await fs.realpath(path.join(inDir, 'index.ts'))),
+    ]);
+    assert.equal(sourceMap.sourcesContent, undefined);
+    assert.notEqual(sourceMap.mappings, '');
   });
 
   it('should build a single ESM module that exports function as default', async () => {
@@ -284,6 +368,45 @@ describe('compile', () => {
     assert.equal(output.default, 'worldworld');
   });
 
+  it('should build nested modules and resolve directory and TypeScript imports', async () => {
+    const id = crypto.randomUUID();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await writeInput(inDir, {
+      'index.ts': `export { nested } from './nested';
+export { hello } from './thing.ts';`,
+      'thing.ts': `export const hello = 'world';`,
+      'README.md': 'This file is not TypeScript.',
+    });
+    await writeInput(path.join(inDir, 'nested'), {
+      'index.ts': `export const nested = 'directory';`,
+    });
+    await writeOutput(await compile({ type: 'module', inDir, outDir }));
+    const output = await import(path.join(outDir, 'index.mjs'));
+    assert.equal(output.nested, 'directory');
+    assert.equal(output.hello, 'world');
+    await assert.rejects(fs.access(path.join(outDir, 'README.md')), {
+      code: 'ENOENT',
+    });
+  });
+
+  it('should preserve JavaScript and JSON import paths', async () => {
+    const id = crypto.randomUUID();
+    const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await writeInput(inDir, {
+      'index.ts': `import { hello } from './thing.js';
+import data from './data.json' with { type: 'json' };
+export const message: string = hello + data.message;`,
+      'thing.ts': `export const hello = 'hello ';`,
+      'data.json': JSON.stringify({ message: 'world' }),
+    });
+    const result = await compile({ type: 'module', inDir, outDir });
+    const output = convert(result.outputFiles);
+    assert.match(output['index.mjs']!, /from "\.\/thing\.js"/u);
+    assert.match(output['index.mjs']!, /from "\.\/data\.json"/u);
+  });
+
   it('should bundle an ESM module that declares __dirname', async () => {
     const id = crypto.randomUUID();
     const inDir = path.join(os.tmpdir(), `in-dir-${id}`, 'src');
@@ -344,6 +467,68 @@ export { injectedDirname } from './dependency.ts';
       message: 'hello world',
       test: 'world',
     });
+  });
+
+  it('should bundle .mjs dependencies and their JSON resources', async () => {
+    const id = crypto.randomUUID();
+    const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const inDir = path.join(moduleDir, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await writeInput(inDir, importExternalModule);
+    await writeNodeModules(moduleDir, {
+      'test-esm-module': {
+        type: 'module',
+        source: {
+          'index.js': `export { hello } from './implementation.mjs';`,
+          'index.d.ts': `export declare const hello: string;`,
+          'implementation.mjs': `import data from './data.json' with { type: 'json' };
+export const hello = data.message;`,
+          'data.json': JSON.stringify({ message: 'world' }),
+        },
+      },
+    });
+    await writeOutput(
+      await compile({
+        type: 'module',
+        entryPoint: 'index.ts',
+        outFile: 'index.mjs',
+        inDir,
+        outDir,
+      }),
+    );
+    const output = await import(path.join(outDir, 'index.mjs'));
+    assert.deepEqual(output.hello, {
+      message: 'hello world',
+      test: 'world',
+    });
+  });
+
+  it('should report a bundler error in a JavaScript dependency', async () => {
+    const id = crypto.randomUUID();
+    const moduleDir = path.join(os.tmpdir(), `in-dir-${id}`);
+    const inDir = path.join(moduleDir, 'src');
+    const outDir = path.join(os.tmpdir(), `out-dir-${id}`, 'build');
+    await writeInput(inDir, importExternalModule);
+    await writeNodeModules(moduleDir, {
+      'test-esm-module': {
+        type: 'module',
+        source: {
+          'index.js': 'export const hello = ;',
+          'index.d.ts': 'export declare const hello: string;',
+        },
+      },
+    });
+    await assert.rejects(
+      compile({
+        type: 'module',
+        entryPoint: 'index.ts',
+        outFile: 'index.mjs',
+        inDir,
+        outDir,
+      }),
+      /Build failed with 1 error:[\s\S]*Unexpected ";"/u,
+    );
+    await assert.rejects(fs.access(outDir), { code: 'ENOENT' });
   });
 
   it('should bundle an ESM module that imports external modules, but excludes them', async () => {

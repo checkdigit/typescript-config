@@ -78,7 +78,7 @@
     "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^3.10.0",
-    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.3",
     "typescript-eslint": "^8.72.2"
   },
   "peerDependencies": {
@@ -87,6 +87,6 @@
     "esbuild": "0.28.2"
   },
   "engines": {
-    "node": ">=26"
+    "node": ">=26.13"
   }
 }
