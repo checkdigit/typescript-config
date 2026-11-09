@@ -75,6 +75,8 @@ jobs:
       - uses: actions/download-artifact@v8
         with: { name: pr-coverage, path: coverage-pr }
       - name: Post coverage report
+        # fork PRs receive a read-only token and cannot post comments
+        if: github.event.pull_request.head.repo.full_name == github.repository
         uses: checkdigit/github-actions/coverage-reporter@main
         with:
           coverage-results-folder-pr: 'coverage-pr'
