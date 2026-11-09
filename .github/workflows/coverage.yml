@@ -1,0 +1,82 @@
+name: Coverage
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  base:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '26.x'
+          cache: 'npm'
+      - name: Use latest npm
+        run: npm install --global npm@latest
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Run prepare
+        run: npm run prepare
+      - name: Run coverage
+        run: npm run ci:coverage
+      - uses: actions/upload-artifact@v7
+        with:
+          name: base-coverage
+          path: coverage/lcov.info
+          if-no-files-found: error
+
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '26.x'
+          cache: 'npm'
+      - name: Use latest npm
+        run: npm install --global npm@latest
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Run prepare
+        run: npm run prepare
+      - name: Run coverage
+        run: npm run ci:coverage
+      - uses: actions/upload-artifact@v7
+        with:
+          name: pr-coverage
+          path: coverage/lcov.info
+          if-no-files-found: error
+
+  report:
+    name: Coverage
+    needs: [base, pr]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require successful coverage jobs
+        if: ${{ needs.base.result != 'success' || needs.pr.result != 'success' }}
+        run: exit 1
+      - uses: actions/download-artifact@v8
+        with: { name: base-coverage, path: coverage }
+      - uses: actions/download-artifact@v8
+        with: { name: pr-coverage, path: coverage-pr }
+      - name: Post coverage report
+        uses: checkdigit/github-actions/coverage-reporter@main
+        with:
+          coverage-results-folder-pr: 'coverage-pr'
+          coverage-results-folder-base: 'coverage'
+          delete-old-comments: true
