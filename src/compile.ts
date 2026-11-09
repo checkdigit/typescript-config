@@ -5,7 +5,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { API, type Diagnostic } from '@typescript/native/sync';
+import { API, type Diagnostic } from '@typescript/native/async';
 import { build, type PluginBuild } from 'esbuild';
 
 import tsConfigJson from '../tsconfig.json' with { type: 'json' };
@@ -229,25 +229,33 @@ export default async function ({
   /**
    * Emit declarations using TypeScript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
-  using api = new API();
-  const compilerOptions = api.parseJsonConfigFileContent(tsConfigJson, {
-    // @checkdigit/typescript-config package root:
-    configDirectory: path.dirname(path.dirname(fileURLToPath(import.meta.url))),
-  }).options;
-  using program = api.createProgram(productionSourceFiles, {
+  await using api = new API();
+  const compilerOptions = (
+    await api.parseJsonConfigFileContent(tsConfigJson, {
+      // @checkdigit/typescript-config package root:
+      configDirectory: path.dirname(
+        path.dirname(fileURLToPath(import.meta.url)),
+      ),
+    })
+  ).options;
+  await using program = await api.createProgram(productionSourceFiles, {
     ...compilerOptions,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,
     outDir,
   });
-  const emitResult = program.emitToString();
+  const emitResult = await program.emitToString();
   const allDiagnostics = [
-    ...program.getGlobalDiagnostics(),
-    ...program.getProgramDiagnostics(),
-    ...program.getSyntacticDiagnostics(),
-    ...program.getSemanticDiagnostics(),
-    ...program.getDeclarationDiagnostics(),
+    ...(
+      await Promise.all([
+        program.getGlobalDiagnostics(),
+        program.getProgramDiagnostics(),
+        program.getSyntacticDiagnostics(),
+        program.getSemanticDiagnostics(),
+        program.getDeclarationDiagnostics(),
+      ])
+    ).flat(),
     ...emitResult.diagnostics,
   ];
   for (const diagnostic of allDiagnostics) {
