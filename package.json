@@ -58,7 +58,6 @@
     "coverage": "node --test-timeout 600000 --experimental-test-coverage --test-coverage-include-all --test-coverage-include=\"src/**/*.ts\" --test-coverage-exclude=\"src/test/**\" --test-coverage-exclude=\"src/**/*.test.ts\" --test-coverage-exclude=\"src/**/*.spec.ts\" --test \"src/**/*.spec.ts\"",
     "lint": "eslint . --max-warnings=0 --concurrency=auto --flag unstable_native_nodejs_ts_config",
     "lint:fix": "eslint . --fix --concurrency=auto --flag unstable_native_nodejs_ts_config",
-    "prepare": "",
     "prepublishOnly": "npm run build:builder && npm run build:dist-types && npm run build:dist-mjs",
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
