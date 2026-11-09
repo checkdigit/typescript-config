@@ -50,7 +50,7 @@
     "build:mjs-bundle-minify": "node -e \"require('node:fs').rmSync('build-mjs-bundle-minify', { recursive: true, force: true })\" && bin/builder.mjs --type=module --minify --outDir=build-mjs-bundle-minify --entryPoint=index.test.ts --outFile=index.test.mjs",
     "build:mjs-bundle-no-external": "node -e \"require('node:fs').rmSync('build-mjs-bundle-no-external', { recursive: true, force: true })\" && bin/builder.mjs --type=module --external=./node_modules/* --outDir=build-mjs-bundle-no-external --entryPoint=index.test.ts --outFile=index.test.mjs --minify",
     "build:types": "node -e \"require('node:fs').rmSync('build-types', { recursive: true, force: true })\" && bin/builder.mjs --type=types --outDir=build-types",
-    "ci:compile": "time tsc",
+    "ci:compile": "tsc",
     "ci:lint": "npm run lint",
     "ci:style": "npm run prettier",
     "ci:test": "npm run build && npm run test:node && npm run test:mjs && npm run test:mjs-bundle && npm run test:mjs-bundle-no-external",
@@ -78,14 +78,14 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-yml": "^3.10.0",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.72.1"
+    "typescript-eslint": "^8.72.2"
   },
   "peerDependencies": {
-    "@types/node": ">=24",
+    "@types/node": ">=26",
     "@typescript/native": "npm:typescript@7.1.0-beta",
     "esbuild": "0.28.2"
   },
   "engines": {
-    "node": ">=24.18.0 <25 || >=26"
+    "node": ">=26"
   }
 }

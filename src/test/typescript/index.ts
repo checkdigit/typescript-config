@@ -11,3 +11,4 @@ import './typescript-5.7.spec.ts';
 import './typescript-5.8.spec.ts';
 import './typescript-5.9.spec.ts';
 import './typescript-6.0.spec.ts';
+import './typescript-7.1.spec.ts';
