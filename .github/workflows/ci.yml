@@ -5,6 +5,13 @@ on:
     branches:
       - 'main'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 env:
   CI: true
 
@@ -18,12 +25,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Update npm
+      - name: Use latest npm
         run: npm install --global npm@latest
       - name: Install Dependencies
         run: npm ci --ignore-scripts
@@ -52,7 +61,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Update npm
+      - name: Use latest npm
         run: npm install --global npm@latest
       - name: Install Dependencies
         run: npm ci --ignore-scripts
@@ -64,3 +73,29 @@ jobs:
         run: npm run ci:lint
       - name: Run Tests
         run: npm run ci:test
+
+  dependencyReview:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Review dependencies
+        uses: actions/dependency-review-action@v5
+        with:
+          allow-licenses: ${{ vars.ALLOW_LICENSES }}
+
+  result:
+    name: CI
+    needs: [pullRequestBuild, branchBuild, dependencyReview]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require successful build and dependency review jobs
+        if: >-
+          needs.pullRequestBuild.result != 'success' ||
+          needs.branchBuild.result != 'success' ||
+          needs.dependencyReview.result != 'success'
+        run: exit 1

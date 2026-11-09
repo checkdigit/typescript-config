@@ -65,7 +65,7 @@
     "test:mjs-bundle": "node --test build-mjs-bundle/index.test.mjs",
     "test:mjs-bundle-minify": "node --test build-mjs-bundle-minify/index.test.mjs",
     "test:mjs-bundle-no-external": "node --test build-mjs-bundle-no-external/index.test.mjs",
-    "test:node": "node --disable-warning ExperimentalWarning --experimental-strip-types --test-timeout 600000 --test \"src/**/*.spec.ts\""
+    "test:node": "node --disable-warning ExperimentalWarning --test-timeout 600000 --test \"src/**/*.spec.ts\""
   },
   "prettier": "@checkdigit/prettier-config",
   "devDependencies": {
