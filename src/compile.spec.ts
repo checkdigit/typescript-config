@@ -9,12 +9,10 @@ import { describe, it } from 'node:test';
 import compile from './compile.ts';
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
-import { fileURLToPath as __fileURLToPath } from "node:url";
-const __filename = __fileURLToPath(import.meta.url);
+const __filename = import.meta.filename;
 const require = __createRequire(import.meta.url);`;
 
-const dirnameInject = `import path from "node:path";
-var __dirname = path.dirname(__filename);`;
+const dirnameInject = `var __dirname = import.meta.dirname;`;
 
 const singleModule = {
   [`index.ts`]: `export const hello = 'world';`,

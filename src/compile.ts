@@ -11,12 +11,10 @@ import { build, type PluginBuild } from 'esbuild';
 import tsConfigJson from '../tsconfig.json' with { type: 'json' };
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
-import { fileURLToPath as __fileURLToPath } from "node:url";
-const __filename = __fileURLToPath(import.meta.url);
+const __filename = import.meta.filename;
 const require = __createRequire(import.meta.url);`;
 
-const dirNameJsCompatibilityInjection = `import path from 'node:path';
-export const __dirname = path.dirname(__filename);`; // relies on __filename from commonJsCompatabilityBanner
+const dirNameJsCompatibilityInjection = `export const __dirname = import.meta.dirname;`;
 const dirNameJsCompatibilityInjectionURL = `data:text/javascript,${encodeURIComponent(dirNameJsCompatibilityInjection)}`;
 
 export type ImportKind =
@@ -125,8 +123,6 @@ export interface CompileOptions {
 
 /**
  * Recursively obtains all files in a directory
- * @param {string} directory
- * @returns {Promise<string[]>}
  */
 async function getFiles(directory: string): Promise<string[]> {
   const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -150,7 +146,7 @@ function flattenDiagnosticMessage(diagnostic: Diagnostic, indent = 0): string {
 
 function excludeSourceMaps(filter: RegExp) {
   return (pluginBuild: PluginBuild) => {
-    // ignore source maps for any Javascript file that matches filter
+    // ignore source maps for any JavaScript file that matches filter
     pluginBuild.onLoad({ filter }, async (args) => {
       if (args.path.endsWith('.js') || args.path.endsWith('.mjs')) {
         return {
