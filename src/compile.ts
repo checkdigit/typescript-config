@@ -2,22 +2,19 @@
 
 import { strict as assert } from 'node:assert';
 import { promises as fs } from 'node:fs';
-import module from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import typescript from 'typescript';
+import { API, type Diagnostic } from '@typescript/native/async';
 import { build, type PluginBuild } from 'esbuild';
 
 import tsConfigJson from '../tsconfig.json' with { type: 'json' };
 
 const commonJsCompatabilityBanner = `import { createRequire as __createRequire } from "node:module";
-import { fileURLToPath as __fileURLToPath } from "node:url";
-const __filename = __fileURLToPath(import.meta.url);
+const __filename = import.meta.filename;
 const require = __createRequire(import.meta.url);`;
 
-const dirNameJsCompatibilityInjection = `import path from 'node:path';
-export const __dirname = path.dirname(__filename);`; // relies on __filename from commonJsCompatabilityBanner
+const dirNameJsCompatibilityInjection = `export const __dirname = import.meta.dirname;`;
 const dirNameJsCompatibilityInjectionURL = `data:text/javascript,${encodeURIComponent(dirNameJsCompatibilityInjection)}`;
 
 export type ImportKind =
@@ -126,8 +123,6 @@ export interface CompileOptions {
 
 /**
  * Recursively obtains all files in a directory
- * @param {string} directory
- * @returns {Promise<string[]>}
  */
 async function getFiles(directory: string): Promise<string[]> {
   const entries = await fs.readdir(directory, { withFileTypes: true });
@@ -140,9 +135,18 @@ async function getFiles(directory: string): Promise<string[]> {
   return files.flat();
 }
 
+function flattenDiagnosticMessage(diagnostic: Diagnostic, indent = 0): string {
+  return [
+    `${'  '.repeat(indent)}${diagnostic.text}`,
+    ...(diagnostic.messageChain ?? []).map((child) =>
+      flattenDiagnosticMessage(child, indent + 1),
+    ),
+  ].join('\n');
+}
+
 function excludeSourceMaps(filter: RegExp) {
   return (pluginBuild: PluginBuild) => {
-    // ignore source maps for any Javascript file that matches filter
+    // ignore source maps for any JavaScript file that matches filter
     pluginBuild.onLoad({ filter }, async (args) => {
       if (args.path.endsWith('.js') || args.path.endsWith('.mjs')) {
         return {
@@ -192,57 +196,6 @@ function resolveTypescriptPaths() {
   };
 }
 
-/**
- * The Temporal polyfill handling can be removed once Node 26 becomes minimum version
- */
-interface TemporalPolyfillPackageJson {
-  exports?: {
-    '.'?: {
-      import?: {
-        default?: string;
-      };
-    }[];
-  };
-}
-
-function getTemporalPolyfillModulePath({
-  exports,
-}: TemporalPolyfillPackageJson): string | undefined {
-  return exports?.['.']?.find((entry) => entry.import?.default !== undefined)
-    ?.import?.default;
-}
-
-function resolveRuntimeTemporalPolyfill(external: string[]) {
-  return (pluginBuild: PluginBuild) => {
-    pluginBuild.onResolve(
-      // Note: the /u flag cannot be used here because the underlying Go implementation does not support it
-      // eslint-disable-next-line require-unicode-regexp
-      { filter: /^@js-temporal\/polyfill$/ },
-      async (resolved) => {
-        const packageJsonPath = module.findPackageJSON(
-          resolved.path,
-          resolved.resolveDir,
-        );
-
-        assert.ok(packageJsonPath !== undefined);
-        if (external.includes('./node_modules/*')) {
-          return { path: resolved.path, external: true };
-        }
-
-        const packageJson = JSON.parse(
-          await fs.readFile(packageJsonPath, 'utf8'),
-        ) as TemporalPolyfillPackageJson;
-        const modulePath = getTemporalPolyfillModulePath(packageJson);
-
-        assert.ok(modulePath !== undefined);
-        return {
-          path: path.join(path.dirname(packageJsonPath), modulePath),
-        };
-      },
-    );
-  };
-}
-
 // eslint-disable-next-line max-lines-per-function
 export default async function ({
   type,
@@ -272,62 +225,62 @@ export default async function ({
   /**
    * Emit declarations using TypeScript compiler if the type is 'types'.  Otherwise, compile to ensure the build is good.
    */
-  const compilerOptions = typescript.parseJsonConfigFileContent(
-    tsConfigJson,
-    typescript.sys,
-    // @checkdigit/typescript-config package root:
-    path.dirname(path.dirname(fileURLToPath(import.meta.url))),
+  await using api = new API();
+  const compilerOptions = (
+    await api.parseJsonConfigFileContent(tsConfigJson, {
+      // @checkdigit/typescript-config package root:
+      configDirectory: path.dirname(
+        path.dirname(fileURLToPath(import.meta.url)),
+      ),
+    })
   ).options;
-  const program = typescript.createProgram(productionSourceFiles, {
+  await using program = await api.createProgram(productionSourceFiles, {
     ...compilerOptions,
     noEmit: type !== 'types',
     emitDeclarationOnly: type === 'types',
     rootDir: inDir,
     outDir,
   });
-  const declarationFiles: OutputFile[] = [];
-  const emitResult = program.emit(undefined, (fileName, data) => {
-    declarationFiles.push({ path: fileName, text: data });
-  });
-  const allDiagnostics = typescript.sortAndDeduplicateDiagnostics([
-    ...typescript.getPreEmitDiagnostics(program),
+  const emitResult = await program.emitToString();
+  const allDiagnostics = [
+    ...(
+      await Promise.all([
+        program.getGlobalDiagnostics(),
+        program.getProgramDiagnostics(),
+        program.getSyntacticDiagnostics(),
+        program.getSemanticDiagnostics(),
+        program.getDeclarationDiagnostics(),
+      ])
+    ).flat(),
     ...emitResult.diagnostics,
-  ]);
+  ];
   for (const diagnostic of allDiagnostics) {
-    if (diagnostic.file) {
-      assert.ok(diagnostic.start !== undefined);
-      const { line, character } = typescript.getLineAndCharacterOfPosition(
-        diagnostic.file,
-        diagnostic.start,
-      );
-      const message = typescript.flattenDiagnosticMessageText(
-        diagnostic.messageText,
-        '\n',
-      );
-      messages.push(
-        `tsc: ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`,
-      );
+    const message = flattenDiagnosticMessage(diagnostic);
+    if (diagnostic.fileName === undefined) {
+      messages.push(`tsc: ${message}`);
     } else {
+      assert.ok(diagnostic.startPosition !== undefined);
+      const { line, character } = diagnostic.startPosition;
       messages.push(
-        `tsc: ${typescript.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`,
+        `tsc: ${diagnostic.fileName} (${line + 1},${character + 1}): ${message}`,
       );
     }
   }
 
   if (messages.length > 0) {
-    throw new Error(`tsc failed ${JSON.stringify(messages)}`);
+    throw new Error(`tsc failed ${JSON.stringify([...new Set(messages)])}`);
   }
 
   if (type === 'types') {
     return {
-      outputFiles: declarationFiles,
+      outputFiles: [...emitResult.outputFiles].map(([filePath, file]) => ({
+        path: filePath,
+        text: file.text,
+      })),
     };
   }
 
-  /**
-   * Emit ESM javascript using esbuild
-   */
-  const buildResult = await build({
+  return await build({
     entryPoints: productionSourceFiles,
     bundle: true,
     minify,
@@ -366,10 +319,6 @@ export default async function ({
           external,
           plugins: [
             {
-              name: 'resolve-runtime-temporal-polyfill',
-              setup: resolveRuntimeTemporalPolyfill(external),
-            },
-            {
               name: 'exclude-source-maps',
               // Note: the /u flag cannot be used here because the underlying Go implementation does not support it
               // eslint-disable-next-line require-unicode-regexp
@@ -378,13 +327,4 @@ export default async function ({
           ],
         }),
   });
-
-  messages.push(
-    ...buildResult.errors.map((error) => `esbuild error: ${error.text}`),
-  );
-  if (messages.length > 0) {
-    throw new Error(`esbuild failed ${JSON.stringify(messages)}`);
-  }
-
-  return buildResult;
 }

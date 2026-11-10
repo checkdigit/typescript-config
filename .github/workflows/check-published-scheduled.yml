@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '30 20 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   checkPublished:
     name: Check Published
@@ -16,7 +19,7 @@ jobs:
         with:
           node-version: '26.x'
           package-manager-cache: false
-      - name: Update npm
+      - name: Use latest npm
         run: npm install --global npm@latest
       - name: Check Published
         uses: checkdigit/github-actions/check-published@main

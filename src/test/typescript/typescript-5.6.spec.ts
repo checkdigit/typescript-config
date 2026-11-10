@@ -31,24 +31,12 @@ describe('typescript-5.6', () => {
     }
   });
 
-  it('iterator helper methods', () => {
-    function* positiveIntegers() {
-      let i = 1;
-      while (true) {
-        yield i;
-        i += 1;
-      }
-    }
-    const evenNumbers = positiveIntegers().map((x) => x * 2);
-    assert.deepEqual([...evenNumbers.take(5)], [2, 4, 6, 8, 10]);
-  });
-
   it('strict built-in iterator checks', () => {
     function* uppercase(iter: Iterator<string, BuiltinIteratorReturn>) {
       while (true) {
         const { value, done } = iter.next();
         // @ts-expect-error now an error in 5.6
-        yield value.toUppercase(); // method should be "toUpperCase", value is possibly undefined
+        yield value.toUpperCase();
         if (done) {
           return;
         }

@@ -1,17 +1,21 @@
 name: Publish
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to publish (for example, v11.0.0)
+        required: true
+        type: string
   pull_request:
     branches:
       - 'main'
 
 jobs:
   publish:
-    name: ${{ github.event_name == 'release' && 'Publish Release' || 'Publish Beta' }}
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Publish Release' || 'Publish Beta' }}
     if: >-
-      (github.event_name == 'release' && github.event.action == 'created') ||
+      github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
        github.event.pull_request.base.ref == 'main' &&
        github.event.pull_request.head.repo.full_name == github.repository)
@@ -25,7 +29,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || format('refs/tags/{0}', inputs.tag) }}
       - name: Dependency Review
         if: github.event_name == 'pull_request'
         uses: actions/dependency-review-action@v5
@@ -37,7 +41,7 @@ jobs:
           node-version: '26.x'
           package-manager-cache: false
           registry-url: 'https://registry.npmjs.org'
-      - name: Update npm
+      - name: Use latest npm
         run: npm install --global npm@latest
       - name: Check Label
         if: github.event_name == 'pull_request'
@@ -59,11 +63,19 @@ jobs:
         id: prepare-beta
         uses: checkdigit/github-actions/prepare-beta@main
       - name: Publish Release
-        if: github.event_name == 'release'
-        run: npm publish
+        if: github.event_name == 'workflow_dispatch'
+        run: npm publish --access public
       - name: Publish Beta
         if: github.event_name == 'pull_request'
-        run: npm publish --tag beta
+        run: npm publish --tag beta --access public
+      - name: Validate Published Beta NPM Package
+        if: github.event_name == 'pull_request'
+        uses: checkdigit/github-actions/validate-npm-package@main
+        with:
+          betaPackage: ${{ steps.prepare-beta.outputs.betaPackage }}
+        env:
+          # The action writes an npmrc containing this variable; public downloads need no token.
+          NPM_TOKEN: ''
       - name: Comment npm publish result
         if: github.event_name == 'pull_request'
         uses: checkdigit/github-actions/comment-npm-publish@main
